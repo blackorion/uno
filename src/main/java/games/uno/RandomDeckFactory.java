@@ -1,5 +1,8 @@
 package games.uno;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class RandomDeckFactory implements DeckFactory
 {
     protected DeckBuilder builder = new DeckBuilder();

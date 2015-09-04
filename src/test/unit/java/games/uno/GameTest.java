@@ -16,20 +16,20 @@ public class GameTest extends Assert
 
     @Test
     public void WhenTheGameStarts_EachUserGets7CardsFromDeck() {
-        User user1 = new User("username");
-        User user2 = new User("username");
-        uno.addUser(user1);
-        uno.addUser(user2);
+        Player player1 = new Player("username");
+        Player player2 = new Player("username");
+        uno.addPlayer(player1);
+        uno.addPlayer(player2);
 
         uno.start();
 
-        assertEquals(7, user1.getCards().size());
-        assertEquals(7, user2.getCards().size());
+        assertEquals(7, player1.getCardsOnHand().size());
+        assertEquals(7, player2.getCardsOnHand().size());
     }
 
     @Test
     public void WhenGameStarts_FirstCardFromDeckMovedToPlayedDeck() {
-        uno.addUser(new User("user"));
+        uno.addPlayer(new Player("player"));
         uno.start();
 
         assertEquals(new Card(CardValues.FOUR, CardColors.RED), uno.currentPlayedCard());

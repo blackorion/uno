@@ -8,8 +8,9 @@ public class Uno
 {
     private final Deck deck;
     private final Deck playDeck = new Deck();
-    private List<User> users = new ArrayList<>();
+    private List<Player> players = new ArrayList<>();
     private boolean isStarted = false;
+    private int currentPlayerIndex = 0;
 
     public Uno(DeckFactory deckFactory) { deck = deckFactory.generate(); }
 
@@ -17,24 +18,47 @@ public class Uno
 
     public Card pullCard() { return deck.pull(); }
 
-    public void addUser(User username) {
+    public void addPlayer(Player username) {
         if ( isStarted )
             throw new IllegalArgumentException("The game has already started.");
 
-        users.add(username);
+        players.add(username);
     }
 
     public void start() {
-        if ( users.size() == 0 )
+        if ( players.size() == 0 )
             throw new NoUsersInTheGameException();
 
-        for ( User user : users )
+        for ( Player player : players )
             for ( int i = 0; i < 7; i++ )
-                user.takeCard(deck.pull());
+                player.takeCard(deck.pull());
 
         playDeck.add(deck.pull());
         isStarted = true;
     }
 
     public Card currentPlayedCard() { return playDeck.showTopCard(); }
+
+    public Player getCurrentPlayer() {
+        return getPlayerByIndex(currentPlayerIndex);
+    }
+
+    public Player getNextPlayer() {
+        return getPlayerByIndex(nextTurnIndex());
+    }
+
+    private Player getPlayerByIndex(int currentPlayerIndex) {return players.get(currentPlayerIndex);}
+
+    public void endTurn() {
+        currentPlayerIndex = nextTurnIndex();
+    }
+
+    private int nextTurnIndex() {
+        int result = currentPlayerIndex + 1;
+
+        if ( result == players.size() )
+            return 0;
+        else
+            return result;
+    }
 }
