@@ -12,7 +12,7 @@ public class DeckTest
         deck.add(new Card(CardValues.ONE_STEP_BACK, CardColors.BLUE));
         deck.add(new Card(CardValues.ONE_STEP_BACK, CardColors.RED));
 
-        assertEquals(2, deck.size());
+        assertEquals(2, deck.remains());
     }
 
     @Test
@@ -23,8 +23,8 @@ public class DeckTest
         deck.add(expectedCard1);
         deck.add(expectedCard2);
 
-        assertEquals(expectedCard1, deck.pull());
-        assertEquals(expectedCard2, deck.pull());
+        assertEquals(expectedCard1, deck.giveACardFromTop());
+        assertEquals(expectedCard2, deck.giveACardFromTop());
     }
 
     @Test(expected = IndexOutOfBoundsException.class)
@@ -32,7 +32,7 @@ public class DeckTest
         Deck deck = new Deck();
         deck.add(new Card(CardValues.TAKE_TWO, CardColors.DARK));
 
-        deck.pull();
-        deck.pull();
+        deck.giveACardFromTop();
+        deck.giveACardFromTop();
     }
 }

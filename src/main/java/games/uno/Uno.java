@@ -1,64 +1,75 @@
 package games.uno;
 
 import games.uno.exceptions.NoUsersInTheGameException;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class Uno
-{
-    private final Deck deck;
+public class Uno {
+    private final Deck bankDeck;
     private final Deck playDeck = new Deck();
+    private final TurnController turnController;
     private List<Player> players = new ArrayList<>();
     private boolean isStarted = false;
-    private int currentPlayerIndex = 0;
+    private boolean currentPlayerFinishedHisTurn = false;
 
-    public Uno(DeckFactory deckFactory) { deck = deckFactory.generate(); }
+    public Uno(DeckFactory deckFactory, TurnController turnController) {
+        this.turnController = turnController;
+        bankDeck = deckFactory.generate();
+    }
 
-    public Deck getDeck() { return new Deck(); }
-
-    public Card pullCard() { return deck.pull(); }
-
-    public void addPlayer(Player username) {
-        if ( isStarted )
+    public void addPlayer(Player player) {
+        if (isStarted)
             throw new IllegalArgumentException("The game has already started.");
 
-        players.add(username);
+        players.add(player);
     }
 
     public void start() {
-        if ( players.size() == 0 )
+        if (players.size() == 0)
             throw new NoUsersInTheGameException();
 
-        for ( Player player : players )
-            for ( int i = 0; i < 7; i++ )
-                player.takeCard(deck.pull());
+        turnController.setPlayers(players);
 
-        playDeck.add(deck.pull());
+        for (Player player : players)
+            for (int i = 0; i < 7; i++)
+                player.takeCard(bankDeck.giveACardFromTop());
+
+        playDeck.add(bankDeck.giveACardFromTop());
         isStarted = true;
     }
 
-    public Card currentPlayedCard() { return playDeck.showTopCard(); }
+    public Card currentPlayedCard() {
+        return playDeck.showTopCard();
+    }
 
     public Player getCurrentPlayer() {
-        return getPlayerByIndex(currentPlayerIndex);
+        return turnController.currentPlayer();
     }
 
     public Player getNextPlayer() {
-        return getPlayerByIndex(nextTurnIndex());
+        return turnController.nextPlayer();
     }
-
-    private Player getPlayerByIndex(int currentPlayerIndex) {return players.get(currentPlayerIndex);}
 
     public void endTurn() {
-        currentPlayerIndex = nextTurnIndex();
+        if (!currentPlayerFinishedHisTurn)
+            throw new IllegalTurnEndException();
+
+        turnController.nextTurn();
+        currentPlayerFinishedHisTurn = false;
     }
 
-    private int nextTurnIndex() {
-        int result = currentPlayerIndex + 1;
+    public void playerPuts(Card card) {
+        if (!card.isPlayable(playDeck.showTopCard()))
+            throw new WrongMoveException(playDeck.showTopCard(), card);
 
-        if ( result == players.size() )
-            return 0;
-        else
-            return result;
+        playDeck.takeCardFrom(getCurrentPlayer(), card);
+        currentPlayerFinishedHisTurn = true;
+        endTurn();
+    }
+
+    public void playerPullsFromDeck() {
+        getCurrentPlayer().takeCardFrom(bankDeck);
+        currentPlayerFinishedHisTurn = true;
     }
 }

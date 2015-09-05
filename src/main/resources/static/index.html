@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>Hello WebSocket</title>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/sockjs/1.0.0/sockjs.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
     <script type="text/javascript">
@@ -10,18 +11,21 @@
         function setConnected(connected) {
             document.getElementById('connect').disabled = connected;
             document.getElementById('disconnect').disabled = !connected;
-            document.getElementById('conversationDiv').style.visibility = connected ? 'visible' : 'hidden';
-            document.getElementById('response').innerHTML = '';
+            document.getElementById('game-start').disabled = !connected;
+            document.getElementById('game-info').innerHTML = '';
         }
 
         function connect() {
-            var socket = new SockJS('/hello');
+            var socket = new SockJS('/ws');
             stompClient = Stomp.over(socket);
-            stompClient.connect({}, function(frame) {
+            stompClient.connect({}, function () {
                 setConnected(true);
-                console.log('Connected: ' + frame);
-                stompClient.subscribe('/topic/greetings', function(greeting){
-                    showGreeting(JSON.parse(greeting.body).content);
+                stompClient.subscribe('/topic/info', function (information) {
+                    showInformation(JSON.parse(information.body).message);
+                });
+
+                stompClient.subscribe('/topic/error', function (information) {
+                    showErrorInformation(JSON.parse(information.body).message);
                 });
             });
         }
@@ -36,31 +40,51 @@
 
         function sendName() {
             var name = document.getElementById('name').value;
-            stompClient.send("/app/hello", {}, JSON.stringify({ 'name': name }));
+            stompClient.send("/app/hello", {}, JSON.stringify({'name': name}));
         }
 
-        function showGreeting(message) {
-            var response = document.getElementById('response');
+        function showInformation(message) {
+            var information = document.getElementById('game-info');
             var p = document.createElement('p');
             p.style.wordWrap = 'break-word';
             p.appendChild(document.createTextNode(message));
-            response.appendChild(p);
+            information.appendChild(p);
+        }
+
+        function showErrorInformation(message) {
+            var information = document.getElementById('game-info');
+            var p = document.createElement('p');
+            p.style.wordWrap = 'break-word';
+            p.style.color = 'red';
+            p.appendChild(document.createTextNode(message));
+            information.appendChild(p);
+        }
+
+        function gameStart() {
+            $.getJSON('/api/game/start');
+        }
+
+        function createUser() {
+            var username = document.getElementById('username').value;
+            console.log(username);
+            $.post('/api/players/create', {username: username}, null, 'json');
         }
     </script>
 </head>
 <body onload="disconnect()">
-<noscript><h2 style="color: #ff0000">Seems your browser doesn't support Javascript! Websocket relies on Javascript being enabled. Please enable
-                                     Javascript and reload this page!</h2></noscript>
+<noscript><h2 style="color: #FF0000">Seems your browser doesn't support Javascript! Websocket relies on Javascript being enabled. Please enable
+    Javascript and reload this page!</h2></noscript>
 <div>
     <div>
         <button id="connect" onclick="connect();">Connect</button>
         <button id="disconnect" disabled="disabled" onclick="disconnect();">Disconnect</button>
+        <button id="game-start" disabled="disabled" onclick="gameStart();">Start</button>
     </div>
-    <div id="conversationDiv">
-        <label>What is your name?</label><input type="text" id="name" />
-        <button id="sendName" onclick="sendName();">Send</button>
-        <p id="response"></p>
+    <div id="create-user-container">
+        <label>What is your name?</label><input type="text" id="username"/>
+        <button id="create-user" onclick="createUser();">Send</button>
     </div>
+    <p id="game-info"></p>
 </div>
 </body>
 </html>

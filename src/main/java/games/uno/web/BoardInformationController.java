@@ -1,6 +1,6 @@
 package games.uno.web;
 
-import games.uno.web.messages.BoardInformation;
+import games.uno.web.messages.BoardInformationMessage;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
 
@@ -8,7 +8,7 @@ import org.springframework.stereotype.Controller;
 public class BoardInformationController
 {
     @SendTo("/topic/board/information")
-    public BoardInformation information() {
-        return new BoardInformation("test message");
+    public BoardInformationMessage information() {
+        return new BoardInformationMessage("test message");
     }
 }

@@ -30,4 +30,8 @@ public class Card
     public int hashCode() {
         return 31 * value.hashCode() + 31 * color.hashCode();
     }
+
+    public boolean isPlayable(Card topCard) {
+        return topCard.getColor() == getColor() || topCard.getValue() == getValue();
+    }
 }

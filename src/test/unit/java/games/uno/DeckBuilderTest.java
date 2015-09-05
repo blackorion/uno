@@ -19,5 +19,7 @@ public class DeckBuilderTest extends Assert
     public void shouldInsertCardsOfRequiredTypeToDeck() {
         DeckBuilder deckBuilder = new DeckBuilder();
         deckBuilder.add(CardValues.TAKE_TWO, CardColors.RED);
+
+        assertThat(deckBuilder.build().giveACardFromTop(), is(new Card(CardValues.TAKE_TWO, CardColors.RED)));
     }
 }

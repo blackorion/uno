@@ -15,7 +15,7 @@ public class GameController
 
     @RequestMapping(value = "/start", method = RequestMethod.GET)
     public String startGame() {
-        gameService.fetchGame().start();
+        gameService.startNewGame();
 
         return "Game started";
     }

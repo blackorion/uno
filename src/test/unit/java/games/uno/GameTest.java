@@ -11,7 +11,7 @@ public class GameTest extends Assert
 
     @Before
     public void setUp() throws Exception {
-        uno = new Uno(new NonRandomDeckFactory());
+        uno = new Uno(new NonRandomDeckFactory(), new TurnController());
     }
 
     @Test

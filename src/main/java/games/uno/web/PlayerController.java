@@ -1,8 +1,10 @@
 package games.uno.web;
 
 import games.uno.Player;
+import games.uno.PlayerRepository;
 import io.codearte.jfairy.Fairy;
 import io.codearte.jfairy.producer.person.Person;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
@@ -13,18 +15,16 @@ import javax.servlet.http.HttpSession;
 @RequestMapping("/api/players")
 public class PlayerController
 {
-    Fairy generator = Fairy.create();
+    private Fairy generator = Fairy.create();
+    @Autowired
+    private PlayerRepository playerRepository;
 
-    @RequestMapping(method = RequestMethod.GET)
+    @RequestMapping(value = "/create", method = RequestMethod.POST)
     @ResponseBody
-    public Player player(@RequestParam(value = "username", required = false) String username, HttpServletRequest request) {
+    public Player create(@RequestParam(value = "username", required = false) String username, HttpServletRequest request) {
         HttpSession session = request.getSession();
-        Player player = (Player) session.getAttribute("player");
-
-        if ( player == null ) {
-            player = populatePlayer(username);
-            session.setAttribute("player", player);
-        }
+        Player player = populatePlayer(username);
+        playerRepository.saveForSession(session.getId(), player);
 
         return player;
     }
@@ -37,8 +37,6 @@ public class PlayerController
     }
 
     private String generateUsername() {
-        Person person = generator.person();
-
-        return person.fullName();
+        return generator.person().fullName();
     }
 }

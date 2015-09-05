@@ -1,10 +1,10 @@
 package games.uno.web.messages;
 
-public class BoardInformation
+public class BoardInformationMessage
 {
     private String message;
 
-    public BoardInformation(String message) {
+    public BoardInformationMessage(String message) {
         this.message = message;
     }
 

@@ -9,6 +9,6 @@ public class RandomDeckFactoryTest
     public void has108Cards() {
         DeckFactory factory = new RandomDeckFactory();
 
-        assertEquals(108, factory.generate().size());
+        assertEquals(108, factory.generate().remains());
     }
 }
