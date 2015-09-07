@@ -23,7 +23,7 @@ export default class GameClient {
 			});
 		});
 	}
-	_ajaxWithSession(url,methodx,f,errorCallback){
+	_ajaxWithSession(url,methodx,f){
 		$.ajax({
 			dataType: 'json',
 			url: this._url+url,
@@ -32,10 +32,11 @@ export default class GameClient {
 			},
 			method: methodx,
 			success:f
-		}).error((error)=>{
-			console.log('!!!!! ERROR !!!!!',error);
-			if(typeof errorCallback === 'function') errorCallback();
 		});
+		// .error((error)=>{
+		// 	console.log('!!!!! ERROR !!!!!',error);
+		// 	if(typeof errorCallback === 'function') errorCallback();
+		// });
 	}
 	createUser(f){
 		this._ajaxWithSession('/api/players/create','POST',f);
