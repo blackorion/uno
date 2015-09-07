@@ -50,6 +50,7 @@ public class GameService
     public void stopCurrentGame() {
         game.finish();
         messagingTemplate.convertAndSend("/topic/info", new BoardInformationMessage("Game is stopped!"));
+        messagingTemplate.convertAndSend("/topic/events", getInfo());
     }
 
     public GameInfo getInfo() {
