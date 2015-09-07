@@ -1,4 +1,4 @@
-package games.uno;
+package games.uno.domain;
 
 public class Card
 {

@@ -1,9 +1,12 @@
-package games.uno;
+package games.uno.domain;
 
+import games.uno.domain.Card;
+import games.uno.domain.CardHolder;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Player implements CardHolder {
+public class Player implements CardHolder
+{
     private Long id;
     private String username;
     private List<Card> cardsOnHand = new ArrayList<>();

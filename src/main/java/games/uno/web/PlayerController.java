@@ -1,42 +1,84 @@
 package games.uno.web;
 
-import games.uno.Player;
 import games.uno.PlayerRepository;
-import io.codearte.jfairy.Fairy;
-import io.codearte.jfairy.producer.person.Person;
+import games.uno.domain.Player;
+import games.uno.util.RandomUsernameGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
+import org.springframework.messaging.simp.annotation.SubscribeMapping;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import java.security.Principal;
+import java.util.Collection;
 
-@Controller
 @CrossOrigin
 @RequestMapping("/api/players")
+@RestController
 public class PlayerController
 {
-    private Fairy generator = Fairy.create();
     @Autowired
-    private PlayerRepository playerRepository;
+    AuthenticationManager authenticationManager;
+    @Autowired
+    PlayerRepository playerRepository;
+    @Autowired
+    RandomUsernameGenerator usernameGenerator;
 
-    @RequestMapping(value = "/create", method = RequestMethod.POST)
-    @ResponseBody
-    public Player create(@RequestParam(value = "username", required = false) String username, HttpServletRequest request) {
-        HttpSession session = request.getSession();
-        Player player = populatePlayer(username);
-        playerRepository.saveForSession(session.getId(), player);
-
-        return player;
+    @SubscribeMapping("/game.players")
+    public Collection<Player> retrievePlayers() {
+        return playerRepository.findAll();
     }
 
-    public Player populatePlayer(String username) {
-        if ( username == null )
-            username = generateUsername();
-
-        return new Player(username);
+    @RequestMapping(value = "/me", method = RequestMethod.GET)
+    public Player create(@RequestParam(value = "username", defaultValue = "", required = false) String username,
+                         @RequestParam(value = "password", required = false) String password,
+                         HttpServletRequest request, Principal principal) {
+        if ( principal == null ) {
+            username = generateUsernameIfEmpty(username);
+            authorizePlayer(username, password);
+            return savePlayerInHttpSession(username, request.getSession().getId());
+        }
+        else
+            return playerRepository.findBySessionId(request.getSession().getId());
     }
 
-    private String generateUsername() {
-        return generator.person().fullName();
+    private LoginStatus authorizePlayer(String username, String password) {
+        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(username, password);
+        Authentication auth = authenticationManager.authenticate(token);
+        SecurityContextHolder.getContext().setAuthentication(auth);
+
+        return new LoginStatus(auth.isAuthenticated(), auth.getName());
+    }
+
+    private Player savePlayerInHttpSession(String username, String sessionId) {
+        return playerRepository.saveForSession(sessionId, new Player(username));
+    }
+
+    private String generateUsernameIfEmpty(String username) {
+        if ( username.isEmpty() )
+            return usernameGenerator.generate();
+        else
+            return username;
+    }
+
+    private class LoginStatus
+    {
+        private final boolean loggedIn;
+        private final String username;
+
+        public LoginStatus(boolean loggedIn, String username) {
+            this.loggedIn = loggedIn;
+            this.username = username;
+        }
+
+        public boolean isLoggedIn() {
+            return loggedIn;
+        }
+
+        public String getUsername() {
+            return username;
+        }
     }
 }

@@ -1,12 +1,15 @@
 package games.uno;
 
+import games.uno.domain.Player;
 import org.springframework.stereotype.Repository;
-
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Repository
-public class InMemmoryPlayerRepository implements PlayerRepository {
+public class InMemmoryPlayerRepository implements PlayerRepository
+{
     Map<String, Player> players = new HashMap<>();
 
     @Override
@@ -15,7 +18,14 @@ public class InMemmoryPlayerRepository implements PlayerRepository {
     }
 
     @Override
-    public void saveForSession(String id, Player player) {
+    public Player saveForSession(String id, Player player) {
         players.put(id, player);
+
+        return player;
+    }
+
+    @Override
+    public List<Player> findAll() {
+        return new ArrayList<>(players.values());
     }
 }

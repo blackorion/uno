@@ -1,4 +1,6 @@
-package games.uno;
+package games.uno.domain;
+
+import games.uno.domain.CardTypes;
 
 public enum CardValues
 {

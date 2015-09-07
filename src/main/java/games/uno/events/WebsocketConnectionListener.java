@@ -1,5 +1,8 @@
-package games.uno;
+package games.uno.events;
 
+import games.uno.GameService;
+import games.uno.PlayerRepository;
+import games.uno.domain.Player;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
