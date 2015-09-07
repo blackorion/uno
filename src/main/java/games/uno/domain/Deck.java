@@ -1,4 +1,4 @@
-package games.uno;
+package games.uno.domain;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -44,5 +44,14 @@ public class Deck implements CardHolder
 
     public void takeCardFrom(CardHolder cardHolder, Card card) {
         cards.add(cardHolder.giveACard(card));
+    }
+
+    public void refill() {
+        index = 0;
+    }
+
+    public void empty() {
+        cards = new ArrayList<>();
+        index = 0;
     }
 }

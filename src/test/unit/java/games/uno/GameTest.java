@@ -1,5 +1,7 @@
 package games.uno;
 
+import games.uno.domain.*;
+import games.uno.util.TurnController;
 import games.uno.utils.NonRandomDeckFactory;
 import org.junit.Assert;
 import org.junit.Before;

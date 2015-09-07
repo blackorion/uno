@@ -1,11 +1,14 @@
-package games.uno;
+package games.uno.domain;
 
-import games.uno.exceptions.NoUsersInTheGameException;
-
+import games.uno.DeckFactory;
+import games.uno.exceptions.*;
+import games.uno.util.TurnController;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Uno {
+public class Uno
+{
+    private static final int MAX_PLAYERS = 15;
     private final Deck bankDeck;
     private final Deck playDeck = new Deck();
     private final TurnController turnController;
@@ -19,20 +22,29 @@ public class Uno {
     }
 
     public void addPlayer(Player player) {
-        if (isStarted)
+        if ( players.contains(player) )
+            throw new PlayerAlreadyInTheGameException(player);
+
+        if ( isStarted )
             throw new IllegalArgumentException("The game has already started.");
+
+        if ( players.size() == MAX_PLAYERS )
+            throw new PlayerLimitForGameException();
 
         players.add(player);
     }
 
     public void start() {
-        if (players.size() == 0)
+        if ( isStarted )
+            throw new GameAlreadyStartedException();
+
+        if ( players.size() == 0 )
             throw new NoUsersInTheGameException();
 
         turnController.setPlayers(players);
 
-        for (Player player : players)
-            for (int i = 0; i < 7; i++)
+        for ( Player player : players )
+            for ( int i = 0; i < 7; i++ )
                 player.takeCard(bankDeck.giveACardFromTop());
 
         playDeck.add(bankDeck.giveACardFromTop());
@@ -47,12 +59,8 @@ public class Uno {
         return turnController.currentPlayer();
     }
 
-    public Player getNextPlayer() {
-        return turnController.nextPlayer();
-    }
-
     public void endTurn() {
-        if (!currentPlayerFinishedHisTurn)
+        if ( !currentPlayerFinishedHisTurn )
             throw new IllegalTurnEndException();
 
         turnController.nextTurn();
@@ -60,7 +68,7 @@ public class Uno {
     }
 
     public void playerPuts(Card card) {
-        if (!card.isPlayable(playDeck.showTopCard()))
+        if ( !card.isPlayable(playDeck.showTopCard()) )
             throw new WrongMoveException(playDeck.showTopCard(), card);
 
         playDeck.takeCardFrom(getCurrentPlayer(), card);
@@ -71,5 +79,21 @@ public class Uno {
     public void playerPullsFromDeck() {
         getCurrentPlayer().takeCardFrom(bankDeck);
         currentPlayerFinishedHisTurn = true;
+    }
+
+    public void finish() {
+        isStarted = false;
+        currentPlayerFinishedHisTurn = false;
+        bankDeck.refill();
+        bankDeck.shuffle();
+        playDeck.empty();
+    }
+
+    public String state() {
+        return isStarted ? "RUNNING" : "NOT_RUNNING";
+    }
+
+    public int playersSize() {
+        return players.size();
     }
 }

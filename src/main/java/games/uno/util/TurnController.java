@@ -1,5 +1,6 @@
-package games.uno;
+package games.uno.util;
 
+import games.uno.domain.Player;
 import java.util.List;
 
 public class TurnController {

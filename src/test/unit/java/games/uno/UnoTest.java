@@ -1,15 +1,13 @@
 package games.uno;
 
-import games.uno.exceptions.NoUsersInTheGameException;
+import games.uno.domain.*;
+import games.uno.exceptions.*;
+import games.uno.util.TurnController;
 import games.uno.utils.NonRandomDeckFactory;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertEquals;
-
-import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.*;
 
 public class UnoTest
@@ -26,6 +24,25 @@ public class UnoTest
         when(deckFactoryMock.generate()).thenReturn(createDeck());
         turnControllerMock = Mockito.mock(TurnController.class);
         uno = new Uno(deckFactoryMock, turnControllerMock);
+    }
+
+    @Test(expected = GameAlreadyStartedException.class)
+    public void TryingToStartGameThatAlreadyStarted_ThrowsException() {
+        uno.addPlayer(PLAYER_ONE);
+        uno.start();
+        uno.start();
+    }
+
+    @Test(expected = PlayerLimitForGameException.class)
+    public void MaxPlayersShouldBeNoMoreThan15() {
+        for ( int i = 0; i < 16; i++ )
+            uno.addPlayer(new Player("Player" + i));
+    }
+
+    @Test(expected = PlayerAlreadyInTheGameException.class)
+    public void SameUserEntersGameTwice() {
+        uno.addPlayer(PLAYER_ONE);
+        uno.addPlayer(PLAYER_ONE);
     }
 
     @Test
@@ -88,6 +105,14 @@ public class UnoTest
         uno.addPlayer(PLAYER_ONE);
         uno.start();
         uno.endTurn();
+    }
+
+    @Test
+    public void afterGameHasFinished_ReturnToDefault() {
+        uno.addPlayer(PLAYER_ONE);
+        uno.start();
+        uno.finish();
+        uno.addPlayer(PLAYER_TWO);
     }
 
     private Deck createDeck() { return new NonRandomDeckFactory().generate(); }

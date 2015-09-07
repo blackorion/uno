@@ -31,7 +31,7 @@
         }
 
         function disconnect() {
-            if (stompClient != null) {
+            if ( stompClient != null ) {
                 stompClient.disconnect();
             }
             setConnected(false);
@@ -40,7 +40,7 @@
 
         function sendName() {
             var name = document.getElementById('name').value;
-            stompClient.send("/app/hello", {}, JSON.stringify({'name': name}));
+            stompClient.send("/app/hello", {}, JSON.stringify({ 'name': name }));
         }
 
         function showInformation(message) {
@@ -67,18 +67,19 @@
         function createUser() {
             var username = document.getElementById('username').value;
             console.log(username);
-            $.post('/api/players/create', {username: username}, null, 'json');
+            $.post('/api/players/create', { username: username }, null, 'json');
         }
     </script>
 </head>
 <body onload="disconnect()">
-<noscript><h2 style="color: #FF0000">Seems your browser doesn't support Javascript! Websocket relies on Javascript being enabled. Please enable
-    Javascript and reload this page!</h2></noscript>
+<noscript><h2 style="color: #F00">Seems your browser doesn't support Javascript! Websocket relies on Javascript being enabled. Please enable
+                                  Javascript and reload this page!</h2></noscript>
 <div>
     <div>
         <button id="connect" onclick="connect();">Connect</button>
         <button id="disconnect" disabled="disabled" onclick="disconnect();">Disconnect</button>
         <button id="game-start" disabled="disabled" onclick="gameStart();">Start</button>
+        <a id="logout" href="/logout">logout</a>
     </div>
     <div id="create-user-container">
         <label>What is your name?</label><input type="text" id="username"/>

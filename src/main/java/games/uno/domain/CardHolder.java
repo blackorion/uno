@@ -1,4 +1,4 @@
-package games.uno;
+package games.uno.domain;
 
 public interface CardHolder {
     Card giveACardFromTop();

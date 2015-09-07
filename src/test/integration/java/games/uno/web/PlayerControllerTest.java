@@ -1,6 +1,6 @@
 package games.uno.web;
 
-import games.uno.Player;
+import games.uno.domain.Player;
 import org.hamcrest.core.IsNull;
 import org.junit.Before;
 import org.junit.Test;
