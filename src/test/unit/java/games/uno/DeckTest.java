@@ -6,35 +6,51 @@ import games.uno.domain.CardValues;
 import games.uno.domain.Deck;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+
+import static org.hamcrest.CoreMatchers.is;
 
 public class DeckTest
 {
+    private Deck deck = new Deck();
+    private final Card CARD_ONE_RED = new Card(CardValues.ONE, CardColors.RED);
+    private final Card CARD_ONE_BLUE = new Card(CardValues.ONE, CardColors.BLUE);
+    private final Card CARD_ONE_GREEN = new Card(CardValues.ONE, CardColors.GREEN);
+    private final Card CARD_ONE_YELLOW = new Card(CardValues.ONE, CardColors.YELLOW);
+
     @Test
     public void shouldInsertCards() {
-        Deck deck = new Deck();
-
-        deck.add(new Card(CardValues.ONE_STEP_BACK, CardColors.BLUE));
-        deck.add(new Card(CardValues.ONE_STEP_BACK, CardColors.RED));
+        deck.add(CARD_ONE_BLUE);
+        deck.add(CARD_ONE_RED);
 
         assertEquals(2, deck.remains());
     }
 
     @Test
-    public void cardCanBePulledFromTop() {
-        Deck deck = new Deck();
-        Card expectedCard1 = new Card(CardValues.ONE_STEP_BACK, CardColors.BLUE);
-        Card expectedCard2 = new Card(CardValues.TAKE_TWO, CardColors.BLUE);
-        deck.add(expectedCard1);
-        deck.add(expectedCard2);
+    public void PullCardFromTop_ShowsCardsRemains() {
+        deck.add(CARD_ONE_BLUE);
+        deck.add(CARD_ONE_RED);
+        deck.add(CARD_ONE_GREEN);
+        deck.add(CARD_ONE_YELLOW);
+        assertThat(deck.remains(), is(4));
 
-        assertEquals(expectedCard1, deck.giveACardFromTop());
-        assertEquals(expectedCard2, deck.giveACardFromTop());
+        deck.giveACardFromTop();
+
+        assertThat(deck.remains(), is(3));
+    }
+
+    @Test
+    public void cardCanBePulledFromTop() {
+        deck.add(CARD_ONE_YELLOW);
+        deck.add(CARD_ONE_GREEN);
+
+        assertEquals(CARD_ONE_YELLOW, deck.giveACardFromTop());
+        assertEquals(CARD_ONE_GREEN, deck.giveACardFromTop());
     }
 
     @Test(expected = IndexOutOfBoundsException.class)
     public void throwsErrorWhenNoMoreCardsInDeck() {
-        Deck deck = new Deck();
-        deck.add(new Card(CardValues.TAKE_TWO, CardColors.DARK));
+        deck.add(CARD_ONE_GREEN);
 
         deck.giveACardFromTop();
         deck.giveACardFromTop();

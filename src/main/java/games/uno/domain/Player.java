@@ -1,7 +1,5 @@
 package games.uno.domain;
 
-import games.uno.domain.Card;
-import games.uno.domain.CardHolder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,31 +13,21 @@ public class Player implements CardHolder
         this.username = username;
     }
 
-    public Long getId() {
-        return id;
-    }
+    public void setId(long id) { this.id = id; }
 
-    public String getUsername() {
-        return username;
-    }
+    public Long getId() { return id; }
 
-    public List<Card> getCardsOnHand() {
-        return cardsOnHand;
-    }
+    public String getUsername() { return username; }
 
-    public void takeCard(Card card) {
-        this.cardsOnHand.add(card);
-    }
+    public List<Card> cardsOnHand() { return cardsOnHand; }
+
+    public void takeCard(Card card) { this.cardsOnHand.add(card); }
 
     @Override
-    public String toString() {
-        return username;
-    }
+    public void takeCardFrom(CardHolder cardHolder) { cardsOnHand.add(cardHolder.giveACardFromTop()); }
 
     @Override
-    public Card giveACardFromTop() {
-        return cardsOnHand.remove(cardsOnHand.size() - 1);
-    }
+    public Card giveACardFromTop() { return cardsOnHand.remove(cardsOnHand.size() - 1); }
 
     @Override
     public Card giveACard(Card card) {
@@ -48,22 +36,18 @@ public class Player implements CardHolder
         return card;
     }
 
-    @Override
-    public int remains() {
-        return cardsOnHand.size();
-    }
-
-    @Override
-    public void takeCardFrom(CardHolder cardHolder) {
-        cardsOnHand.add(cardHolder.giveACardFromTop());
-    }
-
     public boolean hasCardToPlay(Card onTop) {
-        for (Card testable : cardsOnHand) {
-            if(testable.isPlayable(onTop))
+        for ( Card testable : cardsOnHand ) {
+            if ( testable.isPlayable(onTop) )
                 return true;
         }
 
         return false;
     }
+
+    @Override
+    public int remains() { return cardsOnHand.size(); }
+
+    @Override
+    public String toString() { return username; }
 }

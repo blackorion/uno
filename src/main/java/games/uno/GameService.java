@@ -3,7 +3,6 @@ package games.uno;
 import games.uno.domain.Player;
 import games.uno.domain.Uno;
 import games.uno.util.TurnController;
-import games.uno.web.messages.ApplicationError;
 import games.uno.web.messages.BoardInformationMessage;
 import games.uno.web.messages.GameInfo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,37 +22,31 @@ public class GameService
     }
 
     public void addPlayer(Player player) {
-        try {
-            game.addPlayer(player);
-            messagingTemplate.convertAndSend("/topic/info", new BoardInformationMessage("Player " + player + " joined the game"));
-        }
-        catch ( Exception e ) {
-            messagingTemplate.convertAndSend("/queue/error", new ApplicationError(e));
-        }
+        game.addPlayer(player);
+        messagingTemplate.convertAndSend("/topic/info", new BoardInformationMessage("Player " + player + " joined the game"));
+        messagingTemplate.convertAndSend("/topic/game.players", game.players());
     }
 
-    public boolean startNewGame() {
-        try {
-            game.start();
-            messagingTemplate.convertAndSend("/topic/info", new BoardInformationMessage("Game is started!"));
-            messagingTemplate.convertAndSend("/topic/events", getInfo());
-
-            return true;
-        }
-        catch ( Exception e ) {
-            messagingTemplate.convertAndSend("/queue/error", new ApplicationError(e));
-
-            return false;
-        }
+    public void startNewGame() {
+        game.start();
+        messagingTemplate.convertAndSend("/topic/info", new BoardInformationMessage("Game is started!"));
     }
 
     public void stopCurrentGame() {
         game.finish();
         messagingTemplate.convertAndSend("/topic/info", new BoardInformationMessage("Game is stopped!"));
-        messagingTemplate.convertAndSend("/topic/events", getInfo());
+        informClient();
     }
 
+    private void informClient() { messagingTemplate.convertAndSend("/topic/game.info", getInfo()); }
+
     public GameInfo getInfo() {
-        return new GameInfo(game.state(), game.playersSize());
+        return new GameInfo(
+                game.state(),
+                game.playersSize(),
+                game.getCurrentPlayer().getId(),
+                game.currentPlayedCard(),
+                game.bankRemains()
+        );
     }
 }

@@ -25,8 +25,8 @@ public class GameTest extends Assert
 
         uno.start();
 
-        assertEquals(7, player1.getCardsOnHand().size());
-        assertEquals(7, player2.getCardsOnHand().size());
+        assertEquals(7, player1.cardsOnHand().size());
+        assertEquals(7, player2.cardsOnHand().size());
     }
 
     @Test

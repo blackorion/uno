@@ -1,14 +1,14 @@
 package games.uno.web;
 
-import games.uno.PlayerRepository;
+import games.uno.PlayerService;
+import games.uno.domain.Card;
 import games.uno.domain.Player;
-import games.uno.util.RandomUsernameGenerator;
+import games.uno.util.RandomDataGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.messaging.simp.annotation.SubscribeMapping;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
@@ -19,66 +19,42 @@ import java.util.Collection;
 @RestController
 public class PlayerController
 {
+    private static final String SESSION_ATTR = "HTTPSESSIONID";
+
+    private final PlayerService service;
+    private final RandomDataGenerator generator;
+
     @Autowired
-    AuthenticationManager authenticationManager;
-    @Autowired
-    PlayerRepository playerRepository;
-    @Autowired
-    RandomUsernameGenerator usernameGenerator;
+    public PlayerController(PlayerService service, RandomDataGenerator generator) {
+        this.service = service;
+        this.generator = generator;
+    }
 
     @SubscribeMapping("/game.players")
-    public Collection<Player> retrievePlayers() {
-        return playerRepository.findAll();
+    public Collection<Player> retrievePlayers() { return service.findAll(); }
+
+    @SubscribeMapping("/game.cards")
+    public Collection<Card> playerCards(StompHeaderAccessor accessor) {
+        Object o = accessor.getSessionAttributes().get(SESSION_ATTR);
+
+        return service.find((String) o).cardsOnHand();
     }
 
     @RequestMapping(value = "/me", method = RequestMethod.GET)
     public Player create(@RequestParam(value = "username", defaultValue = "", required = false) String username,
                          @RequestParam(value = "password", required = false) String password,
                          HttpServletRequest request, Principal principal) {
-        if ( principal == null ) {
-            username = generateUsernameIfEmpty(username);
-            authorizePlayer(username, password);
-            return savePlayerInHttpSession(username, request.getSession().getId());
-        }
+        if ( principal == null )
+            return authorizeAndStore(generateUsernameIfEmpty(username), password, request.getSession().getId());
         else
-            return playerRepository.findBySessionId(request.getSession().getId());
+            return service.find(request.getSession().getId());
     }
 
-    private LoginStatus authorizePlayer(String username, String password) {
-        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(username, password);
-        Authentication auth = authenticationManager.authenticate(token);
-        SecurityContextHolder.getContext().setAuthentication(auth);
-
-        return new LoginStatus(auth.isAuthenticated(), auth.getName());
+    private Player authorizeAndStore(String username, String password, String sessionId) {
+        return service.save(sessionId, new Player(username));
     }
 
-    private Player savePlayerInHttpSession(String username, String sessionId) {
-        return playerRepository.saveForSession(sessionId, new Player(username));
-    }
-
-    private String generateUsernameIfEmpty(String username) {
-        if ( username.isEmpty() )
-            return usernameGenerator.generate();
-        else
-            return username;
-    }
-
-    private class LoginStatus
-    {
-        private final boolean loggedIn;
-        private final String username;
-
-        public LoginStatus(boolean loggedIn, String username) {
-            this.loggedIn = loggedIn;
-            this.username = username;
-        }
-
-        public boolean isLoggedIn() {
-            return loggedIn;
-        }
-
-        public String getUsername() {
-            return username;
-        }
+    public String generateUsernameIfEmpty(String username) {
+        return (username.isEmpty()) ? generator.name() : username;
     }
 }

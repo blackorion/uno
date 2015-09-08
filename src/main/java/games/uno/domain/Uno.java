@@ -56,6 +56,9 @@ public class Uno
     }
 
     public Player getCurrentPlayer() {
+        if ( !isStarted )
+            return players.get(0);
+
         return turnController.currentPlayer();
     }
 
@@ -95,5 +98,13 @@ public class Uno
 
     public int playersSize() {
         return players.size();
+    }
+
+    public int bankRemains() {
+        return bankDeck.remains();
+    }
+
+    public List<Player> players() {
+        return players;
     }
 }

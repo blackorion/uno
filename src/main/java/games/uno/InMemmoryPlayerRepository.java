@@ -6,11 +6,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
 
 @Repository
 public class InMemmoryPlayerRepository implements PlayerRepository
 {
-    Map<String, Player> players = new HashMap<>();
+    private AtomicLong counter = new AtomicLong();
+    private Map<String, Player> players = new HashMap<>();
 
     @Override
     public Player findBySessionId(String sessionId) {
@@ -19,6 +21,7 @@ public class InMemmoryPlayerRepository implements PlayerRepository
 
     @Override
     public Player saveForSession(String id, Player player) {
+        player.setId(counter.getAndIncrement());
         players.put(id, player);
 
         return player;

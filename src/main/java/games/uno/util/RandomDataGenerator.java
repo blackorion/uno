@@ -4,11 +4,11 @@ import io.codearte.jfairy.Fairy;
 import org.springframework.stereotype.Component;
 
 @Component
-public class RandomUsernameGenerator
+public class RandomDataGenerator
 {
     private Fairy generator = Fairy.create();
 
-    public String generate() {
+    public String name() {
         return generator.person().fullName();
     }
 }

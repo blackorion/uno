@@ -22,7 +22,7 @@ public class PlayerTest {
         deck.add(ONE_RED);
         player.takeCardFrom(deck);
 
-        assertThat(player.getCardsOnHand(), contains(ONE_RED));
+        assertThat(player.cardsOnHand(), contains(ONE_RED));
     }
 
     @Test
