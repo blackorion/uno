@@ -42,15 +42,15 @@ public class RandomDeckFactory implements DeckFactory
         for ( CardColors color : CardColors.values() )
             if ( color != CardColors.DARK )
                 for ( int i = 0; i < 2; i++ ) {
-                    builder.add(CardValues.TAKE_TWO, color);
-                    builder.add(CardValues.ONE_STEP_BACK, color);
-                    builder.add(CardValues.PASS_TURN, color);
+                    builder.add(CardValues.DRAW_TWO, color);
+                    builder.add(CardValues.REVERSE, color);
+                    builder.add(CardValues.SKIP, color);
                 }
 
 
         for ( int i = 0; i < 4; i++ ) {
-            builder.add(CardValues.PICK_COLOR, CardColors.DARK);
-            builder.add(CardValues.TAKE_FOUR, CardColors.DARK);
+            builder.add(CardValues.WILD, CardColors.DARK);
+            builder.add(CardValues.WILD_DRAW_FOUR, CardColors.DARK);
         }
     }
 }

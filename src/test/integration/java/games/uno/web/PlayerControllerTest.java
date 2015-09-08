@@ -1,9 +1,13 @@
 package games.uno.web;
 
+import games.uno.GameService;
+import games.uno.PlayerService;
 import games.uno.domain.Player;
+import games.uno.util.RandomDataGenerator;
 import org.hamcrest.core.IsNull;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -23,7 +27,7 @@ public class PlayerControllerTest
 
     @Before
     public void setUp() {
-        controller = new PlayerController();
+        controller = new PlayerController(Mockito.mock(PlayerService.class), Mockito.mock(GameService.class), Mockito.mock(RandomDataGenerator.class));
         mvc = MockMvcBuilders.standaloneSetup(controller).build();
     }
 

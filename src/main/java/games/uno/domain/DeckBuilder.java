@@ -8,6 +8,6 @@ public class DeckBuilder {
     }
 
     public void add(CardValues value, CardColors color) {
-        deck.add(new Card(value, color));
+        deck.take(new Card(value, color));
     }
 }

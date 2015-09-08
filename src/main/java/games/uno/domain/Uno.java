@@ -33,11 +33,11 @@ public class Uno {
 
         playersQueue.setPlayers(table.players());
 
-        for (Player player : table.players())
-            for (int i = 0; i < 7; i++)
-                player.takeCard(bankDeck.giveACardFromTop());
+        for ( Player player : players )
+            for ( int i = 0; i < 7; i++ )
+                player.take(bankDeck.drawFromTop());
 
-        playDeck.add(bankDeck.giveACardFromTop());
+        playDeck.take(bankDeck.drawFromTop());
         state = GameState.RUNNING;
     }
 
@@ -77,6 +77,7 @@ public class Uno {
         bankDeck.refill();
         bankDeck.shuffle();
         playDeck.empty();
+        players.forEach(AbstractCardHolder::empty);
     }
 
     public int playersSize() {
@@ -99,5 +100,15 @@ public class Uno {
         public boolean isRunning(){
             return isRunning;
         }
+    public int playersSize() {
+        return players.size();
+    }
+
+    public int bankRemains() {
+        return bankDeck.remains();
+    }
+
+    public List<Player> players() {
+        return players;
     }
 }

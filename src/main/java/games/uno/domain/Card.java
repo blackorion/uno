@@ -32,6 +32,8 @@ public class Card
     }
 
     public boolean isPlayable(Card topCard) {
-        return topCard.getColor() == getColor() || topCard.getValue() == getValue();
+        return topCard != null
+                && (topCard.getColor() == getColor() || topCard.getValue() == getValue());
+
     }
 }

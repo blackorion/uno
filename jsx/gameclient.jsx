@@ -8,19 +8,27 @@ export default class GameClient {
 		this._client.debug = null;
 		this._client.connect({},(frame)=>{
 			$(document).trigger('ws:ready');
-			this._client.subscribe('/topic/events',(data)=>{
-				console.log('<<< WS INFO',data);
-			});
-			this._client.subscribe('/queue/error',(data)=>{
-				console.log('<<< WS ERROR',data);
-			});
+			this._debugSubscribe('/topic/events');
+			this._debugSubscribe('/queue/errors');
+			this._debugSubscribe('/app/game.players');
+			this._debugSubscribe('/app/game.info');
+			this._debugSubscribe('/topic/game.info');
+			this._debugSubscribe('/user/topic/game.cards');
+			this._debugSubscribe('/topic/game.players');
+			this._debugSubscribe('/app/game.cards');
+			this._debugSubscribe('/user/queue/game.cards');
+		});
+	}
+	_debugSubscribe(chan){
+		this._client.subscribe(chan,(data)=>{
+			console.log('<<< WS '+chan,data);
 		});
 	}
 	subscribe(chan, f){
 		$(document).on('ws:ready',{},()=>{
 			this._client.subscribe(chan,(data)=>{
 				f(JSON.parse(data.body));
-			});
+			})
 		});
 	}
 	_ajaxWithSession(url,methodx,f){
@@ -33,24 +41,14 @@ export default class GameClient {
 			method: methodx,
 			success:f
 		});
-		// .error((error)=>{
-		// 	console.log('!!!!! ERROR !!!!!',error);
-		// 	if(typeof errorCallback === 'function') errorCallback();
-		// });
-	}
-	createUser(f){
-		this._ajaxWithSession('/api/players/create','POST',f);
 	}
 	startGame(f){
-		this._ajaxWithSession('/api/game/start','GET',f);
+		this._client.send('/app/game.control',{},JSON.stringify({action:'START'}));
 	}
 	currentUser(f){
 		this._ajaxWithSession('/api/players/me','GET',f);
 	}
 	stopGame(f){
-		this._ajaxWithSession('/api/game/stop','GET',f);
-	}
-	info(f){
-		this._ajaxWithSession('/api/game/info','GET',f);
+		this._client.send('/app/game.control',{},JSON.stringify({action:'STOP'}));
 	}
 }
