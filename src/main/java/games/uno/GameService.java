@@ -6,6 +6,7 @@ import games.uno.domain.Uno;
 import games.uno.util.TurnController;
 import games.uno.web.messages.BoardInformationMessage;
 import games.uno.web.messages.GameInfo;
+import games.uno.websockets.PlayerEventInformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
@@ -14,11 +15,13 @@ import org.springframework.stereotype.Service;
 public class GameService
 {
     private final SimpMessagingTemplate messagingTemplate;
+    private final PlayerEventInformer informer;
     private final Uno game;
 
     @Autowired
-    public GameService(DeckFactory factory, SimpMessagingTemplate messagingTemplate) {
+    public GameService(DeckFactory factory, SimpMessagingTemplate messagingTemplate, PlayerEventInformer informer) {
         this.messagingTemplate = messagingTemplate;
+        this.informer = informer;
         this.game = new Uno(factory, new TurnController());
     }
 
@@ -31,6 +34,7 @@ public class GameService
     public void startNewGame() {
         game.start();
         messagingTemplate.convertAndSend("/topic/info", new BoardInformationMessage("Game is started!"));
+        informer.sendHandToAllPlayers(currentCard());
     }
 
     public void stopCurrentGame() {
