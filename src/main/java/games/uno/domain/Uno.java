@@ -90,6 +90,7 @@ public class Uno
         bankDeck.refill();
         bankDeck.shuffle();
         playDeck.empty();
+        players.forEach(AbstractCardHolder::empty);
     }
 
     public String state() {

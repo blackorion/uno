@@ -8,6 +8,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.*;
 
 public class UnoTest
@@ -112,6 +114,8 @@ public class UnoTest
         uno.addPlayer(PLAYER_ONE);
         uno.start();
         uno.finish();
+
+        assertThat(PLAYER_ONE.remains(), is(0));
         uno.addPlayer(PLAYER_TWO);
     }
 
