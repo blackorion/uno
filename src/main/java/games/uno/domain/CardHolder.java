@@ -1,11 +1,20 @@
 package games.uno.domain;
 
-public interface CardHolder {
-    Card giveACardFromTop();
+public interface CardHolder
+{
+    Card drawFromTop();
 
-    Card giveACard(Card card);
+    Card draw(Card card);
 
-    void takeCardFrom(CardHolder cardHolder);
+    void take(Card card);
+
+    default void takeCardFrom(CardHolder cardHolder) {
+        take(cardHolder.drawFromTop());
+    }
+
+    default void takeCardFrom(CardHolder cardHolder, Card card) {
+        take(cardHolder.draw(card));
+    }
 
     int remains();
 }

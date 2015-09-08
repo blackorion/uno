@@ -12,6 +12,8 @@ import static org.hamcrest.core.Is.is;
 
 public class DeckBuilderTest extends Assert
 {
+    public static final Card DRAW_TWO_RED_CARD = new Card(CardValues.DRAW_TWO, CardColors.RED);
+
     @Test
     public void createsADeck() {
         DeckBuilder deckBuilder = new DeckBuilder();
@@ -22,8 +24,8 @@ public class DeckBuilderTest extends Assert
     @Test
     public void shouldInsertCardsOfRequiredTypeToDeck() {
         DeckBuilder deckBuilder = new DeckBuilder();
-        deckBuilder.add(CardValues.TAKE_TWO, CardColors.RED);
+        deckBuilder.add(CardValues.DRAW_TWO, CardColors.RED);
 
-        assertThat(deckBuilder.build().giveACardFromTop(), is(new Card(CardValues.TAKE_TWO, CardColors.RED)));
+        assertThat(deckBuilder.build().drawFromTop(), is(DRAW_TWO_RED_CARD));
     }
 }

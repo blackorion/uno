@@ -20,39 +20,39 @@ public class DeckTest
 
     @Test
     public void shouldInsertCards() {
-        deck.add(CARD_ONE_BLUE);
-        deck.add(CARD_ONE_RED);
+        deck.take(CARD_ONE_BLUE);
+        deck.take(CARD_ONE_RED);
 
         assertEquals(2, deck.remains());
     }
 
     @Test
     public void PullCardFromTop_ShowsCardsRemains() {
-        deck.add(CARD_ONE_BLUE);
-        deck.add(CARD_ONE_RED);
-        deck.add(CARD_ONE_GREEN);
-        deck.add(CARD_ONE_YELLOW);
+        deck.take(CARD_ONE_BLUE);
+        deck.take(CARD_ONE_RED);
+        deck.take(CARD_ONE_GREEN);
+        deck.take(CARD_ONE_YELLOW);
         assertThat(deck.remains(), is(4));
 
-        deck.giveACardFromTop();
+        deck.drawFromTop();
 
         assertThat(deck.remains(), is(3));
     }
 
     @Test
     public void cardCanBePulledFromTop() {
-        deck.add(CARD_ONE_YELLOW);
-        deck.add(CARD_ONE_GREEN);
+        deck.take(CARD_ONE_YELLOW);
+        deck.take(CARD_ONE_GREEN);
 
-        assertEquals(CARD_ONE_YELLOW, deck.giveACardFromTop());
-        assertEquals(CARD_ONE_GREEN, deck.giveACardFromTop());
+        assertEquals(CARD_ONE_YELLOW, deck.drawFromTop());
+        assertEquals(CARD_ONE_GREEN, deck.drawFromTop());
     }
 
     @Test(expected = IndexOutOfBoundsException.class)
     public void throwsErrorWhenNoMoreCardsInDeck() {
-        deck.add(CARD_ONE_GREEN);
+        deck.take(CARD_ONE_GREEN);
 
-        deck.giveACardFromTop();
-        deck.giveACardFromTop();
+        deck.drawFromTop();
+        deck.drawFromTop();
     }
 }

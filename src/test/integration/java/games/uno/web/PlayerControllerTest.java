@@ -1,5 +1,6 @@
 package games.uno.web;
 
+import games.uno.GameService;
 import games.uno.PlayerService;
 import games.uno.domain.Player;
 import games.uno.util.RandomDataGenerator;
@@ -26,7 +27,7 @@ public class PlayerControllerTest
 
     @Before
     public void setUp() {
-        controller = new PlayerController(Mockito.mock(PlayerService.class), Mockito.mock(RandomDataGenerator.class));
+        controller = new PlayerController(Mockito.mock(PlayerService.class), Mockito.mock(GameService.class), Mockito.mock(RandomDataGenerator.class));
         mvc = MockMvcBuilders.standaloneSetup(controller).build();
     }
 

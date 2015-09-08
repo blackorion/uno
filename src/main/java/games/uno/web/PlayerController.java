@@ -1,18 +1,18 @@
 package games.uno.web;
 
+import games.uno.GameService;
 import games.uno.PlayerService;
 import games.uno.domain.Card;
 import games.uno.domain.Player;
 import games.uno.util.RandomDataGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.messaging.simp.annotation.SubscribeMapping;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 @CrossOrigin
 @RequestMapping("/api/players")
@@ -21,23 +21,27 @@ public class PlayerController
 {
     private static final String SESSION_ATTR = "HTTPSESSIONID";
 
-    private final PlayerService service;
+    private final PlayerService playerService;
+    private final GameService gameService;
     private final RandomDataGenerator generator;
 
     @Autowired
-    public PlayerController(PlayerService service, RandomDataGenerator generator) {
-        this.service = service;
+    public PlayerController(PlayerService playerService, GameService gameService, RandomDataGenerator generator) {
+        this.playerService = playerService;
+        this.gameService = gameService;
         this.generator = generator;
     }
 
     @SubscribeMapping("/game.players")
-    public Collection<Player> retrievePlayers() { return service.findAll(); }
+    public Collection<Player> retrievePlayers() { return playerService.findAll(); }
 
     @SubscribeMapping("/game.cards")
-    public Collection<Card> playerCards(StompHeaderAccessor accessor) {
-        Object o = accessor.getSessionAttributes().get(SESSION_ATTR);
+    public Collection<PresentableCard> playerCards(StompHeaderAccessor accessor) {
+        String sessionId = (String) accessor.getSessionAttributes().get(SESSION_ATTR);
 
-        return service.find((String) o).cardsOnHand();
+        return playerService.find(sessionId).cardsOnHand().stream()
+                .map(this::mapCard)
+                .collect(Collectors.toList());
     }
 
     @RequestMapping(value = "/me", method = RequestMethod.GET)
@@ -47,14 +51,18 @@ public class PlayerController
         if ( principal == null )
             return authorizeAndStore(generateUsernameIfEmpty(username), password, request.getSession().getId());
         else
-            return service.find(request.getSession().getId());
+            return playerService.find(request.getSession().getId());
     }
 
     private Player authorizeAndStore(String username, String password, String sessionId) {
-        return service.save(sessionId, new Player(username));
+        return playerService.save(sessionId, new Player(username));
     }
 
     public String generateUsernameIfEmpty(String username) {
         return (username.isEmpty()) ? generator.name() : username;
+    }
+
+    private PresentableCard mapCard(Card card) {
+        return new PresentableCard(card.getValue(), card.getColor(), card.isPlayable(gameService.currentCard()));
     }
 }

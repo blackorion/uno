@@ -1,6 +1,9 @@
-package games.uno.web.messages;
+package games.uno.web;
 
 import games.uno.GameService;
+import games.uno.web.messages.ApplicationError;
+import games.uno.web.messages.GameControlMessage;
+import games.uno.web.messages.GameInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
 import org.springframework.messaging.handler.annotation.MessageMapping;

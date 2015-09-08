@@ -2,11 +2,12 @@ package games.uno;
 
 import games.uno.domain.*;
 import org.junit.Test;
-
-import static org.hamcrest.Matchers.contains;
 import static org.junit.Assert.*;
 
-public class PlayerTest {
+import static org.hamcrest.Matchers.contains;
+
+public class PlayerTest
+{
 
     private final Player player = new Player("player");
     private final Card ONE_RED = new Card(CardValues.ONE, CardColors.RED);
@@ -19,7 +20,7 @@ public class PlayerTest {
     @Test
     public void canPullCardFromTopOfTheDeck() {
         Deck deck = new Deck();
-        deck.add(ONE_RED);
+        deck.take(ONE_RED);
         player.takeCardFrom(deck);
 
         assertThat(player.cardsOnHand(), contains(ONE_RED));
@@ -27,8 +28,8 @@ public class PlayerTest {
 
     @Test
     public void canGiveACard() {
-        player.takeCard(ONE_RED);
-        player.giveACard(ONE_RED);
+        player.take(ONE_RED);
+        player.draw(ONE_RED);
 
         assertEquals(0, player.remains());
     }
@@ -37,7 +38,7 @@ public class PlayerTest {
     public void shouldKnowIfHasCardOnHandToPlay() {
         assertFalse(player.hasCardToPlay(ONE_RED));
 
-        player.takeCard(ONE_RED);
+        player.take(ONE_RED);
         assertTrue(player.hasCardToPlay(ONE_RED));
     }
 }

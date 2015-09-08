@@ -1,14 +1,12 @@
 package games.uno.domain;
 
-import games.uno.domain.CardTypes;
-
 public enum CardValues
 {
-    TAKE_TWO(CardTypes.ACTION),
-    TAKE_FOUR(CardTypes.ACTION),
-    ONE_STEP_BACK(CardTypes.ACTION),
-    PASS_TURN(CardTypes.ACTION),
-    PICK_COLOR(CardTypes.ACTION),
+    DRAW_TWO(CardTypes.ACTION),
+    SKIP(CardTypes.ACTION),
+    REVERSE(CardTypes.ACTION),
+    WILD(CardTypes.ACTION),
+    WILD_DRAW_FOUR(CardTypes.ACTION),
 
     ONE(CardTypes.NUMERIC),
     TWO(CardTypes.NUMERIC),

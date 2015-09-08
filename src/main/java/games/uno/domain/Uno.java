@@ -45,9 +45,9 @@ public class Uno
 
         for ( Player player : players )
             for ( int i = 0; i < 7; i++ )
-                player.takeCard(bankDeck.giveACardFromTop());
+                player.take(bankDeck.drawFromTop());
 
-        playDeck.add(bankDeck.giveACardFromTop());
+        playDeck.take(bankDeck.drawFromTop());
         isStarted = true;
     }
 

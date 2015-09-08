@@ -1,5 +1,6 @@
 package games.uno;
 
+import games.uno.domain.Card;
 import games.uno.domain.Player;
 import games.uno.domain.Uno;
 import games.uno.util.TurnController;
@@ -35,10 +36,7 @@ public class GameService
     public void stopCurrentGame() {
         game.finish();
         messagingTemplate.convertAndSend("/topic/info", new BoardInformationMessage("Game is stopped!"));
-        informClient();
     }
-
-    private void informClient() { messagingTemplate.convertAndSend("/topic/game.info", getInfo()); }
 
     public GameInfo getInfo() {
         return new GameInfo(
@@ -48,5 +46,9 @@ public class GameService
                 game.currentPlayedCard(),
                 game.bankRemains()
         );
+    }
+
+    public Card currentCard() {
+        return game.currentPlayedCard();
     }
 }
