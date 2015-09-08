@@ -35,7 +35,7 @@ export default class Board {
 	}
 	_setupEvents(){
 		this._gameClient.subscribe('/topic/events',(data)=>{
-			this._info = data.message;
+			this._info = data;
 			$(document).trigger('update:game_info');
 		});
 	}
