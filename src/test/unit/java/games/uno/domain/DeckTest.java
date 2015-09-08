@@ -1,14 +1,10 @@
-package games.uno;
+package games.uno.domain;
 
-import games.uno.domain.Card;
-import games.uno.domain.CardColors;
-import games.uno.domain.CardValues;
-import games.uno.domain.Deck;
 import org.junit.Test;
+
 import static org.junit.Assert.assertEquals;
 
-public class DeckTest
-{
+public class DeckTest {
     @Test
     public void shouldInsertCards() {
         Deck deck = new Deck();

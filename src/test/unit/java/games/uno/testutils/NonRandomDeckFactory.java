@@ -1,7 +1,7 @@
-package games.uno.utils;
+package games.uno.testutils;
 
 import games.uno.domain.Deck;
-import games.uno.RandomDeckFactory;
+import games.uno.util.RandomDeckFactory;
 
 public class NonRandomDeckFactory extends RandomDeckFactory
 {

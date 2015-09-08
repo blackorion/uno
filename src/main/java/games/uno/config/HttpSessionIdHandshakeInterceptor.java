@@ -1,4 +1,4 @@
-package games.uno;
+package games.uno.config;
 
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;

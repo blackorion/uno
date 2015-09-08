@@ -1,20 +1,20 @@
-package games.uno;
+package games.uno.domain;
 
-import games.uno.domain.*;
+import games.uno.util.DeckFactory;
 import games.uno.exceptions.*;
-import games.uno.util.TurnController;
-import games.uno.utils.NonRandomDeckFactory;
+import games.uno.testutils.NonRandomDeckFactory;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 
 public class UnoTest
 {
     private Uno uno;
     private DeckFactory deckFactoryMock;
-    private TurnController turnControllerMock;
+    private PlayersQueue playersQueueMock;
     private final Player PLAYER_ONE = new Player("username1");
     private final Player PLAYER_TWO = new Player("username2");
 
@@ -22,8 +22,8 @@ public class UnoTest
     public void setUp() throws Exception {
         deckFactoryMock = Mockito.mock(DeckFactory.class);
         when(deckFactoryMock.generate()).thenReturn(createDeck());
-        turnControllerMock = Mockito.mock(TurnController.class);
-        uno = new Uno(deckFactoryMock, turnControllerMock);
+        playersQueueMock = Mockito.mock(PlayersQueue.class);
+        uno = new Uno(deckFactoryMock, playersQueueMock);
     }
 
     @Test(expected = GameAlreadyStartedException.class)
@@ -31,18 +31,6 @@ public class UnoTest
         uno.addPlayer(PLAYER_ONE);
         uno.start();
         uno.start();
-    }
-
-    @Test(expected = PlayerLimitForGameException.class)
-    public void MaxPlayersShouldBeNoMoreThan15() {
-        for ( int i = 0; i < 16; i++ )
-            uno.addPlayer(new Player("Player" + i));
-    }
-
-    @Test(expected = PlayerAlreadyInTheGameException.class)
-    public void SameUserEntersGameTwice() {
-        uno.addPlayer(PLAYER_ONE);
-        uno.addPlayer(PLAYER_ONE);
     }
 
     @Test
@@ -55,28 +43,40 @@ public class UnoTest
         uno.start();
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void AfterGameStarted_PlayerCantAccess() {
+    @Test
+    public void OnGameStart_EachUserGets7CardsFromDeck() {
         uno.addPlayer(PLAYER_ONE);
-        uno.start();
         uno.addPlayer(PLAYER_TWO);
+
+        uno.start();
+
+        assertEquals(7, PLAYER_ONE.getCardsOnHand().size());
+        assertEquals(7, PLAYER_TWO.getCardsOnHand().size());
     }
 
     @Test
-    public void OnEachTurn_NextPlayerSelected() {
-        when(turnControllerMock.currentPlayer()).thenReturn(PLAYER_ONE);
+    public void OnGameStart_FirstCardFromBankDeckMovedToPlayedDeck() {
+        uno.addPlayer(PLAYER_ONE);
+        uno.start();
+
+        assertEquals(new Card(CardValues.FOUR, CardColors.RED), uno.currentPlayedCard());
+    }
+
+    @Test
+    public void ForNextTurn_CallsPlayersQueue() {
+        when(playersQueueMock.currentPlayer()).thenReturn(PLAYER_ONE);
         uno.addPlayer(PLAYER_ONE);
         uno.addPlayer(PLAYER_TWO);
         uno.start();
         uno.playerPullsFromDeck();
         uno.endTurn();
 
-        verify(turnControllerMock, atLeastOnce()).nextTurn();
+        verify(playersQueueMock, atLeastOnce()).nextTurn();
     }
 
     @Test
     public void PlayerCanPlayACardWithSameColorOrValue() {
-        when(turnControllerMock.currentPlayer()).thenReturn(PLAYER_ONE);
+        when(playersQueueMock.currentPlayer()).thenReturn(PLAYER_ONE);
         uno.addPlayer(PLAYER_ONE);
         uno.start();
         uno.playerPuts(new Card(CardValues.FOUR, CardColors.BLUE));
@@ -92,12 +92,12 @@ public class UnoTest
 
     @Test
     public void WhenPlayerPlaysACard_TurnGoesToNextPlayer() {
-        when(turnControllerMock.currentPlayer()).thenReturn(PLAYER_ONE);
+        when(playersQueueMock.currentPlayer()).thenReturn(PLAYER_ONE);
         uno.addPlayer(PLAYER_ONE);
         uno.start();
         uno.playerPuts(new Card(CardValues.FOUR, CardColors.RED));
 
-        verify(turnControllerMock, times(1)).nextTurn();
+        verify(playersQueueMock, times(1)).nextTurn();
     }
 
     @Test(expected = IllegalTurnEndException.class)

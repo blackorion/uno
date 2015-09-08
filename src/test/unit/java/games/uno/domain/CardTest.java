@@ -1,4 +1,4 @@
-package games.uno;
+package games.uno.domain;
 
 import games.uno.domain.Card;
 import games.uno.domain.CardColors;

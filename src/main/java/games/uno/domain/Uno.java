@@ -1,54 +1,44 @@
 package games.uno.domain;
 
-import games.uno.DeckFactory;
-import games.uno.exceptions.*;
-import games.uno.util.TurnController;
-import java.util.ArrayList;
-import java.util.List;
+import games.uno.exceptions.GameAlreadyStartedException;
+import games.uno.exceptions.IllegalTurnEndException;
+import games.uno.exceptions.NoUsersInTheGameException;
+import games.uno.exceptions.WrongMoveException;
+import games.uno.util.DeckFactory;
 
-public class Uno
-{
-    private static final int MAX_PLAYERS = 15;
+public class Uno {
     private final Deck bankDeck;
     private final Deck playDeck = new Deck();
-    private final TurnController turnController;
-    private List<Player> players = new ArrayList<>();
-    private boolean isStarted = false;
+    private final PlayersQueue playersQueue;
+    private final GameTable table;
+    private GameState state = GameState.STOPPED;
     private boolean currentPlayerFinishedHisTurn = false;
 
-    public Uno(DeckFactory deckFactory, TurnController turnController) {
-        this.turnController = turnController;
+    public Uno(DeckFactory deckFactory, PlayersQueue playersQueue) {
+        this.playersQueue = playersQueue;
+        this.table = new GameTable(this);
         bankDeck = deckFactory.generate();
     }
 
     public void addPlayer(Player player) {
-        if ( players.contains(player) )
-            throw new PlayerAlreadyInTheGameException(player);
-
-        if ( isStarted )
-            throw new IllegalArgumentException("The game has already started.");
-
-        if ( players.size() == MAX_PLAYERS )
-            throw new PlayerLimitForGameException();
-
-        players.add(player);
+        table.add(player);
     }
 
     public void start() {
-        if ( isStarted )
+        if (state == GameState.RUNNING)
             throw new GameAlreadyStartedException();
 
-        if ( players.size() == 0 )
+        if (table.isEmpty())
             throw new NoUsersInTheGameException();
 
-        turnController.setPlayers(players);
+        playersQueue.setPlayers(table.players());
 
-        for ( Player player : players )
-            for ( int i = 0; i < 7; i++ )
+        for (Player player : table.players())
+            for (int i = 0; i < 7; i++)
                 player.takeCard(bankDeck.giveACardFromTop());
 
         playDeck.add(bankDeck.giveACardFromTop());
-        isStarted = true;
+        state = GameState.RUNNING;
     }
 
     public Card currentPlayedCard() {
@@ -56,19 +46,19 @@ public class Uno
     }
 
     public Player getCurrentPlayer() {
-        return turnController.currentPlayer();
+        return playersQueue.currentPlayer();
     }
 
     public void endTurn() {
-        if ( !currentPlayerFinishedHisTurn )
+        if (!currentPlayerFinishedHisTurn)
             throw new IllegalTurnEndException();
 
-        turnController.nextTurn();
+        playersQueue.nextTurn();
         currentPlayerFinishedHisTurn = false;
     }
 
     public void playerPuts(Card card) {
-        if ( !card.isPlayable(playDeck.showTopCard()) )
+        if (!card.isPlayable(playDeck.showTopCard()))
             throw new WrongMoveException(playDeck.showTopCard(), card);
 
         playDeck.takeCardFrom(getCurrentPlayer(), card);
@@ -82,18 +72,32 @@ public class Uno
     }
 
     public void finish() {
-        isStarted = false;
+        state = GameState.STOPPED;
         currentPlayerFinishedHisTurn = false;
         bankDeck.refill();
         bankDeck.shuffle();
         playDeck.empty();
     }
 
-    public String state() {
-        return isStarted ? "RUNNING" : "NOT_RUNNING";
+    public int playersSize() {
+        return table.players().size();
     }
 
-    public int playersSize() {
-        return players.size();
+    public GameState state() {
+        return state;
+    }
+
+    public enum GameState {
+        RUNNING(true), STOPPED(false);
+
+        private final boolean isRunning;
+
+        GameState(boolean isRunning) {
+            this.isRunning = isRunning;
+        }
+
+        public boolean isRunning(){
+            return isRunning;
+        }
     }
 }

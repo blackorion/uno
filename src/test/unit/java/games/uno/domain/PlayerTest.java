@@ -1,6 +1,5 @@
-package games.uno;
+package games.uno.domain;
 
-import games.uno.domain.*;
 import org.junit.Test;
 
 import static org.hamcrest.Matchers.contains;

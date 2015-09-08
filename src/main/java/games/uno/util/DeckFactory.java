@@ -1,4 +1,4 @@
-package games.uno;
+package games.uno.util;
 
 import games.uno.domain.Deck;
 

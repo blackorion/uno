@@ -1,8 +1,9 @@
 package games.uno;
 
 import games.uno.domain.Player;
+import games.uno.domain.PlayersQueue;
 import games.uno.domain.Uno;
-import games.uno.util.TurnController;
+import games.uno.util.DeckFactory;
 import games.uno.web.messages.ApplicationError;
 import games.uno.web.messages.BoardInformationMessage;
 import games.uno.web.messages.GameInfo;
@@ -11,23 +12,21 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
-public class GameService
-{
+public class GameService {
     private final SimpMessagingTemplate messagingTemplate;
     private final Uno game;
 
     @Autowired
     public GameService(DeckFactory factory, SimpMessagingTemplate messagingTemplate) {
         this.messagingTemplate = messagingTemplate;
-        this.game = new Uno(factory, new TurnController());
+        this.game = new Uno(factory, new PlayersQueue());
     }
 
     public void addPlayer(Player player) {
         try {
             game.addPlayer(player);
             messagingTemplate.convertAndSend("/topic/info", new BoardInformationMessage("Player " + player + " joined the game"));
-        }
-        catch ( Exception e ) {
+        } catch (Exception e) {
             messagingTemplate.convertAndSend("/queue/error", new ApplicationError(e));
         }
     }
@@ -39,8 +38,7 @@ public class GameService
             messagingTemplate.convertAndSend("/topic/events", getInfo());
 
             return true;
-        }
-        catch ( Exception e ) {
+        } catch (Exception e) {
             messagingTemplate.convertAndSend("/queue/error", new ApplicationError(e));
 
             return false;
@@ -54,6 +52,6 @@ public class GameService
     }
 
     public GameInfo getInfo() {
-        return new GameInfo(game.state(), game.playersSize());
+        return new GameInfo(game.state().toString(), game.playersSize());
     }
 }
