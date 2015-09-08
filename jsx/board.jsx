@@ -1,61 +1,49 @@
-import User from './user';
-import Card from './card';
-import Hand from './hand';
+import {User,CurrentUser} from './user';
 import GameClient from './gameclient';
-import Greeting from './greeting';
-import MenuBar from './menubar';
+import BoardBase from './boardbase';
 
-export default class Board {
+export default class Board extends BoardBase {
 	constructor() {
-		this._currentUser = null;
+		super();
 		this._gameClient = new GameClient('http://10.160.70.117:8080');
-
-		this._greeter = React.render(
-			<Greeting board={this}/>,
-				document.getElementById('greeter')
-		);
-		this._menubar = React.render(
-			<MenuBar board={this}/>,
-				document.getElementById('menubar')
-		);
-		this._info = null;
-	}
-	get currentUser(){
-		return this._currentUser;
 	}
 	initiateGame(){
 		this._gameClient.currentUser((data)=>{
 			console.log('>>> CURRENT USER',data);
-			this._currentUser =  new User(0,data.username);
+			this._currentUserId = data.id;
+			this._users[data.id] = new CurrentUser(data.id,data.username);
 			this._gameClient.connect();
 			$(document).trigger('update:current_user');
 		});
-		this._updateInfo();
 		this._setupEvents();
 	}
+	_setStatus(newStatus){
+			this._status = newStatus;
+			$(document).trigger('update:game_status');
+	}
+	_setUsers(newUsers){
+		let currentUser = this.currentUser;
+		this._users = {};
+		for(let newUser of newUsers){
+			if (newUser.id == this.currentUserId)
+				this._users[this.currentUserId] = currentUser;
+			else this._users[newUser.id] = new User(newUser.id,newUser.username);
+		}
+		$(document).trigger('update:users');
+	}
+	_setUserHand(hand){
+		for(let idx in hand)
+			if(hand[idx].color == 'DARK') hand[idx].color = 'BLACK_PERSON';
+		this.currentUser.hand = hand;
+		$(document).trigger('update:user_cards');
+	}
 	_setupEvents(){
-		this._gameClient.subscribe('/topic/events',(data)=>{
-			this._info = data;
-			$(document).trigger('update:game_info');
-		});
-	}
-	_updateInfo(){
-		this._gameClient.info((data)=>{
-			console.log('>>> INFO',data);
-			this._info = data;
-			$(document).trigger('update:game_info');
-		});
-	}
-	get info(){
-		return this._info;
-	}
-	createNewUser(f){
-		this._gameClient.createUser((data)=>{
-			console.log('>>> CREATE USER',data);
-			this._currentUser =  new User(0,data.username);
-			$(document).trigger('update:current_user');
-			if(typeof f === 'function') f();
-		});
+		this._gameClient.subscribe('/topic/game.info',this._setStatus.bind(this));
+		this._gameClient.subscribe('/app/game.info',this._setStatus.bind(this));
+		this._gameClient.subscribe('/app/game.players',this._setUsers.bind(this));
+		this._gameClient.subscribe('/topic/game.players',this._setUsers.bind(this));
+		this._gameClient.subscribe('/app/game.cards',this._setUserHand.bind(this));
+		this._gameClient.subscribe('/user/topic/game.cards',this._setUserHand.bind(this));
 	}
 	startGame(){
 		console.log('>>> START GAME');

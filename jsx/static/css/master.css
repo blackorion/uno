@@ -3,15 +3,13 @@ body {
 	margin: 0;
 	font-family: 'Roboto', sans-serif;
 	font-weight: 400;
-	background: #EFEFEF;
+	background: #FFC190;
 }
 
 #board {
 	display: flex;
-	/* display: none; */
 	align-items: center;
 	flex-direction: column;
-	position: absolute;
 	top: 0;
 	left: 0;
 	width: 100%;
@@ -20,17 +18,27 @@ body {
 
 #greeting {
 	text-align: center;
-	background: #D9D9FF;
+	background: #DC916C;
 	width:100%;
+	color: white;
+	padding-top: 50px;
+	padding-bottom:50px;
 }
 
-#hand-others {
-	width: 100%;
+.center-flex-row{
+	display: flex;
+	align-times: center;
+	glex-direction: row;
+	justify-content: center;
+	flex-wrap:wrap;
+}
+
+#hands > * {
+	margin: 25px;
 }
 
 .glow {
-	text-shadow: 0px 0px 10px rgba(127, 0, 127, 1);
-	color: white;
+	text-shadow: 0px 0px 10px #FFB300;
 }
 
 .card {
@@ -38,9 +46,8 @@ body {
 }
 
 .btn {
-	color: #ffffff;
+	color: white;
 	font-size: 20px;
-	background: #3498db;
 	padding: 10px 20px 10px 20px;
 	text-decoration: none;
 	border: none;
@@ -49,10 +56,53 @@ body {
 }
 
 .btn:hover {
-	background: #3cb0fd;
 	text-decoration: none;
 }
 
+.good {
+	background: #44B1D0;
+}
+
+.good:hover {
+	background: #5DD5F7;
+}
+
+.bad {
+	background: #D04444;
+}
+
+.bad:hover {
+	background: #F75D5D;
+}
+
+#menubar {
+	background: #9E6D5C;
+	width: 100%;
+}
+
 #main-menu > * {
+	margin: 25px;
+}
+
+.hand-name-active {
+	background: #78D04C;
+}
+
+.hand-name-inactive {
+	background: #9E6D5C;
+}
+
+.hand-name {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	width: 200px;
+	text-align: center;
+	height: 50px;
+	color: white;
+	font-weight: bold;
+}
+
+#user-hand > * {
 	margin: 25px;
 }
