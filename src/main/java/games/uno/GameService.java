@@ -28,7 +28,7 @@ public class GameService
     public void addPlayer(Player player) {
         game.addPlayer(player);
         messagingTemplate.convertAndSend("/topic/info", new BoardInformationMessage("Player " + player + " joined the game"));
-        messagingTemplate.convertAndSend("/topic/game.getElements", game.players());
+        messagingTemplate.convertAndSend("/topic/game.players", game.players());
     }
 
     public void startNewGame() {
