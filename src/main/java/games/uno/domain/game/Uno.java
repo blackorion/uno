@@ -2,25 +2,23 @@ package games.uno.domain.game;
 
 import games.uno.domain.cards.AbstractCardHolder;
 import games.uno.domain.cards.Card;
+import games.uno.domain.cards.CardHolder;
 import games.uno.domain.cards.Deck;
-import games.uno.exceptions.GameAlreadyStartedException;
 import games.uno.exceptions.IllegalTurnEndException;
-import games.uno.exceptions.NoUsersInTheGameException;
 import games.uno.exceptions.WrongMoveException;
 import games.uno.util.DeckFactory;
-
 import java.util.List;
 
-public class Uno {
+public class Uno
+{
     private final Deck bankDeck;
     private final Deck playDeck = new Deck();
-    private final PlayersQueue playersQueue;
     private final GameTable table;
-    private GameState state = GameState.STOPPED;
+
+    private GameState state = GameState.NOT_RUNNING;
     private boolean currentPlayerFinishedHisTurn = false;
 
-    public Uno(DeckFactory deckFactory, PlayersQueue playersQueue) {
-        this.playersQueue = playersQueue;
+    public Uno(DeckFactory deckFactory) {
         this.table = new GameTable(this);
         bankDeck = deckFactory.generate();
     }
@@ -30,20 +28,7 @@ public class Uno {
     }
 
     public void start() {
-        if (state == GameState.RUNNING)
-            throw new GameAlreadyStartedException();
-
-        if (table.isEmpty())
-            throw new NoUsersInTheGameException();
-
-        playersQueue.setPlayers(table.players());
-
-        for (Player player : table.players())
-            for (int i = 0; i < 7; i++)
-                player.take(bankDeck.drawFromTop());
-
-        playDeck.take(bankDeck.drawFromTop());
-        state = GameState.RUNNING;
+        state.start(this);
     }
 
     public Card currentPlayedCard() {
@@ -51,19 +36,19 @@ public class Uno {
     }
 
     public Player getCurrentPlayer() {
-        return playersQueue.currentPlayer();
+        return table.currentPlayer();
     }
 
     public void endTurn() {
-        if (!currentPlayerFinishedHisTurn)
+        if ( !currentPlayerFinishedHisTurn )
             throw new IllegalTurnEndException();
 
-        playersQueue.nextTurn();
+        table.nextTurn();
         currentPlayerFinishedHisTurn = false;
     }
 
     public void playerPuts(Card card) {
-        if (!card.isPlayable(playDeck.showTopCard()))
+        if ( !card.isPlayable(playDeck.showTopCard()) )
             throw new WrongMoveException(playDeck.showTopCard(), card);
 
         playDeck.takeCardFrom(getCurrentPlayer(), card);
@@ -77,12 +62,7 @@ public class Uno {
     }
 
     public void finish() {
-        state = GameState.STOPPED;
-        currentPlayerFinishedHisTurn = false;
-        bankDeck.refill();
-        bankDeck.shuffle();
-        playDeck.empty();
-        table.players().forEach(AbstractCardHolder::empty);
+        state.finish(this);
     }
 
     public int playersSize() {
@@ -101,17 +81,31 @@ public class Uno {
         return state;
     }
 
-    public enum GameState {
-        RUNNING(true), STOPPED(false);
+    public BidirectionalQueue.Direction getDirection() {
+        return table.getDirection();
+    }
 
-        private final boolean isRunning;
+    public boolean hasPlayers() {
+        return !table.isEmpty();
+    }
 
-        GameState(boolean isRunning) {
-            this.isRunning = isRunning;
-        }
+    public CardHolder getBankDeck() {
+        return bankDeck;
+    }
 
-        public boolean isRunning() {
-            return isRunning;
-        }
+    public void moveCardToPlayDeck() {
+        playDeck.takeCardFrom(bankDeck);
+    }
+
+    public void setState(GameState state) {
+        this.state = state;
+    }
+
+    public void flush() {
+        currentPlayerFinishedHisTurn = false;
+        bankDeck.refill();
+        bankDeck.shuffle();
+        playDeck.empty();
+        table.players().forEach(AbstractCardHolder::empty);
     }
 }

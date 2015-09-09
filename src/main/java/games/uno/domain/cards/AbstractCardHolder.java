@@ -9,7 +9,9 @@ public class AbstractCardHolder implements CardHolder
     protected int index = 0;
 
     @Override
-    public Card drawFromTop() { return cards.get(index++); }
+    public Card drawFromTop() {
+        return cards.get(index++);
+    }
 
     @Override
     public Card draw(Card card) {
@@ -19,7 +21,9 @@ public class AbstractCardHolder implements CardHolder
     }
 
     @Override
-    public void take(Card card) { cards.add(card); }
+    public void take(Card card) {
+        cards.add(card);
+    }
 
     @Override
     public int remains() { return cards.size() - index; }

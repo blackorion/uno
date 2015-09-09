@@ -33,7 +33,8 @@ public class Card
 
     public boolean isPlayable(Card topCard) {
         return topCard != null
-                && (topCard.getColor() == getColor() || topCard.getValue() == getValue());
+                && (getColor() == CardColors.DARK
+                || (topCard.getColor() == getColor() || topCard.getValue() == getValue()));
 
     }
 }

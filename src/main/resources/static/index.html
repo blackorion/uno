@@ -67,7 +67,7 @@
         function createUser() {
             var username = document.getElementById('username').value;
             console.log(username);
-            $.post('/api/players/create', { username: username }, null, 'json');
+            $.post('/api/elements/create', { username: username }, null, 'json');
         }
     </script>
 </head>

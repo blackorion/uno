@@ -33,7 +33,7 @@ public class PlayerControllerTest
 
     @Test
     public void shouldStorePlayerObjectInSession() throws Exception {
-        MvcResult result = mvc.perform(get("/api/players").accept(MediaType.APPLICATION_JSON))
+        MvcResult result = mvc.perform(get("/api/getElements").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk()).andReturn();
 
         HttpSession session = result.getRequest().getSession();
@@ -43,14 +43,14 @@ public class PlayerControllerTest
 
     @Test
     public void shouldCreatePlayerWithGeneratedName() throws Exception {
-        mvc.perform(get("/api/players").accept(MediaType.APPLICATION_JSON))
+        mvc.perform(get("/api/getElements").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.username").value(IsNull.notNullValue()));
     }
 
     @Test
     public void shouldSetTheTransferredNameToPlayerIfCreated() throws Exception {
-        mvc.perform(get("/api/players").param("username", "username").accept(MediaType.APPLICATION_JSON))
+        mvc.perform(get("/api/getElements").param("username", "username").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.username").value(is("username")));
     }
@@ -59,7 +59,7 @@ public class PlayerControllerTest
     public void shouldFetchPlayerFromSessionIfExists() throws Exception {
         Player player = new Player("username");
 
-        mvc.perform(get("/api/players")
+        mvc.perform(get("/api/getElements")
                 .param("username", "other name")
                 .sessionAttr("player", player)
                 .accept(MediaType.APPLICATION_JSON))

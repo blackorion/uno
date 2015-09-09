@@ -1,5 +1,6 @@
 package games.uno.domain;
 
+import games.uno.domain.game.GameState;
 import games.uno.domain.game.GameTable;
 import games.uno.domain.game.Player;
 import games.uno.domain.game.Uno;
@@ -16,7 +17,7 @@ public class GameTableTest {
 
     @Test(expected = PlayerLimitForGameException.class)
     public void MaxPlayersCapacity() {
-        when(gameMock.state()).thenReturn(Uno.GameState.STOPPED);
+        when(gameMock.state()).thenReturn(GameState.NOT_RUNNING);
 
         for (int i = 0; i < 16; i++)
             table.add(new Player("Player" + i));
@@ -24,7 +25,7 @@ public class GameTableTest {
 
     @Test(expected = PlayerAlreadyInTheGameException.class)
     public void SameUserEntersGameTwice() {
-        when(gameMock.state()).thenReturn(Uno.GameState.STOPPED);
+        when(gameMock.state()).thenReturn(GameState.NOT_RUNNING);
         Player player = new Player("player");
 
         table.add(player);
@@ -33,7 +34,7 @@ public class GameTableTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void PlayerIsForbiddenJoinTableWhileGameRunning() {
-        when(gameMock.state()).thenReturn(Uno.GameState.RUNNING);
+        when(gameMock.state()).thenReturn(GameState.RUNNING);
         table.add(new Player("player"));
     }
 }
