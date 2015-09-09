@@ -1,6 +1,6 @@
-export const GAME_NOT_RUNNING   = 'NOT_RUNNING';
-export const GAME_RUNNING       = 'RUNNING';
-// export const MSG_NOT_RUNNING = ''
+export const GAME_NOT_RUNNING     = 'NOT_RUNNING';
+export const GAME_RUNNING         = 'RUNNING';
+export const GAME_DIRECTION_RIGHT = 'CLOCKWISE';
 
 export const CARD_DRAW_TWO       = 'DRAW_TWO';
 export const CARD_WILD_DRAW_FOUR = 'WILD_DRAW_FOUR';

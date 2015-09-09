@@ -17,6 +17,7 @@ export default class GameClient {
 			this._debugSubscribe('/topic/game.players');
 			this._debugSubscribe('/app/game.cards');
 			this._debugSubscribe('/user/queue/game.cards');
+			// this._debugSubscribe('/app/game.playcard');
 		});
 	}
 	_debugSubscribe(chan){
@@ -24,12 +25,16 @@ export default class GameClient {
 			console.log('<<< WS '+chan,data);
 		});
 	}
-	subscribe(chan, f){
+	subscribeSingle(chan, f){
 		$(document).on('ws:ready',{},()=>{
 			this._client.subscribe(chan,(data)=>{
 				f(JSON.parse(data.body));
 			})
 		});
+	}
+	subscribe(chan, f){
+		this.subscribeSingle('/app/'+chan,f);
+		this.subscribeSingle('/topic/'+chan,f);
 	}
 	_ajaxWithSession(url,methodx,f){
 		$.ajax({
@@ -42,6 +47,20 @@ export default class GameClient {
 			success:f
 		});
 	}
+
+	// Events
+	setStatusUpdateCallback(f){
+		this.subscribe('game.info',f);
+	}
+	setUserUpdateCallback(f){
+		this.subscribe('game.players',f);
+	}
+	setUserHandUpdateCallback(f){
+		this.subscribeSingle('/app/game.cards',f);
+		this.subscribeSingle('/user/topic/game.cards',f);
+	}
+
+	// Actions
 	startGame(f){
 		this._client.send('/app/game.control',{},JSON.stringify({action:'START'}));
 	}
@@ -50,5 +69,9 @@ export default class GameClient {
 	}
 	stopGame(f){
 		this._client.send('/app/game.control',{},JSON.stringify({action:'STOP'}));
+	}
+	playCard(card_){
+		console.log('>>> WS SENDING',JSON.stringify(card_));
+		this._client.send('/app/game.playcard',{},JSON.stringify({'card':card_}));
 	}
 }
