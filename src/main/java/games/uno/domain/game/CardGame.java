@@ -1,12 +1,15 @@
 package games.uno.domain.game;
 
 import games.uno.domain.cards.Card;
+import games.uno.domain.cards.Deck;
 
-public interface Game
+public interface CardGame
 {
     void addPlayer(Player player);
 
     void start();
+
+    Card currentPlayedCard();
 
     Player getCurrentPlayer();
 
@@ -14,9 +17,17 @@ public interface Game
 
     void finish();
 
+    void playerDrawsFromDeck();
+
+    int playersSize();
+
     boolean hasPlayers();
 
     void flush();
 
     void playerPlaysA(Card card);
+
+    void flipACard();
+
+    Deck getPlayDeck();
 }

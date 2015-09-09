@@ -24,11 +24,6 @@ public enum GameState
             if ( !game.hasPlayers() )
                 throw new NoUsersInTheGameException();
 
-            for ( Player player : game.players() )
-                for ( int i = 0; i < 7; i++ )
-                    player.takeCardFrom(game.getBankDeck());
-
-            game.flipACard();
             game.getCurrentPlayer().shouldMakeAMove();
             game.setState(RUNNING);
         }

@@ -1,7 +1,6 @@
 package games.uno.domain.cards;
 
-public class Card
-{
+public class Card {
     private final CardValues value;
     private final CardColors color;
 
@@ -16,9 +15,16 @@ public class Card
         return color;
     }
 
+    public boolean isPlayable(Card topCard) {
+        return topCard != null
+                && (getColor() == CardColors.DARK
+                || (topCard.getColor() == getColor() || topCard.getValue() == getValue()));
+
+    }
+
     @Override
     public boolean equals(Object obj) {
-        if ( !(obj instanceof Card) )
+        if (!(obj instanceof Card))
             return false;
 
         Card other = (Card) obj;
@@ -31,10 +37,8 @@ public class Card
         return 31 * value.hashCode() + 31 * color.hashCode();
     }
 
-    public boolean isPlayable(Card topCard) {
-        return topCard != null
-                && (getColor() == CardColors.DARK
-                || (topCard.getColor() == getColor() || topCard.getValue() == getValue()));
-
+    @Override
+    public String toString() {
+        return value + " " + color;
     }
 }

@@ -45,7 +45,7 @@ public class UnoTest
     }
 
     @Test
-    public void shouldGenerateTheDeckAtStart() {
+    public void ShouldGenerateTheDeckAtStart() {
         verify(deckFactoryMock, times(1)).generate();
     }
 
@@ -57,42 +57,8 @@ public class UnoTest
     }
 
     @Test(expected = NoUsersInTheGameException.class)
-    public void shouldThrowExceptionOnStartIfNoPlayersConnected() {
+    public void ShouldThrowExceptionOnStartIfNoPlayersConnected() {
         uno.start();
-    }
-
-    @Test
-    public void OnGameStart_EachUserGets7CardsFromDeck() {
-        uno.addPlayer(PLAYER_ONE);
-        uno.addPlayer(PLAYER_TWO);
-
-        uno.start();
-
-        assertEquals(7, PLAYER_ONE.cardsOnHand().size());
-        assertEquals(7, PLAYER_TWO.cardsOnHand().size());
-    }
-
-    @Test
-    public void OnGameStart_FirstCardFromBankDeckMovedToPlayedDeck() {
-        uno.addPlayer(PLAYER_ONE);
-        uno.start();
-
-        assertEquals(new Card(CardValues.FOUR, CardColors.RED), uno.currentPlayedCard());
-    }
-
-    @Test
-    public void PlayerCanPlayACardWithSameColorOrValue() {
-        uno.addPlayer(PLAYER_ONE);
-        uno.start();
-        uno.playerPlaysA(new Card(CardValues.FOUR, CardColors.BLUE));
-        uno.playerPlaysA(new Card(CardValues.ONE, CardColors.BLUE));
-    }
-
-    @Test(expected = WrongMoveException.class)
-    public void PlayerCantPlayACardOtherColorOrValue() {
-        uno.addPlayer(PLAYER_ONE);
-        uno.start();
-        uno.playerPlaysA(new Card(CardValues.ONE, CardColors.BLUE));
     }
 
     @Test

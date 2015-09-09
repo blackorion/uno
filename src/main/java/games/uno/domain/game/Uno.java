@@ -7,10 +7,10 @@ import games.uno.domain.cards.Deck;
 import games.uno.exceptions.IllegalTurnEndException;
 import games.uno.exceptions.WrongMoveException;
 import games.uno.util.DeckFactory;
+
 import java.util.List;
 
-public class Uno implements Game
-{
+public class Uno implements CardGame {
     private final Deck bankDeck;
     private final Deck playDeck = new Deck();
     private final RulesManager rulesManager;
@@ -30,8 +30,26 @@ public class Uno implements Game
     }
 
     @Override
-    public void start() { state.start(this); }
+    public void start() {
+        state.start(this);
+        rulesManager.gameStarted();
+    }
 
+    @Override
+    public void finish() {
+        state.finish(this);
+    }
+
+    @Override
+    public void endTurn() {
+        if (getCurrentPlayer().hasToMakeAMove())
+            throw new IllegalTurnEndException();
+
+        table.nextTurn();
+        getCurrentPlayer().shouldMakeAMove();
+    }
+
+    @Override
     public Card currentPlayedCard() {
         return playDeck.showTopCard();
     }
@@ -42,24 +60,12 @@ public class Uno implements Game
     }
 
     @Override
-    public void endTurn() {
-        if ( getCurrentPlayer().hasToMakeAMove() )
-            throw new IllegalTurnEndException();
-
-        table.nextTurn();
-        getCurrentPlayer().shouldMakeAMove();
-    }
-
     public void playerDrawsFromDeck() {
         getCurrentPlayer().takeCardFrom(bankDeck);
         getCurrentPlayer().finishedHisMove();
     }
 
     @Override
-    public void finish() {
-        state.finish(this);
-    }
-
     public int playersSize() {
         return table.players().size();
     }
@@ -80,15 +86,21 @@ public class Uno implements Game
         return table.getDirection();
     }
 
+    public CardHolder getBankDeck() {
+        return bankDeck;
+    }
+
+    @Override
+    public Deck getPlayDeck() {
+        return playDeck;
+    }
+
     @Override
     public boolean hasPlayers() {
         return !table.isEmpty();
     }
 
-    public CardHolder getBankDeck() {
-        return bankDeck;
-    }
-
+    @Override
     public void flipACard() {
         playDeck.takeCardFrom(bankDeck);
     }
@@ -98,21 +110,16 @@ public class Uno implements Game
     }
 
     @Override
+    public void playerPlaysA(Card card) {
+        rulesManager.cardPlayed(card);
+    }
+
+    @Override
     public void flush() {
         getCurrentPlayer().finishedHisMove();
         bankDeck.refill();
         bankDeck.shuffle();
         playDeck.empty();
         table.players().forEach(AbstractCardHolder::empty);
-    }
-
-    @Override
-    public void playerPlaysA(Card card) {
-        if ( !card.isPlayable(playDeck.showTopCard()) )
-            throw new WrongMoveException(playDeck.showTopCard(), card);
-
-        playDeck.takeCardFrom(getCurrentPlayer(), card);
-        getCurrentPlayer().finishedHisMove();
-        endTurn();
     }
 }

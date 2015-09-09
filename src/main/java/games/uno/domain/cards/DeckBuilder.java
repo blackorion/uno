@@ -7,7 +7,15 @@ public class DeckBuilder {
         return deck;
     }
 
-    public void add(CardValues value, CardColors color) {
+    public DeckBuilder add(CardValues value, CardColors color) {
         deck.take(new Card(value, color));
+
+        return this;
+    }
+
+    public DeckBuilder add(Card card) {
+        deck.take(card);
+
+        return this;
     }
 }
