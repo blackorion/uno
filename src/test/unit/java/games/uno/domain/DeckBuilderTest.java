@@ -1,5 +1,6 @@
 package games.uno.domain;
 
+import games.uno.domain.cards.*;
 import org.junit.Assert;
 import org.junit.Test;
 

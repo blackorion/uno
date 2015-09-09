@@ -1,6 +1,6 @@
 package games.uno;
 
-import games.uno.domain.Player;
+import games.uno.domain.game.Player;
 import java.util.List;
 
 public interface PlayerRepository {

@@ -1,6 +1,6 @@
 package games.uno.web.messages;
 
-import games.uno.domain.Card;
+import games.uno.domain.cards.Card;
 
 public class GameInfoMessage
 {

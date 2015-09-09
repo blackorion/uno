@@ -1,10 +1,10 @@
 package games.uno.util;
 
-import games.uno.domain.DeckBuilder;
-import games.uno.domain.CardColors;
-import games.uno.domain.CardTypes;
-import games.uno.domain.CardValues;
-import games.uno.domain.Deck;
+import games.uno.domain.cards.DeckBuilder;
+import games.uno.domain.cards.CardColors;
+import games.uno.domain.cards.CardTypes;
+import games.uno.domain.cards.CardValues;
+import games.uno.domain.cards.Deck;
 import org.springframework.stereotype.Component;
 
 @Component

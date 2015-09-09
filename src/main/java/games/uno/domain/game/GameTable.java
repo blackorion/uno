@@ -1,4 +1,4 @@
-package games.uno.domain;
+package games.uno.domain.game;
 
 import games.uno.exceptions.PlayerAlreadyInTheGameException;
 import games.uno.exceptions.PlayerLimitForGameException;

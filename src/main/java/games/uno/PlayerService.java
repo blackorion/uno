@@ -1,6 +1,6 @@
 package games.uno;
 
-import games.uno.domain.Player;
+import games.uno.domain.game.Player;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

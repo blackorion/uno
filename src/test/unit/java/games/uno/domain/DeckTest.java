@@ -1,9 +1,9 @@
 package games.uno;
 
-import games.uno.domain.Card;
-import games.uno.domain.CardColors;
-import games.uno.domain.CardValues;
-import games.uno.domain.Deck;
+import games.uno.domain.cards.Card;
+import games.uno.domain.cards.CardColors;
+import games.uno.domain.cards.CardValues;
+import games.uno.domain.cards.Deck;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;

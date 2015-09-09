@@ -1,4 +1,4 @@
-package games.uno.domain;
+package games.uno.domain.cards;
 
 public class DeckBuilder {
     private Deck deck = new Deck();

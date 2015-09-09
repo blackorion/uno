@@ -1,5 +1,8 @@
 package games.uno.domain;
 
+import games.uno.domain.game.GameTable;
+import games.uno.domain.game.Player;
+import games.uno.domain.game.Uno;
 import games.uno.exceptions.PlayerAlreadyInTheGameException;
 import games.uno.exceptions.PlayerLimitForGameException;
 import org.junit.Test;

@@ -1,10 +1,15 @@
-package games.uno.domain;
+package games.uno.domain.game;
 
+import games.uno.domain.cards.AbstractCardHolder;
+import games.uno.domain.cards.Card;
+import games.uno.domain.cards.Deck;
 import games.uno.exceptions.GameAlreadyStartedException;
 import games.uno.exceptions.IllegalTurnEndException;
 import games.uno.exceptions.NoUsersInTheGameException;
 import games.uno.exceptions.WrongMoveException;
 import games.uno.util.DeckFactory;
+
+import java.util.List;
 
 public class Uno {
     private final Deck bankDeck;
@@ -33,8 +38,8 @@ public class Uno {
 
         playersQueue.setPlayers(table.players());
 
-        for ( Player player : players )
-            for ( int i = 0; i < 7; i++ )
+        for (Player player : table.players())
+            for (int i = 0; i < 7; i++)
                 player.take(bankDeck.drawFromTop());
 
         playDeck.take(bankDeck.drawFromTop());
@@ -77,11 +82,19 @@ public class Uno {
         bankDeck.refill();
         bankDeck.shuffle();
         playDeck.empty();
-        players.forEach(AbstractCardHolder::empty);
+        table.players().forEach(AbstractCardHolder::empty);
     }
 
     public int playersSize() {
         return table.players().size();
+    }
+
+    public int bankRemains() {
+        return bankDeck.remains();
+    }
+
+    public List<Player> players() {
+        return table.players();
     }
 
     public GameState state() {
@@ -97,18 +110,8 @@ public class Uno {
             this.isRunning = isRunning;
         }
 
-        public boolean isRunning(){
+        public boolean isRunning() {
             return isRunning;
         }
-    public int playersSize() {
-        return players.size();
-    }
-
-    public int bankRemains() {
-        return bankDeck.remains();
-    }
-
-    public List<Player> players() {
-        return players;
     }
 }

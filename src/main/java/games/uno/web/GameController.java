@@ -1,9 +1,9 @@
 package games.uno.web;
 
 import games.uno.GameService;
-import games.uno.web.messages.ApplicationError;
+import games.uno.web.messages.ApplicationErrorMessage;
 import games.uno.web.messages.GameControlMessage;
-import games.uno.web.messages.GameInfo;
+import games.uno.web.messages.GameInfoMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -22,13 +22,13 @@ public class GameController
     GameService gameService;
 
     @SubscribeMapping("/game.info")
-    public GameInfo info() {
+    public GameInfoMessage info() {
         return gameService.getInfo();
     }
 
     @MessageMapping(value = "/game.control")
     @SendTo("/topic/game.info")
-    public GameInfo control(GameControlMessage control) {
+    public GameInfoMessage control(GameControlMessage control) {
         if ( "START".equals(control.getAction()) )
             gameService.startNewGame();
         else if ( "STOP".equals(control.getAction()) )
@@ -39,7 +39,7 @@ public class GameController
 
     @MessageExceptionHandler
     @SendTo("/queue/errors")
-    public ApplicationError handleException(RuntimeException exception) {
-        return new ApplicationError(exception.getMessage());
+    public ApplicationErrorMessage handleException(RuntimeException exception) {
+        return new ApplicationErrorMessage(exception.getMessage());
     }
 }

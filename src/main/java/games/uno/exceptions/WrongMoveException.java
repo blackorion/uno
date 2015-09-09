@@ -1,6 +1,6 @@
 package games.uno.exceptions;
 
-import games.uno.domain.Card;
+import games.uno.domain.cards.Card;
 
 public class WrongMoveException extends RuntimeException {
     private static final long serialVersionUID = 5L;

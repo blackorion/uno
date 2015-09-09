@@ -1,5 +1,7 @@
 package games.uno.domain;
 
+import games.uno.domain.game.Player;
+import games.uno.domain.game.PlayersQueue;
 import org.junit.Before;
 import org.junit.Test;
 

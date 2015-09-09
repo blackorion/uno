@@ -1,6 +1,6 @@
 package games.uno.exceptions;
 
-import games.uno.domain.Player;
+import games.uno.domain.game.Player;
 
 public class PlayerAlreadyInTheGameException extends RuntimeException
 {

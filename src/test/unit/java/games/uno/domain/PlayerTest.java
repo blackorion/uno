@@ -1,5 +1,10 @@
 package games.uno.domain;
 
+import games.uno.domain.cards.Card;
+import games.uno.domain.cards.CardColors;
+import games.uno.domain.cards.CardValues;
+import games.uno.domain.cards.Deck;
+import games.uno.domain.game.Player;
 import org.junit.Test;
 import static org.junit.Assert.*;
 

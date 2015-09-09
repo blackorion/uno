@@ -1,5 +1,12 @@
 package games.uno.domain;
 
+import games.uno.domain.cards.Card;
+import games.uno.domain.cards.CardColors;
+import games.uno.domain.cards.CardValues;
+import games.uno.domain.cards.Deck;
+import games.uno.domain.game.Player;
+import games.uno.domain.game.PlayersQueue;
+import games.uno.domain.game.Uno;
 import games.uno.util.DeckFactory;
 import games.uno.exceptions.*;
 import games.uno.testutils.NonRandomDeckFactory;
@@ -9,6 +16,7 @@ import org.mockito.Mockito;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 
 public class UnoTest
@@ -51,8 +59,8 @@ public class UnoTest
 
         uno.start();
 
-        assertEquals(7, PLAYER_ONE.getCardsOnHand().size());
-        assertEquals(7, PLAYER_TWO.getCardsOnHand().size());
+        assertEquals(7, PLAYER_ONE.cardsOnHand().size());
+        assertEquals(7, PLAYER_TWO.cardsOnHand().size());
     }
 
     @Test

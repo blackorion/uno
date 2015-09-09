@@ -1,14 +1,14 @@
 package games.uno.web.messages;
 
-public class ApplicationError
+public class ApplicationErrorMessage
 {
     private String message;
 
-    public ApplicationError(String message) {
+    public ApplicationErrorMessage(String message) {
         this.message = message;
     }
 
-    public ApplicationError(Throwable ex) {
+    public ApplicationErrorMessage(Throwable ex) {
         this(ex.getMessage());
     }
 

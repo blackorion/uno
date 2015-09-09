@@ -1,4 +1,6 @@
-package games.uno.domain;
+package games.uno.domain.game;
+
+import games.uno.domain.game.Player;
 
 import java.util.List;
 

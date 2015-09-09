@@ -1,4 +1,4 @@
-package games.uno.domain;
+package games.uno.domain.cards;
 
 import java.util.ArrayList;
 import java.util.List;

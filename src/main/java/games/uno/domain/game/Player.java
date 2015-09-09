@@ -1,4 +1,7 @@
-package games.uno.domain;
+package games.uno.domain.game;
+
+import games.uno.domain.cards.AbstractCardHolder;
+import games.uno.domain.cards.Card;
 
 import java.util.List;
 

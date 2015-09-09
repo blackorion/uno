@@ -1,6 +1,6 @@
 package games.uno;
 
-import games.uno.domain.Player;
+import games.uno.domain.game.Player;
 import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
 import java.util.HashMap;
