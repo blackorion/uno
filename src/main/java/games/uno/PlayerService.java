@@ -2,6 +2,7 @@ package games.uno;
 
 import games.uno.domain.game.Player;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -12,6 +13,8 @@ import java.util.Collection;
 @Service
 public class PlayerService
 {
+    private static final String SESSION_ATTR = "HTTPSESSIONID";
+
     private PlayerRepository repository;
     private AuthenticationManager authenticationManager;
 
@@ -28,6 +31,10 @@ public class PlayerService
     public Collection<Player> findAll() { return repository.findAll(); }
 
     public Player find(String sessionId) { return repository.findBySessionId(sessionId); }
+
+    public Player find(StompHeaderAccessor accessor) {
+        return find((String) accessor.getSessionAttributes().get(SESSION_ATTR));
+    }
 
     public Player save(String sessionId, Player player) {
         authorizePlayer(player.getUsername(), null);

@@ -16,9 +16,8 @@ import java.util.stream.Collectors;
 @CrossOrigin
 @RequestMapping("/api/players")
 @RestController
-public class PlayerController {
-    private static final String SESSION_ATTR = "HTTPSESSIONID";
-
+public class PlayerController
+{
     private final PlayerService playerService;
     private final GameService gameService;
     private final RandomDataGenerator generator;
@@ -37,9 +36,7 @@ public class PlayerController {
 
     @SubscribeMapping("/game.cards")
     public Collection<PresentableCard> playerCards(StompHeaderAccessor accessor) {
-        String sessionId = (String) accessor.getSessionAttributes().get(SESSION_ATTR);
-
-        return playerService.find(sessionId).cardsOnHand().stream()
+        return playerService.find(accessor).cardsOnHand().stream()
                 .map(card -> PresentableCard.fromCard(card, gameService.currentCard()))
                 .collect(Collectors.toList());
     }
@@ -48,7 +45,7 @@ public class PlayerController {
     public Player create(@RequestParam(value = "username", defaultValue = "", required = false) String username,
                          @RequestParam(value = "password", required = false) String password,
                          HttpServletRequest request, Principal principal) {
-        if (principal == null)
+        if ( principal == null )
             return authorizeAndStore(generateUsernameIfEmpty(username), password, request.getSession().getId());
         else
             return playerService.find(request.getSession().getId());

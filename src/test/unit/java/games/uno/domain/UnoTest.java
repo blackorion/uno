@@ -13,9 +13,11 @@ import games.uno.exceptions.WrongMoveException;
 import games.uno.testutils.NonRandomDeckFactory;
 import games.uno.util.DeckFactory;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -82,15 +84,15 @@ public class UnoTest
     public void PlayerCanPlayACardWithSameColorOrValue() {
         uno.addPlayer(PLAYER_ONE);
         uno.start();
-        uno.playerPuts(new Card(CardValues.FOUR, CardColors.BLUE));
-        uno.playerPuts(new Card(CardValues.ONE, CardColors.BLUE));
+        uno.playerPlaysA(new Card(CardValues.FOUR, CardColors.BLUE));
+        uno.playerPlaysA(new Card(CardValues.ONE, CardColors.BLUE));
     }
 
     @Test(expected = WrongMoveException.class)
     public void PlayerCantPlayACardOtherColorOrValue() {
         uno.addPlayer(PLAYER_ONE);
         uno.start();
-        uno.playerPuts(new Card(CardValues.ONE, CardColors.BLUE));
+        uno.playerPlaysA(new Card(CardValues.ONE, CardColors.BLUE));
     }
 
     @Test
@@ -98,7 +100,7 @@ public class UnoTest
         uno.addPlayer(PLAYER_ONE);
         uno.addPlayer(PLAYER_TWO);
         uno.start();
-        uno.playerPuts(new Card(CardValues.FOUR, CardColors.RED));
+        uno.playerPlaysA(new Card(CardValues.FOUR, CardColors.RED));
 
         assertThat(uno.getCurrentPlayer(), is(PLAYER_TWO));
     }
@@ -111,7 +113,35 @@ public class UnoTest
     }
 
     @Test
-    public void afterGameHasFinished_ReturnToDefault() {
+    public void PlayerPullsACardFromDeck_PlayerCanFinishHisMove() {
+        uno.addPlayer(PLAYER_ONE);
+        uno.start();
+        uno.playerDrawsFromDeck();
+
+        assertFalse(PLAYER_ONE.hasToMakeAMove());
+    }
+
+    @Test
+    public void PlayerDrawsACard_CanPlayTheDrawedCard() {
+        uno.addPlayer(PLAYER_ONE);
+        uno.start();
+        uno.playerDrawsFromDeck();
+
+        uno.playerPlaysA(new Card(CardValues.FIVE, CardColors.RED));
+    }
+
+    @Test(expected = WrongMoveException.class)
+    @Ignore
+    public void PlayerDrawsACard_CanPlayOtherThanDrawedCard() {
+        uno.addPlayer(PLAYER_ONE);
+        uno.start();
+        uno.playerDrawsFromDeck();
+
+        uno.playerPlaysA(new Card(CardValues.SEVEN, CardColors.BLUE));
+    }
+
+    @Test
+    public void AfterGameHasFinished_ReturnToDefaults() {
         uno.addPlayer(PLAYER_ONE);
         uno.start();
         uno.finish();

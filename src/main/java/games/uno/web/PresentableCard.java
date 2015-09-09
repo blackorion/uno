@@ -1,14 +1,17 @@
 package games.uno.web;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import games.uno.domain.cards.Card;
 import games.uno.domain.cards.CardColors;
 import games.uno.domain.cards.CardValues;
 
 public class PresentableCard
 {
-    private final CardValues value;
-    private final CardColors color;
-    private final boolean isPlayable;
+    private CardValues value;
+    private CardColors color;
+    private boolean isPlayable;
+
+    public PresentableCard() { }
 
     public PresentableCard(CardValues value, CardColors color, boolean isPlayable) {
         this.value = value;
@@ -26,6 +29,11 @@ public class PresentableCard
 
     public boolean isPlayable() {
         return isPlayable;
+    }
+
+    @JsonIgnore
+    public Card getCard() {
+        return new Card(value, color);
     }
 
     public static PresentableCard fromCard(Card card, Card topCard) {

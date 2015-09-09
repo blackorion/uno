@@ -2,13 +2,13 @@ package games.uno.domain.game;
 
 import games.uno.domain.cards.AbstractCardHolder;
 import games.uno.domain.cards.Card;
-
 import java.util.List;
 
 public class Player extends AbstractCardHolder
 {
     private Long id;
     private String username;
+    private boolean hasToMakeAMove = false;
 
     public Player(String username) { this.username = username; }
 
@@ -31,4 +31,16 @@ public class Player extends AbstractCardHolder
 
     @Override
     public String toString() { return username; }
+
+    public boolean hasToMakeAMove() {
+        return hasToMakeAMove;
+    }
+
+    public void shouldMakeAMove() {
+        hasToMakeAMove = true;
+    }
+
+    public void finishedHisMove() {
+        hasToMakeAMove = false;
+    }
 }

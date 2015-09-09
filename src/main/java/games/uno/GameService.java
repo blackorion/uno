@@ -46,6 +46,14 @@ public class GameService
         return game.currentPlayedCard();
     }
 
+    public void playCard(Player player, Card card) {
+        if ( player != game.getCurrentPlayer() )
+            return;
+
+        game.playerPlaysA(card);
+        informer.sendHandToAllPlayers(currentCard());
+    }
+
     public GameInfoMessage getInfo() {
         return new GameInfoMessage(
                 game.state(),

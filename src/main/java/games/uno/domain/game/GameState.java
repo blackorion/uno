@@ -7,12 +7,12 @@ public enum GameState
 {
     RUNNING(true) {
         @Override
-        public void start(Uno game) {
+        void start(Uno game) {
             throw new GameAlreadyStartedException();
         }
 
         @Override
-        public void finish(Uno game) {
+        void finish(Uno game) {
             game.setState(GameState.NOT_RUNNING);
             game.flush();
         }
@@ -20,7 +20,7 @@ public enum GameState
 
     NOT_RUNNING(false) {
         @Override
-        public void start(Uno game) {
+        void start(Uno game) {
             if ( !game.hasPlayers() )
                 throw new NoUsersInTheGameException();
 
@@ -28,12 +28,13 @@ public enum GameState
                 for ( int i = 0; i < 7; i++ )
                     player.takeCardFrom(game.getBankDeck());
 
-            game.moveCardToPlayDeck();
+            game.flipACard();
+            game.getCurrentPlayer().shouldMakeAMove();
             game.setState(RUNNING);
         }
 
         @Override
-        public void finish(Uno game) {
+        void finish(Uno game) {
 
         }
     };
@@ -48,7 +49,7 @@ public enum GameState
         return isRunning;
     }
 
-    public abstract void start(Uno game);
+    abstract void start(Uno game);
 
-    public abstract void finish(Uno game);
+    abstract void finish(Uno game);
 }

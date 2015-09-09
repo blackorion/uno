@@ -1,10 +1,31 @@
 package games.uno.web.messages;
 
+import games.uno.GameService;
+
 public class GameControlMessage
 {
-    private String action;
+    private GameAction action;
 
-    public String getAction() {
+    public GameAction getAction() {
         return action;
+    }
+
+    public enum GameAction
+    {
+        START {
+            @Override
+            public void invoke(GameService service) {
+                service.startNewGame();
+            }
+        },
+
+        STOP {
+            @Override
+            public void invoke(GameService service) {
+                service.stopCurrentGame();
+            }
+        };
+
+        public abstract void invoke(GameService service);
     }
 }
