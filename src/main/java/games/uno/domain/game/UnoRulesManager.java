@@ -1,6 +1,7 @@
 package games.uno.domain.game;
 
 import games.uno.domain.cards.Card;
+import games.uno.domain.cards.CardColors;
 import games.uno.domain.cards.CardValues;
 import games.uno.exceptions.IllegalTurnEndException;
 import games.uno.exceptions.WrongMoveException;
@@ -24,6 +25,9 @@ public class UnoRulesManager implements RulesManager {
     public void cardPlayed(Card card) {
         if (!card.isPlayable(game.currentPlayedCard()))
             throw new WrongMoveException(game.currentPlayedCard(), card);
+
+        if (card.isWild() && card.getColor() == CardColors.DARK)
+            throw new WrongMoveException("Color not picked");
 
         if (lastDrawnCard != null && card != lastDrawnCard)
             throw new WrongMoveException(game.currentPlayedCard(), card);

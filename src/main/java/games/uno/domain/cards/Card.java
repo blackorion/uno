@@ -11,16 +11,15 @@ public class Card {
 
     public CardValues getValue() { return value; }
 
-    public CardColors getColor() {
-        return color;
-    }
+    public CardColors getColor() { return color; }
 
     public boolean isPlayable(Card topCard) {
-        return topCard != null
-                && (getColor() == CardColors.DARK
-                || (topCard.getColor() == getColor() || topCard.getValue() == getValue()));
-
+        return topCard != null && (isWild() || isMatchesDiscard(topCard));
     }
+
+    public boolean isWild() {return getValue() == CardValues.WILD || getValue() == CardValues.WILD_DRAW_FOUR;}
+
+    private boolean isMatchesDiscard(Card topCard) {return topCard.getColor() == getColor() || topCard.getValue() == getValue();}
 
     @Override
     public boolean equals(Object obj) {

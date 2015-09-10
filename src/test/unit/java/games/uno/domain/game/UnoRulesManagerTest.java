@@ -7,6 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import static org.junit.Assert.assertFalse;
 import static org.mockito.Mockito.*;
 
 public class UnoRulesManagerTest {
@@ -83,21 +84,28 @@ public class UnoRulesManagerTest {
     }
 
     @Test(expected = WrongMoveException.class)
-    public void PlayCard_PlayerPlaysCardWithOtherThenSelectedColorOnWildCard_ThrownException() {
+    public void PlayCard_CardWithOtherThenSelectedColorOnWildCard_ThrownException() {
         when(mockController.currentPlayedCard()).thenReturn(NonRandomDeckFactory.WILD_RED);
         manager.cardPlayed(NonRandomDeckFactory.ONE_BLUE);
     }
 
     @Test
-    public void PlayCard_PlayerPlaysWildCardOnWildCard_ValidMove() {
+    public void PlayCard_WildCardOnWildCard_ValidMove() {
         when(mockController.currentPlayedCard()).thenReturn(NonRandomDeckFactory.WILD_RED);
         manager.cardPlayed(NonRandomDeckFactory.WILD_BLUE);
     }
 
     @Test
-    public void PlayCard_PlayerPlaysCardWithSelectedColorOnWildCard_ValidMove() {
+    public void PlayCard_WithSelectedColorOnWildCard_ValidMove() {
         manager.cardPlayed(NonRandomDeckFactory.WILD_RED);
         manager.cardPlayed(NonRandomDeckFactory.ONE_RED);
+    }
+
+    @Test(expected = WrongMoveException.class)
+    public void PlayCard_WildWithoutColorSelected_ThrownException() {
+        when(mockController.currentPlayedCard()).thenReturn(NonRandomDeckFactory.ONE_RED);
+
+        manager.cardPlayed(NonRandomDeckFactory.WILD_DARK);
     }
 
     @Test

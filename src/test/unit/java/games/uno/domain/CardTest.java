@@ -3,6 +3,7 @@ package games.uno.domain;
 import games.uno.domain.cards.Card;
 import games.uno.domain.cards.CardColors;
 import games.uno.domain.cards.CardValues;
+import games.uno.testutils.NonRandomDeckFactory;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -23,7 +24,8 @@ public class CardTest
 
     @Test
     public void DarkCardIsPlayableOnAnyCard() {
-        assertTrue(new Card(CardValues.WILD, CardColors.DARK).isPlayable(new Card(CardValues.ONE, CardColors.RED)));
-        assertTrue(new Card(CardValues.WILD_DRAW_FOUR, CardColors.DARK).isPlayable(new Card(CardValues.ONE, CardColors.RED)));
+        assertTrue(NonRandomDeckFactory.WILD_RED.isPlayable(NonRandomDeckFactory.ONE_RED));
+        assertTrue(NonRandomDeckFactory.WILD_BLUE.isPlayable(NonRandomDeckFactory.EIGHT_RED));
+        assertTrue(NonRandomDeckFactory.WILD_DRAW_FOUR_BLUE.isPlayable(NonRandomDeckFactory.EIGHT_RED));
     }
 }
