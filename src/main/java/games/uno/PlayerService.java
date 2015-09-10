@@ -37,12 +37,10 @@ public class PlayerService
     }
 
     public Player save(String sessionId, Player player) {
-        authorizePlayer(player.getUsername(), null);
-
         return repository.saveForSession(sessionId, player);
     }
 
-    private LoginStatus authorizePlayer(String username, String password) {
+    public LoginStatus authorizePlayer(String username, String password) {
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(username, password);
         Authentication auth = authenticationManager.authenticate(token);
         SecurityContextHolder.getContext().setAuthentication(auth);

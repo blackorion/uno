@@ -8,9 +8,9 @@ public class GameTable
 {
     private static final int MAX_PLAYERS = 15;
     private final BidirectionalQueue<Player> queue = new BidirectionalQueue<>();
-    private final Uno game;
+    private final UnoGameFacade game;
 
-    public GameTable(Uno game) {
+    public GameTable(UnoGameFacade game) {
         this.game = game;
     }
 
@@ -51,5 +51,9 @@ public class GameTable
 
     public void nextTurn() {
         queue.next();
+    }
+
+    public void changeDirection() {
+        queue.changeDirection();
     }
 }

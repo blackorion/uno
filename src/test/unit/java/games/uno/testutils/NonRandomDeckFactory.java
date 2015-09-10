@@ -18,6 +18,14 @@ public class NonRandomDeckFactory extends RandomDeckFactory {
     public static final Card NINE_RED = new Card(CardValues.NINE, CardColors.RED);
     public static final Card ZERO_RED = new Card(CardValues.ZERO, CardColors.RED);
 
+    public static final Card REVERSE_RED = new Card(CardValues.REVERSE, CardColors.RED);
+    public static final Card SKIP_RED = new Card(CardValues.SKIP, CardColors.RED);
+    public static final Card DRAW_TWO_RED = new Card(CardValues.DRAW_TWO, CardColors.RED);
+
+    public static final Card ONE_BLUE = new Card(CardValues.ONE, CardColors.BLUE);
+    public static final Card TWO_BLUE = new Card(CardValues.TWO, CardColors.BLUE);
+
+
     @Override
     public Deck generate() {
         initCards();
@@ -47,4 +55,5 @@ public class NonRandomDeckFactory extends RandomDeckFactory {
                 .add(NINE_RED)
                 .add(ZERO_RED);
     }
+
 }

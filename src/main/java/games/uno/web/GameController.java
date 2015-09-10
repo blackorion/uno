@@ -2,6 +2,7 @@ package games.uno.web;
 
 import games.uno.GameService;
 import games.uno.PlayerService;
+import games.uno.domain.game.Player;
 import games.uno.web.messages.ApplicationErrorMessage;
 import games.uno.web.messages.GameControlMessage;
 import games.uno.web.messages.GameInfoMessage;
@@ -47,6 +48,15 @@ public class GameController
     @SendTo("/topic/game.info")
     public GameInfoMessage playCard(PlayCardEventMessage event, StompHeaderAccessor accessor) {
         gameService.playCard(playerService.find(accessor), event.card.getCard());
+
+        return gameService.getInfo();
+    }
+
+    @MessageMapping("/game.drawcard")
+    @SendTo("/topic/game.info")
+    public GameInfoMessage drawCard(StompHeaderAccessor accessor) {
+        Player player = playerService.find(accessor);
+        gameService.drawCard(player);
 
         return gameService.getInfo();
     }

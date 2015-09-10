@@ -4,7 +4,9 @@ import games.uno.GameService;
 import games.uno.PlayerService;
 import games.uno.domain.game.Player;
 import games.uno.util.RandomDataGenerator;
+import games.uno.web.messages.PlayerActionMessage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.annotation.SubscribeMapping;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.web.bind.annotation.*;
@@ -29,9 +31,17 @@ public class PlayerController
         this.generator = generator;
     }
 
+    @MessageMapping("/player.changename")
+    public Player changeName(PlayerActionMessage action, StompHeaderAccessor accessor) {
+        Player player = playerService.find(accessor);
+        player.setName(action.message);
+
+        return player;
+    }
+
     @SubscribeMapping("/game.players")
     public Collection<Player> retrievePlayers() {
-        return playerService.findAll();
+        return gameService.players();
     }
 
     @SubscribeMapping("/game.cards")
@@ -45,14 +55,21 @@ public class PlayerController
     public Player create(@RequestParam(value = "username", defaultValue = "", required = false) String username,
                          @RequestParam(value = "password", required = false) String password,
                          HttpServletRequest request, Principal principal) {
-        if ( principal == null )
-            return authorizeAndStore(generateUsernameIfEmpty(username), password, request.getSession().getId());
-        else
-            return playerService.find(request.getSession().getId());
+        if ( principal != null ) {
+            Player player = playerService.find(request.getSession().getId());
+
+            if ( player != null )
+                return player;
+        }
+
+        return authorizeAndStore(generateUsernameIfEmpty(username), password, request.getSession().getId());
     }
 
     private Player authorizeAndStore(String username, String password, String sessionId) {
-        return playerService.save(sessionId, new Player(username));
+        Player player = new Player(username);
+        playerService.authorizePlayer(player.getName(), null);
+
+        return playerService.save(sessionId, player);
     }
 
     public String generateUsernameIfEmpty(String username) {

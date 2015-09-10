@@ -11,4 +11,8 @@ public class RandomDataGenerator
     public String name() {
         return generator.person().fullName();
     }
+
+    public String login() {
+        return generator.person().middleName();
+    }
 }
