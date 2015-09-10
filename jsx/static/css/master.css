@@ -71,7 +71,7 @@ body {
 	background: url("/img/arrow_left.svg");
 	background-attachment: fixed;
 	background-position: 0px 0px;
-	animation: moveLeft 40s linear infinite reverse;
+	animation: moveRight 40s linear infinite reverse;
 }
 
 .glow {
@@ -117,27 +117,43 @@ body {
 	background: #F75D5D;
 }
 
+.worst {
+	background: #BBBBBB;
+}
+
+.worst:hover {
+	background: #DDDDDD;
+}
+
 #menubar {
 	background: #9E6D5C;
 }
 
 .hand-name-active {
 	background: #78D04C;
+	color: white;
 }
 
 .hand-name-inactive {
 	background: #9E6D5C;
+	color: white;
+}
+
+.hand-name-edit {
+	color: black;
+	background: white;
 }
 
 .hand-name {
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
-	width: 200px;
+	width: 100%;
 	text-align: center;
 	height: 50px;
-	color: white;
 	font-weight: bold;
+	width: 170px;
+	margin-bottom: 25px;
 }
 
 #deck {
@@ -153,4 +169,44 @@ body {
 
 #cards-left strong {
 	font-size: 24px;
+}
+
+#new-card {
+	width: 82px;
+	height: 125px;
+	border-style: solid;
+	border-width: 1px;
+	display: flex;
+	justify-content: center;
+	flex-direction: column;
+	text-align: center;
+	border-radius: 15px;
+	font-size: 20px;
+	color: white;
+	border-color: white;
+	float: left;
+	position:absolute;
+	margin-left: -105px;
+}
+
+#new-card:hover {
+	background: #BFE8B1;
+	cursor: pointer;
+}
+
+.handhand {
+	width: 50px;
+	height: 50px;
+	background: #44B1D0;
+	color: white;
+	font-size: 25px;
+	float: right;
+	position: absolute;
+	border-radius: 25px;
+	right: -25px;
+	bottom: 0;
+}
+
+.user-car {
+	position:relative;
 }

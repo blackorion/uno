@@ -2,7 +2,7 @@ export default class GameClient {
 	constructor(url){
 		this._url = url;
 	}
-	connect(){
+	_connect(){
 		this._socket = new SockJS(this._url+'/ws');
 		this._client = Stomp.over(this._socket);
 		this._client.debug = null;
@@ -25,16 +25,16 @@ export default class GameClient {
 			console.log('<<< WS '+chan,data);
 		});
 	}
-	subscribeSingle(chan, f){
+	_subscribeSingle(chan, f){
 		$(document).on('ws:ready',{},()=>{
 			this._client.subscribe(chan,(data)=>{
 				f(JSON.parse(data.body));
 			})
 		});
 	}
-	subscribe(chan, f){
-		this.subscribeSingle('/app/'+chan,f);
-		this.subscribeSingle('/topic/'+chan,f);
+	_subscribe(chan, f){
+		this._subscribeSingle('/app/'+chan,f);
+		this._subscribeSingle('/topic/'+chan,f);
 	}
 	_ajaxWithSession(url,methodx,f){
 		$.ajax({
@@ -49,29 +49,39 @@ export default class GameClient {
 	}
 
 	// Events
-	setStatusUpdateCallback(f){
-		this.subscribe('game.info',f);
+	_setStatusUpdateCallback(f){
+		this._subscribe('game.info',f);
 	}
-	setUserUpdateCallback(f){
-		this.subscribe('game.players',f);
+	_setUserUpdateCallback(f){
+		this._subscribe('game.players',f);
 	}
-	setUserHandUpdateCallback(f){
-		this.subscribeSingle('/app/game.cards',f);
-		this.subscribeSingle('/user/topic/game.cards',f);
+	_setUserHandUpdateCallback(f){
+		this._subscribeSingle('/app/game.cards',f);
+		this._subscribeSingle('/user/topic/game.cards',f);
 	}
 
 	// Actions
 	startGame(f){
+		console.log('>>> WS START GAME');
 		this._client.send('/app/game.control',{},JSON.stringify({action:'START'}));
 	}
-	currentUser(f){
+	_greetServer(f){
 		this._ajaxWithSession('/api/players/me','GET',f);
 	}
 	stopGame(f){
+		console.log('>>> WS STOP GAME');
 		this._client.send('/app/game.control',{},JSON.stringify({action:'STOP'}));
 	}
 	playCard(card_){
 		console.log('>>> WS SENDING',JSON.stringify(card_));
 		this._client.send('/app/game.playcard',{},JSON.stringify({'card':card_}));
+	}
+	drawCard(){
+		console.log('>>> WS DRAW CARD');
+		this._client.send('/app/game.drawcard',{},JSON.stringify({}));
+	}
+	setUserName(newName){
+		console.log('>>> WS NEW NAME',newName);
+		this._client.send('/app/player.changename',{},JSON.stringify({action:'CHANGE_NAME',message:newName}));
 	}
 }

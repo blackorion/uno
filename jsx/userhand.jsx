@@ -1,5 +1,4 @@
 import Card from './card';
-import * as constants from './constants';
 
 export default class UserHand extends React.Component {
 	constructor(props) {
@@ -12,12 +11,9 @@ export default class UserHand extends React.Component {
 		});
 	}
 	_synthCards(){
-		let user = this.props.board.currentUser;
-		if (user.hand && user.hand.length > 0){
-			return user.hand.map((cardFromHand,i)=>{
-				let card = jQuery.extend(true, {}, cardFromHand);
-				if(!this.props.board.isUsersTurn())
-					card.playable = false;
+		let hand = this.props.board.currentUser.hand.reverse();
+		if (hand.length > 0){
+			return hand.map((card,i)=>{
 				if(card.playable)
 					return <Card key={i} action={this.props.board.playCard.bind(this.props.board)} data={card} />;
 				return <Card key={i} data={card} />;
@@ -26,8 +22,7 @@ export default class UserHand extends React.Component {
 		return <p>You don't have any cards.</p>;
 	}
 	render(){
-		let status = this.props.board.status;
-		if(status && status.state == constants.GAME_RUNNING){
+		if(this.props.board.isGameRunning()){
 			return <div id='user-hand' className='center-flex-row'>
 				{this._synthCards()}
 			</div>;

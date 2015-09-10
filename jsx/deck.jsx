@@ -8,13 +8,21 @@ export default class Deck extends React.Component {
 			this.forceUpdate();
 		});
 	}
+	_synthDrawCard(){
+		if(this.props.board.isUsersTurn())
+			return <div onClick={this.props.board.drawCard.bind(this.props.board)} id="new-card">
+				Draw
+			</div>;
+	}
 	render() {
 		let status = this.props.board.status;
-		if(status && status.state == constants.GAME_RUNNING)
+		if(this.props.board.isGameRunning()){
 			return <div>
+				{this._synthDrawCard()}
 				<Card data={status.topCard} />
 				<span id='cards-left'>Cards left:<br/><strong>{status.cardsInBank}</strong></span>
 			</div>;
+		}
 		return false;
 	}
 }

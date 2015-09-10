@@ -1,25 +1,28 @@
-export class User {
-	constructor(idx,name_){
+export default class User {
+	constructor(idx,board){
 		this._id = idx;
-		this._name = name_;
+		this._hand = [];
+		this._board = board;
 	}
 	get id(){
 		return this._id;
 	}
-	get name(){
-		return this._name;
-	}
-}
-
-export class CurrentUser extends User {
-	constructor(idx,name_){
-		super(idx,name_);
-		this._hand = [];
-	}
 	get hand(){
-		return this._hand;
+		return this._hand.map((cardFromHand)=>{
+			let card = jQuery.extend(true, {}, cardFromHand);
+			if(!this._board.isUsersTurn())
+				card.playable = false;
+			return card;
+		});
 	}
 	set hand(newHand){
 		this._hand = newHand;
+	}
+	get name(){
+		return this._board.userById(this._id).name;
+	}
+	set name(newName){
+		this._board.setUserName(newName);
+		$(document).trigger('update:current_user');
 	}
 }

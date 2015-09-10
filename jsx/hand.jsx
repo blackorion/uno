@@ -6,16 +6,47 @@ export default class Hand extends React.Component{
 		$(document).on('update:game_status',{},()=>{
 			this.forceUpdate();
 		});
+		this.state = {
+			editable:false
+		};
 	}
 	_synthHandNameClassName(){
-		if(this.props.board.status && this.props.board.status.currentPlayerId == this.props.user.id)
-			return 'hand-name hand-name-active';
-		return 'hand-name hand-name-inactive';
+		let cls = 'hand-name '
+		if(!this.state.editable){
+			if(this.props.board.status && this.props.board.status.currentPlayerId == this.props.user.id)
+				cls += 'hand-name-active';
+			else cls += 'hand-name-inactive';
+		} else cls += 'hand-name-edit';
+		return cls
+	}
+	_commitUserNameChange(event){
+		let newName = event.target.innerText;
+		if(newName.length > 0) this.props.board.currentUser.name = newName;
+		this.setState({editable:false});
+	}
+	_setEditable(){
+		if(this.props.user.id == this.props.board.currentUser.id)
+			this.setState({editable:true});
+	}
+	_synthNamePlate(){
+		if(this.state.editable){
+			return <div contentEditable='true'
+				className={this._synthHandNameClassName()}
+				dangerouslySetInnerHTML={{__html: this.props.user.name}}
+				onBlur={this._commitUserNameChange.bind(this)}></div>;
+		} else{
+			return <div onDoubleClick={this._setEditable.bind(this)}
+				className={this._synthHandNameClassName()}>{this.props.user.name}</div>;
+		}
+
 	}
 	render(){
-		return <div>
-			<div className={this._synthHandNameClassName()}>{this.props.user.name}</div>
-		</div>;
+		return <div className='user-car'>
+			<div className='handhand center-flex-row'>
+				{this.props.user.cardsOnHand}
+			</div>
+			{this._synthNamePlate()}
+		</div>
 	}
 }
 
