@@ -7,4 +7,8 @@ public interface RulesManager
     void gameStarted();
 
     void cardPlayed(Card card);
+
+    void gameStopped();
+
+    void playerDraws();
 }

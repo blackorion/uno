@@ -7,16 +7,16 @@ import java.util.List;
 public class Player extends AbstractCardHolder
 {
     private Long id;
-    private String username;
-    private boolean hasToMakeAMove = false;
+    private String name;
+    private boolean shouldPlay = false;
 
-    public Player(String username) { this.username = username; }
+    public Player(String name) { this.name = name; }
 
     public void setId(long id) { this.id = id; }
 
     public Long getId() { return id; }
 
-    public String getUsername() { return username; }
+    public String getName() { return name; }
 
     public List<Card> cardsOnHand() { return cards; }
 
@@ -30,17 +30,25 @@ public class Player extends AbstractCardHolder
     }
 
     @Override
-    public String toString() { return username; }
+    public String toString() { return name; }
 
-    public boolean hasToMakeAMove() {
-        return hasToMakeAMove;
+    public boolean isShouldPlay() {
+        return shouldPlay;
+    }
+
+    public int getCardsOnHand() {
+        return remains();
     }
 
     public void shouldMakeAMove() {
-        hasToMakeAMove = true;
+        shouldPlay = true;
     }
 
     public void finishedHisMove() {
-        hasToMakeAMove = false;
+        shouldPlay = false;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

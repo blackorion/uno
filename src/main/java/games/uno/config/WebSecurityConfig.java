@@ -9,31 +9,18 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
-import java.util.List;
 
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter
 {
-    private static final Object SECURE_ADMIN_PASSWORD = "rockandroll";
-
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .csrf().disable()
-                .formLogin()
-                .loginPage("/login.html")
-                .defaultSuccessUrl("/index.html")
-                .permitAll()
-                .and()
-                .logout()
-                .logoutSuccessUrl("/login.html")
-                .permitAll()
-                .and()
                 .authorizeRequests()
-                .antMatchers("/api/**", "/login.html").permitAll()
+                .antMatchers("/api/**").permitAll()
                 .anyRequest().authenticated();
     }
 
@@ -50,10 +37,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter
             public Authentication authenticate(Authentication authentication) {
                 UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) authentication;
 
-                List<GrantedAuthority> authorities = SECURE_ADMIN_PASSWORD.equals(token.getCredentials())
-                        ? AuthorityUtils.createAuthorityList("ROLE_ADMIN") : null;
-
-                return new UsernamePasswordAuthenticationToken(token.getName(), token.getCredentials(), authorities);
+                return new UsernamePasswordAuthenticationToken(token.getName(), token.getCredentials(), AuthorityUtils.createAuthorityList());
             }
         });
     }

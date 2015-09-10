@@ -3,7 +3,7 @@ package games.uno.domain;
 import games.uno.domain.game.GameState;
 import games.uno.domain.game.GameTable;
 import games.uno.domain.game.Player;
-import games.uno.domain.game.Uno;
+import games.uno.domain.game.UnoGameFacade;
 import games.uno.exceptions.PlayerAlreadyInTheGameException;
 import games.uno.exceptions.PlayerLimitForGameException;
 import org.junit.Test;
@@ -12,7 +12,7 @@ import org.mockito.Mockito;
 import static org.mockito.Mockito.when;
 
 public class GameTableTest {
-    private final Uno gameMock = Mockito.mock(Uno.class);
+    private final UnoGameFacade gameMock = Mockito.mock(UnoGameFacade.class);
     GameTable table = new GameTable(gameMock);
 
     @Test(expected = PlayerLimitForGameException.class)

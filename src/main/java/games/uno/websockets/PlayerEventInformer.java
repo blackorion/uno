@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
 public class PlayerEventInformer
@@ -27,7 +26,11 @@ public class PlayerEventInformer
     }
 
     public void sendPlayerHand(Player player, Card onTop) {
-        List<PresentableCard> cards = player.cardsOnHand().stream().map(card -> PresentableCard.fromCard(card, onTop)).collect(Collectors.toList());
-        messagingTemplate.convertAndSendToUser(player.getUsername(), "/topic/game.cards", cards);
+        List<PresentableCard> cards = PresentableCard.fromCollection(player.cardsOnHand(), onTop);
+        messagingTemplate.convertAndSendToUser(player.getName(), "/topic/game.cards", cards);
+    }
+
+    public void sendPlayersListToAll(List<Player> players) {
+        messagingTemplate.convertAndSend("/topic/game.players", players);
     }
 }
