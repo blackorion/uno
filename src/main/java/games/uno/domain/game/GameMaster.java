@@ -2,10 +2,11 @@ package games.uno.domain.game;
 
 import games.uno.domain.cards.Card;
 import games.uno.domain.cards.CardHolder;
+import games.uno.domain.cards.Deck;
 
 public interface GameMaster
 {
-    void endTurn();
+    void nextPlayer();
 
     Player currentPlayer();
 
@@ -13,15 +14,11 @@ public interface GameMaster
 
     void flipACard();
 
-    void playerDrawsFromDeck();
-
     void changeDirection();
 
     void setState(GameState state);
 
-    void setPlayerShouldMove();
-
-    CardHolder bankDeck();
+    void persuadePlayerToPlay();
 
     void setPlayerFinishedMove();
 
@@ -29,13 +26,21 @@ public interface GameMaster
 
     void stop();
 
-    void drawCard();
+    Card drawCard();
 
-    void playA(Card card);
+    void putInPlayDeck(Card card);
 
     void flush();
 
-    void eachPlayer(EachPlayerAction drawSevenCards);
-
     GameState state();
+
+    void giveEachPlayerCards(int number);
+
+    boolean isPlayerShouldPlay();
+
+    boolean deckIsEmpty();
+
+    void updateDeckFromPill();
+
+    int deckRemains();
 }

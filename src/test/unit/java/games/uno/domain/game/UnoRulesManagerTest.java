@@ -1,16 +1,15 @@
 package games.uno.domain.game;
 
+import games.uno.exceptions.IllegalTurnEndException;
 import games.uno.exceptions.WrongMoveException;
 import games.uno.testutils.NonRandomDeckFactory;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 
 import static org.mockito.Mockito.*;
 
-public class UnoRulesManagerTest
-{
+public class UnoRulesManagerTest {
     private GameMaster mockController = Mockito.mock(GameMaster.class);
     private RulesManager manager = new UnoRulesManager(mockController);
 
@@ -30,7 +29,7 @@ public class UnoRulesManagerTest
     public void OnGameStart_EachUserGets7CardsFromDeck() {
         manager.gameStarted();
 
-        verify(mockController, times(7)).playerDrawsFromDeck();
+        verify(mockController, times(1)).giveEachPlayerCards(7);
     }
 
     @Test(expected = WrongMoveException.class)
@@ -44,7 +43,7 @@ public class UnoRulesManagerTest
 
         manager.cardPlayed(NonRandomDeckFactory.ONE_RED);
 
-        verify(mockController, times(1)).playA(NonRandomDeckFactory.ONE_RED);
+        verify(mockController, times(1)).putInPlayDeck(NonRandomDeckFactory.ONE_RED);
     }
 
     @Test
@@ -58,7 +57,7 @@ public class UnoRulesManagerTest
     public void PlayCard_Playable_TurnEnds() {
         manager.cardPlayed(NonRandomDeckFactory.ONE_RED);
 
-        verify(mockController, times(1)).endTurn();
+        verify(mockController, times(1)).nextPlayer();
     }
 
     @Test
@@ -72,7 +71,7 @@ public class UnoRulesManagerTest
     public void PlayCard_SkipCard_NextPlayerSkipsTurn() {
         manager.cardPlayed(NonRandomDeckFactory.SKIP_RED);
 
-        verify(mockController, times(2)).endTurn();
+        verify(mockController, times(2)).nextPlayer();
     }
 
     @Test
@@ -80,7 +79,81 @@ public class UnoRulesManagerTest
         manager.cardPlayed(NonRandomDeckFactory.DRAW_TWO_RED);
 
         verify(mockController, times(2)).drawCard();
-        verify(mockController, times(2)).endTurn();
+        verify(mockController, times(2)).nextPlayer();
+    }
+
+    @Test(expected = WrongMoveException.class)
+    public void PlayCard_PlayerPlaysCardWithOtherThenSelectedColorOnWildCard_ThrownException() {
+        when(mockController.currentPlayedCard()).thenReturn(NonRandomDeckFactory.WILD_RED);
+        manager.cardPlayed(NonRandomDeckFactory.ONE_BLUE);
+    }
+
+    @Test
+    public void PlayCard_PlayerPlaysWildCardOnWildCard_ValidMove() {
+        when(mockController.currentPlayedCard()).thenReturn(NonRandomDeckFactory.WILD_RED);
+        manager.cardPlayed(NonRandomDeckFactory.WILD_BLUE);
+    }
+
+    @Test
+    public void PlayCard_PlayerPlaysCardWithSelectedColorOnWildCard_ValidMove() {
+        manager.cardPlayed(NonRandomDeckFactory.WILD_RED);
+        manager.cardPlayed(NonRandomDeckFactory.ONE_RED);
+    }
+
+    @Test
+    public void PlayerDrawsACard_CanPlayTheDrawnCard() {
+        when(mockController.drawCard()).thenReturn(NonRandomDeckFactory.ONE_RED);
+        manager.playerDraws();
+
+        manager.cardPlayed(NonRandomDeckFactory.ONE_RED);
+    }
+
+    @Test(expected = WrongMoveException.class)
+    public void PlayerDrawsACard_PlaysOtherThanDrawnCard_ThrownException() {
+        when(mockController.drawCard()).thenReturn(NonRandomDeckFactory.FIVE_RED);
+        manager.playerDraws();
+
+        manager.cardPlayed(NonRandomDeckFactory.ONE_RED);
+    }
+
+    @Test
+    public void PlayerDrawsCard_DeckIsEmpty_PillShuffledToNewDeck() {
+        when(mockController.deckIsEmpty()).thenReturn(true);
+
+        manager.playerDraws();
+
+        verify(mockController, times(1)).updateDeckFromPill();
+    }
+
+    @Test(expected = WrongMoveException.class)
+    public void PlayerDrawsACard_Twice_ThrowsException() {
+        when(mockController.drawCard()).thenReturn(NonRandomDeckFactory.FIVE_RED);
+        manager.playerDraws();
+        manager.playerDraws();
+    }
+
+    @Test
+    public void PlaysACard_AfterPreviousPlayerDrawn_CanPlayAnyPlayableCard() {
+        when(mockController.drawCard()).thenReturn(NonRandomDeckFactory.FIVE_RED);
+        manager.playerDraws();
+        manager.entTurn();
+        manager.cardPlayed(NonRandomDeckFactory.ONE_RED);
+    }
+
+    @Test(expected = IllegalTurnEndException.class)
+    public void TurnEnd_PlayerHasNotMoved_ThrowsError() {
+        when(mockController.isPlayerShouldPlay()).thenReturn(true);
+
+        manager.entTurn();
+    }
+
+    @Test
+    public void TurnEnd_PlayerPlayed_MoveTurnToNextPlayerAndPersuadeHimToPlay() {
+        when(mockController.isPlayerShouldPlay()).thenReturn(false);
+        manager.entTurn();
+
+        verify(mockController, times(1)).nextPlayer();
+        verify(mockController, times(1)).persuadePlayerToPlay();
     }
 
     @Test
@@ -88,19 +161,5 @@ public class UnoRulesManagerTest
         manager.gameStopped();
 
         verify(mockController, times(1)).flush();
-    }
-
-    @Test
-    public void PlayerDrawsACard_CanPlayTheDrawnCard() {
-        when(mockController.currentPlayedCard()).thenReturn(NonRandomDeckFactory.EIGHT_RED);
-        manager.playerDraws();
-
-        manager.cardPlayed(NonRandomDeckFactory.ONE_RED);
-    }
-
-    @Test(expected = WrongMoveException.class)
-    @Ignore
-    public void PlayerDrawsACard_CanPlayOtherThanDrawnCard() {
-
     }
 }

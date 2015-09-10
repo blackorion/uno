@@ -14,7 +14,7 @@ public class UnoGameFacade implements CardGame
     private final UnoGameMaster master;
 
     public UnoGameFacade(DeckFactory deckFactory) {
-        this.table = new GameTable(this);
+        table = new GameTable(this);
         master = new UnoGameMaster(deckFactory.generate(), new Deck(), table);
         rulesManager = new UnoRulesManager(master);
     }
@@ -39,11 +39,7 @@ public class UnoGameFacade implements CardGame
 
     @Override
     public void endTurn() {
-        if ( currentPlayer().isShouldPlay())
-            throw new IllegalTurnEndException();
-
-        table.nextTurn();
-        currentPlayer().shouldMakeAMove();
+        rulesManager.entTurn();
     }
 
     @Override
@@ -67,7 +63,7 @@ public class UnoGameFacade implements CardGame
     }
 
     public int bankRemains() {
-        return master.bankDeck().remains();
+        return master.deckRemains();
     }
 
     public List<Player> players() {

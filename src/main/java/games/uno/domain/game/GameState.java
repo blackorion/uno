@@ -19,7 +19,7 @@ public enum GameState
     NOT_RUNNING(false) {
         @Override
         void start(GameMaster game) {
-            game.setPlayerShouldMove();
+            game.persuadePlayerToPlay();
             game.setState(RUNNING);
         }
 

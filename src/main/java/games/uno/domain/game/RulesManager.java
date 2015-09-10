@@ -11,4 +11,6 @@ public interface RulesManager
     void gameStopped();
 
     void playerDraws();
+
+    void entTurn();
 }

@@ -2,19 +2,17 @@ package games.uno.domain.game;
 
 import games.uno.domain.cards.AbstractCardHolder;
 import games.uno.domain.cards.Card;
-import games.uno.domain.cards.CardHolder;
 import games.uno.domain.cards.Deck;
 
-public class UnoGameMaster implements GameMaster
-{
-    private final Deck bankDeck;
-    private final Deck playDeck;
+public class UnoGameMaster implements GameMaster {
+    private final Deck deck;
+    private final Deck pill;
     private final GameTable table;
     private GameState state = GameState.NOT_RUNNING;
 
-    public UnoGameMaster(Deck bankDeck, Deck playDeck, GameTable gameTable) {
-        this.bankDeck = bankDeck;
-        this.playDeck = playDeck;
+    public UnoGameMaster(Deck deck, Deck pill, GameTable gameTable) {
+        this.deck = deck;
+        this.pill = pill;
         this.table = gameTable;
     }
 
@@ -25,17 +23,12 @@ public class UnoGameMaster implements GameMaster
 
     @Override
     public Card currentPlayedCard() {
-        return playDeck.showTopCard();
+        return pill.showTopCard();
     }
 
     @Override
     public void flipACard() {
-        playDeck.takeCardFrom(bankDeck);
-    }
-
-    @Override
-    public void playerDrawsFromDeck() {
-        table.currentPlayer().takeCardFrom(bankDeck);
+        pill.takeCardFrom(deck);
     }
 
     @Override
@@ -46,15 +39,10 @@ public class UnoGameMaster implements GameMaster
     @Override
     public void flush() {
         currentPlayer().finishedHisMove();
-        bankDeck.refill();
-        bankDeck.shuffle();
-        playDeck.empty();
+        deck.refill();
+        deck.shuffle();
+        pill.empty();
         table.players().forEach(AbstractCardHolder::empty);
-    }
-
-    @Override
-    public void eachPlayer(EachPlayerAction action) {
-        table.players().forEach(action::handle);
     }
 
     @Override
@@ -63,23 +51,49 @@ public class UnoGameMaster implements GameMaster
     }
 
     @Override
+    public void giveEachPlayerCards(int number) {
+        table.players().forEach(player -> {
+            for (int i = 0; i < number; i++)
+                player.takeCardFrom(deck);
+        });
+    }
+
+    @Override
+    public boolean isPlayerShouldPlay() {
+        return currentPlayer().isShouldPlay();
+    }
+
+    @Override
+    public void updateDeckFromPill() {
+        Card card = pill.drawFromTop();
+        deck.takeAllFrom(pill);
+        pill.empty();
+        pill.take(card);
+    }
+
+    @Override
+    public int deckRemains() {
+        return deck.remains();
+    }
+
+    @Override
+    public boolean deckIsEmpty() {
+        return deck.remains() == 0;
+    }
+
+    @Override
     public void setState(GameState state) {
         this.state = state;
     }
 
     @Override
-    public void setPlayerShouldMove() {
+    public void persuadePlayerToPlay() {
         table.currentPlayer().shouldMakeAMove();
     }
 
     @Override
-    public CardHolder bankDeck() {
-        return bankDeck;
-    }
-
-    @Override
-    public void drawCard() {
-        table.currentPlayer().takeCardFrom(bankDeck);
+    public Card drawCard() {
+        return table.currentPlayer().takeCardFrom(deck);
     }
 
     @Override
@@ -98,12 +112,12 @@ public class UnoGameMaster implements GameMaster
     }
 
     @Override
-    public void playA(Card card) {
-        playDeck.takeCardFrom(currentPlayer(), card);
+    public void putInPlayDeck(Card card) {
+        pill.takeCardFrom(currentPlayer(), card);
     }
 
     @Override
-    public void endTurn() {
+    public void nextPlayer() {
         table.nextTurn();
     }
 }

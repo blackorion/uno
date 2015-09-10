@@ -8,4 +8,8 @@ public class WrongMoveException extends RuntimeException {
     public WrongMoveException(Card currentCard, Card playedCard) {
         super("Can't play " + playedCard + " on top of " + currentCard);
     }
+
+    public WrongMoveException(String message) {
+        super(message);
+    }
 }

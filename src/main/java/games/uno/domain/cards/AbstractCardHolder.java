@@ -3,8 +3,7 @@ package games.uno.domain.cards;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AbstractCardHolder implements CardHolder
-{
+public class AbstractCardHolder implements CardHolder {
     protected List<Card> cards = new ArrayList<>();
     protected int index = 0;
 

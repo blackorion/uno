@@ -2,11 +2,12 @@ package games.uno.domain.game;
 
 import games.uno.domain.cards.Card;
 import games.uno.domain.cards.CardValues;
+import games.uno.exceptions.IllegalTurnEndException;
 import games.uno.exceptions.WrongMoveException;
 
-public class UnoRulesManager implements RulesManager
-{
+public class UnoRulesManager implements RulesManager {
     private final GameMaster game;
+    private Card lastDrawnCard;
 
     public UnoRulesManager(GameMaster game) {
         this.game = game;
@@ -21,22 +22,25 @@ public class UnoRulesManager implements RulesManager
 
     @Override
     public void cardPlayed(Card card) {
-        if ( !card.isPlayable(game.currentPlayedCard()) )
+        if (!card.isPlayable(game.currentPlayedCard()))
             throw new WrongMoveException(game.currentPlayedCard(), card);
 
-        game.playA(card);
+        if (lastDrawnCard != null && card != lastDrawnCard)
+            throw new WrongMoveException(game.currentPlayedCard(), card);
+
+        game.putInPlayDeck(card);
         handleCardAction(card);
         game.setPlayerFinishedMove();
-        game.endTurn();
+        game.nextPlayer();
     }
 
     private void handleCardAction(Card card) {
-        if ( card.getValue() == CardValues.REVERSE )
+        if (card.getValue() == CardValues.REVERSE)
             game.changeDirection();
-        else if ( card.getValue() == CardValues.SKIP )
-            game.endTurn();
-        else if ( card.getValue() == CardValues.DRAW_TWO ) {
-            game.endTurn();
+        else if (card.getValue() == CardValues.SKIP)
+            game.nextPlayer();
+        else if (card.getValue() == CardValues.DRAW_TWO) {
+            game.nextPlayer();
             game.drawCard();
             game.drawCard();
         }
@@ -50,20 +54,27 @@ public class UnoRulesManager implements RulesManager
 
     @Override
     public void playerDraws() {
-        game.drawCard();
+        if (lastDrawnCard != null)
+            throw new WrongMoveException("Can't draw more than one card in turn.");
+
+        lastDrawnCard = game.drawCard();
         game.setPlayerFinishedMove();
+
+        if (game.deckIsEmpty())
+            game.updateDeckFromPill();
+    }
+
+    @Override
+    public void entTurn() {
+        if (game.isPlayerShouldPlay())
+            throw new IllegalTurnEndException();
+
+        game.nextPlayer();
+        game.persuadePlayerToPlay();
+        lastDrawnCard = null;
     }
 
     private void eachPlayerGetsHand() {
-        game.eachPlayer(this::drawSevenCards);
-    }
-
-    private Player drawSevenCards(Player player) {
-        for ( int j = 0; j < 7; j++ )
-            game.playerDrawsFromDeck();
-
-        game.endTurn();
-
-        return player;
+        game.giveEachPlayerCards(7);
     }
 }
