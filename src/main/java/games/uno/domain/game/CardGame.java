@@ -2,8 +2,7 @@ package games.uno.domain.game;
 
 import games.uno.domain.cards.Card;
 
-public interface CardGame
-{
+public interface CardGame {
     void start();
 
     void finish();
@@ -16,7 +15,7 @@ public interface CardGame
 
     Card currentCard();
 
-    void playerDrawsFromDeck();
+    Card playerDrawsFromDeck();
 
     int playersSize();
 

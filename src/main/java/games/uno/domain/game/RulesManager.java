@@ -10,7 +10,7 @@ public interface RulesManager
 
     void gameStopped();
 
-    void playerDraws();
+    Card playerDraws();
 
     void endTurn();
 }

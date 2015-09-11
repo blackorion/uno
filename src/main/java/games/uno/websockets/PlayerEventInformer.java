@@ -7,11 +7,11 @@ import games.uno.web.PresentableCard;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
+
 import java.util.List;
 
 @Component
-public class PlayerEventInformer
-{
+public class PlayerEventInformer {
     private SimpMessagingTemplate messagingTemplate;
     private PlayerRepository playerRepository;
 
@@ -32,5 +32,9 @@ public class PlayerEventInformer
 
     public void sendPlayersListToAll(List<Player> players) {
         messagingTemplate.convertAndSend("/topic/game.players", players);
+    }
+
+    public void sendPlayerCardDrawn(Player player, Card card) {
+        messagingTemplate.convertAndSendToUser(player.getName(), "/topic/game.cards.drawn", card);
     }
 }

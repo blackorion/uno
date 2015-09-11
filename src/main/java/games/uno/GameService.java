@@ -56,9 +56,10 @@ public class GameService
         if ( player != game.currentPlayer() )
             return;
 
-        game.playerDrawsFromDeck();
+        Card card = game.playerDrawsFromDeck();
         informer.sendPlayerHand(player, currentCard());
         informer.sendPlayersListToAll(game.players());
+        informer.sendPlayerCardDrawn(player, card);
     }
 
     public void endTurn() {

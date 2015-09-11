@@ -18,7 +18,7 @@ public class UnoRulesManager implements RulesManager {
     @Override
     public void gameStarted() {
         game.start();
-        eachPlayerGetsHand();
+        game.giveEachPlayerCards(7);
         game.flipACard();
         handleFirstCardAction();
     }
@@ -92,7 +92,7 @@ public class UnoRulesManager implements RulesManager {
     }
 
     @Override
-    public void playerDraws() {
+    public Card playerDraws() {
         if (lastDrawnCard != null)
             throw new WrongMoveException("Can't draw more than one card in turn.");
 
@@ -104,6 +104,8 @@ public class UnoRulesManager implements RulesManager {
 
         if (noCardsToMakeMove())
             endTurn();
+
+        return lastDrawnCard;
     }
 
     private boolean noCardsToMakeMove() {
@@ -124,7 +126,4 @@ public class UnoRulesManager implements RulesManager {
         lastDrawnCard = null;
     }
 
-    private void eachPlayerGetsHand() {
-        game.giveEachPlayerCards(7);
-    }
 }

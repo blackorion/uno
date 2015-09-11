@@ -53,8 +53,8 @@ public class UnoGameFacade implements CardGame
     }
 
     @Override
-    public void playerDrawsFromDeck() {
-        rulesManager.playerDraws();
+    public Card playerDrawsFromDeck() {
+        return rulesManager.playerDraws();
     }
 
     @Override
