@@ -11,12 +11,14 @@ export default class Hand extends React.Component{
 		};
 	}
 	_synthHandNameClassName(){
-		let cls = 'hand-name '
+		let cls = 'hand-name'
 		if(!this.state.editable){
 			if(this.props.board.status && this.props.board.status.currentPlayerId == this.props.user.id)
-				cls += 'hand-name-active';
-			else cls += 'hand-name-inactive';
-		} else cls += 'hand-name-edit';
+				cls += ' hand-name-active';
+			if(this.props.user.id == this.props.board.currentUser.id)
+				cls += ' hand-name-self';
+			else cls += ' hand-name-other';
+		} else cls += ' hand-name-edit';
 		return cls
 	}
 	_commitUserNameChange(event){
@@ -40,11 +42,15 @@ export default class Hand extends React.Component{
 		}
 
 	}
-	render(){
-		return <div className='user-car'>
-			<div className='handhand center-flex-row'>
+	_synthCardsOnHand(){
+		if(this.props.user.cardsOnHand > 0)
+			return <div className='hand-name-off bluez handhand center-flex-row'>
 				{this.props.user.cardsOnHand}
-			</div>
+			</div>;
+	}
+	render(){
+		return <div className='pos-rel'>
+			{this._synthCardsOnHand()}
 			{this._synthNamePlate()}
 		</div>
 	}

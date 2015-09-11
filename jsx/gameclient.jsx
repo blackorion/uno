@@ -47,6 +47,9 @@ export default class GameClient {
 			success:f
 		});
 	}
+	_sendAction(actionx,datax){
+		this._client.send('/app/game.players.actions',{},JSON.stringify({action:actionx,data:datax}));
+	}
 
 	// Events
 	_setStatusUpdateCallback(f){
@@ -74,14 +77,17 @@ export default class GameClient {
 	}
 	playCard(card_){
 		console.log('>>> WS SENDING',JSON.stringify(card_));
-		this._client.send('/app/game.playcard',{},JSON.stringify({'card':card_}));
+		this._sendAction('PLAY_CARD',{card:card_});
 	}
 	drawCard(){
 		console.log('>>> WS DRAW CARD');
-		this._client.send('/app/game.drawcard',{},JSON.stringify({}));
+		this._sendAction('DRAW_CARD',{});
 	}
 	setUserName(newName){
-		console.log('>>> WS NEW NAME',newName);
-		this._client.send('/app/player.changename',{},JSON.stringify({action:'CHANGE_NAME',message:newName}));
+		console.log('>>> WS NEW NAME [NOOP]',newName);
+	}
+	endTurn(){
+		console.log('>>> WS END TURN');
+		this._sendAction('END_TURN',{});
 	}
 }
