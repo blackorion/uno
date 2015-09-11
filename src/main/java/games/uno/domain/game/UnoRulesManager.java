@@ -29,13 +29,13 @@ public class UnoRulesManager implements RulesManager {
         if (card.isWild() && card.getColor() == CardColors.DARK)
             throw new WrongMoveException("Color not picked");
 
-        if (lastDrawnCard != null && card != lastDrawnCard)
-            throw new WrongMoveException(game.currentPlayedCard(), card);
+        if (lastDrawnCard != null && !card.equals(lastDrawnCard))
+            throw new WrongMoveException("Only drawn card is playable");
 
         game.putInPlayDeck(card);
         handleCardAction(card);
         game.setPlayerFinishedMove();
-        game.nextPlayer();
+        endTurn();
     }
 
     private void handleCardAction(Card card) {
@@ -47,11 +47,18 @@ public class UnoRulesManager implements RulesManager {
             game.nextPlayer();
             game.drawCard();
             game.drawCard();
+        } else if (card.getValue() == CardValues.WILD_DRAW_FOUR) {
+            game.nextPlayer();
+            game.drawCard();
+            game.drawCard();
+            game.drawCard();
+            game.drawCard();
         }
     }
 
     @Override
     public void gameStopped() {
+        lastDrawnCard = null;
         game.stop();
         game.flush();
     }
@@ -66,10 +73,21 @@ public class UnoRulesManager implements RulesManager {
 
         if (game.deckIsEmpty())
             game.updateDeckFromPill();
+
+        if (noCardsToMakeMove())
+            endTurn();
+    }
+
+    private boolean noCardsToMakeMove() {
+        for (Card card : game.currentPlayer().cardsOnHand())
+            if (card.isPlayable(game.currentPlayedCard()))
+                return false;
+
+        return true;
     }
 
     @Override
-    public void entTurn() {
+    public void endTurn() {
         if (game.isPlayerShouldPlay())
             throw new IllegalTurnEndException();
 

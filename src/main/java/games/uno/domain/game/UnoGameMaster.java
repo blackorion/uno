@@ -67,6 +67,7 @@ public class UnoGameMaster implements GameMaster {
     public void updateDeckFromPill() {
         Card card = pill.drawFromTop();
         deck.takeAllFrom(pill);
+        deck.flush();
         pill.empty();
         pill.take(card);
     }

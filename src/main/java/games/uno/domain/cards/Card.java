@@ -9,17 +9,25 @@ public class Card {
         this.color = color;
     }
 
-    public CardValues getValue() { return value; }
+    public CardValues getValue() {
+        return value;
+    }
 
-    public CardColors getColor() { return color; }
+    public CardColors getColor() {
+        return color;
+    }
 
     public boolean isPlayable(Card topCard) {
         return topCard != null && (isWild() || isMatchesDiscard(topCard));
     }
 
-    public boolean isWild() {return getValue() == CardValues.WILD || getValue() == CardValues.WILD_DRAW_FOUR;}
+    public boolean isWild() {
+        return getValue() == CardValues.WILD || getValue() == CardValues.WILD_DRAW_FOUR;
+    }
 
-    private boolean isMatchesDiscard(Card topCard) {return topCard.getColor() == getColor() || topCard.getValue() == getValue();}
+    private boolean isMatchesDiscard(Card topCard) {
+        return topCard.getColor() == getColor() || topCard.getValue() == getValue();
+    }
 
     @Override
     public boolean equals(Object obj) {
@@ -27,6 +35,9 @@ public class Card {
             return false;
 
         Card other = (Card) obj;
+
+        if (isWild() && value == other.getValue() && (color == CardColors.DARK || other.getColor() == CardColors.DARK))
+            return true;
 
         return (value == other.value && color == other.color);
     }

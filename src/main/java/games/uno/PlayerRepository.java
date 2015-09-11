@@ -1,6 +1,7 @@
 package games.uno;
 
 import games.uno.domain.game.Player;
+
 import java.util.List;
 
 public interface PlayerRepository {
@@ -9,4 +10,6 @@ public interface PlayerRepository {
     List<Player> findAll();
 
     Player saveForSession(String id, Player player);
+
+    void deleteAll();
 }

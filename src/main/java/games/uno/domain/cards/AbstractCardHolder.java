@@ -14,7 +14,15 @@ public class AbstractCardHolder implements CardHolder {
 
     @Override
     public Card draw(Card card) {
-        cards.remove(card);
+        if (card.isWild()) {
+            for (Card examined : cards) {
+                if (examined.getValue() == card.getValue()) {
+                    cards.remove(examined);
+                    break;
+                }
+            }
+        } else
+            cards.remove(card);
 
         return card;
     }
@@ -25,7 +33,9 @@ public class AbstractCardHolder implements CardHolder {
     }
 
     @Override
-    public int remains() { return cards.size() - index; }
+    public int remains() {
+        return cards.size() - index;
+    }
 
     public void empty() {
         cards = new ArrayList<>();

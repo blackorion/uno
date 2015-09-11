@@ -8,6 +8,7 @@ import games.uno.web.messages.GameInfoMessage;
 import games.uno.websockets.PlayerEventInformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.util.Collection;
 
 @Service
@@ -57,6 +58,11 @@ public class GameService
 
         game.playerDrawsFromDeck();
         informer.sendPlayerHand(player, currentCard());
+        informer.sendPlayersListToAll(game.players());
+    }
+
+    public void endTurn() {
+        game.endTurn();
         informer.sendPlayersListToAll(game.players());
     }
 

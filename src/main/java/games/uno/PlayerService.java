@@ -8,6 +8,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+
 import java.util.Collection;
 
 @Service
@@ -46,6 +47,10 @@ public class PlayerService
         SecurityContextHolder.getContext().setAuthentication(auth);
 
         return new LoginStatus(auth.isAuthenticated(), auth.getName());
+    }
+
+    public void flushSession() {
+        repository.deleteAll();
     }
 
     private class LoginStatus

@@ -28,6 +28,7 @@ public class NonRandomDeckFactory extends RandomDeckFactory {
 
     public static final Card ONE_BLUE = new Card(CardValues.ONE, CardColors.BLUE);
     public static final Card TWO_BLUE = new Card(CardValues.TWO, CardColors.BLUE);
+    public static final Card THREE_BLUE = new Card(CardValues.THREE, CardColors.BLUE);
 
 
     @Override

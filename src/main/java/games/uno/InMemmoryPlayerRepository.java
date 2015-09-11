@@ -2,6 +2,7 @@ package games.uno;
 
 import games.uno.domain.game.Player;
 import org.springframework.stereotype.Repository;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -9,8 +10,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Repository
-public class InMemmoryPlayerRepository implements PlayerRepository
-{
+public class InMemmoryPlayerRepository implements PlayerRepository {
     private AtomicLong counter = new AtomicLong();
     private Map<String, Player> players = new HashMap<>();
 
@@ -25,6 +25,11 @@ public class InMemmoryPlayerRepository implements PlayerRepository
         players.put(id, player);
 
         return player;
+    }
+
+    @Override
+    public void deleteAll() {
+        players.clear();
     }
 
     @Override

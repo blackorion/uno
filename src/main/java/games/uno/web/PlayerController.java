@@ -4,12 +4,11 @@ import games.uno.GameService;
 import games.uno.PlayerService;
 import games.uno.domain.game.Player;
 import games.uno.util.RandomDataGenerator;
-import games.uno.web.messages.PlayerActionMessage;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.annotation.SubscribeMapping;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.web.bind.annotation.*;
+
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
 import java.util.Collection;
@@ -29,14 +28,6 @@ public class PlayerController
         this.playerService = playerService;
         this.gameService = gameService;
         this.generator = generator;
-    }
-
-    @MessageMapping("/player.changename")
-    public Player changeName(PlayerActionMessage action, StompHeaderAccessor accessor) {
-        Player player = playerService.find(accessor);
-        player.setName(action.message);
-
-        return player;
     }
 
     @SubscribeMapping("/game.players")

@@ -1,11 +1,8 @@
 package games.uno.domain.game;
 
 import games.uno.domain.cards.Card;
-import games.uno.domain.cards.CardHolder;
-import games.uno.domain.cards.Deck;
 
-public interface GameMaster
-{
+public interface GameMaster {
     void nextPlayer();
 
     Player currentPlayer();

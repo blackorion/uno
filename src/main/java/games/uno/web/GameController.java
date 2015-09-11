@@ -2,26 +2,25 @@ package games.uno.web;
 
 import games.uno.GameService;
 import games.uno.PlayerService;
-import games.uno.domain.game.Player;
 import games.uno.web.messages.ApplicationErrorMessage;
 import games.uno.web.messages.GameControlMessage;
 import games.uno.web.messages.GameInfoMessage;
-import games.uno.web.messages.PlayCardEventMessage;
+import games.uno.web.messages.PlayerActionMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.annotation.SubscribeMapping;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 @CrossOrigin
 @RequestMapping("/api/game")
-@RestController
-public class GameController
-{
+@Controller
+public class GameController {
     private GameService gameService;
     private PlayerService playerService;
 
@@ -29,6 +28,13 @@ public class GameController
     public GameController(GameService gameService, PlayerService playerService) {
         this.gameService = gameService;
         this.playerService = playerService;
+    }
+
+    @RequestMapping(value = "/flush", method = RequestMethod.GET)
+    public String flush() {
+        this.playerService.flushSession();
+
+        return "redirect:/";
     }
 
     @SubscribeMapping("/game.info")
@@ -44,19 +50,10 @@ public class GameController
         return gameService.getInfo();
     }
 
-    @MessageMapping("/game.playcard")
+    @MessageMapping("/game.players.actions")
     @SendTo("/topic/game.info")
-    public GameInfoMessage playCard(PlayCardEventMessage event, StompHeaderAccessor accessor) {
-        gameService.playCard(playerService.find(accessor), event.card.getCard());
-
-        return gameService.getInfo();
-    }
-
-    @MessageMapping("/game.drawcard")
-    @SendTo("/topic/game.info")
-    public GameInfoMessage drawCard(StompHeaderAccessor accessor) {
-        Player player = playerService.find(accessor);
-        gameService.drawCard(player);
+    public GameInfoMessage playerActions(PlayerActionMessage action, StompHeaderAccessor accessor) {
+        action.invoke(playerService.find(accessor), gameService);
 
         return gameService.getInfo();
     }

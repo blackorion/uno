@@ -12,5 +12,5 @@ public interface RulesManager
 
     void playerDraws();
 
-    void entTurn();
+    void endTurn();
 }

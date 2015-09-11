@@ -1,5 +1,6 @@
 package games.uno.domain.game;
 
+import games.uno.domain.cards.Card;
 import games.uno.exceptions.IllegalTurnEndException;
 import games.uno.exceptions.WrongMoveException;
 import games.uno.testutils.NonRandomDeckFactory;
@@ -7,7 +8,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import static org.junit.Assert.assertFalse;
 import static org.mockito.Mockito.*;
 
 public class UnoRulesManagerTest {
@@ -17,6 +17,7 @@ public class UnoRulesManagerTest {
     @Before
     public void setUp() throws Exception {
         when(mockController.currentPlayedCard()).thenReturn(NonRandomDeckFactory.ONE_RED);
+        createPlayer();
     }
 
     @Test
@@ -69,6 +70,13 @@ public class UnoRulesManagerTest {
     }
 
     @Test
+    public void PlayCard_ReverseCard_PersuadeNextPlayerToPlay() {
+        manager.cardPlayed(NonRandomDeckFactory.REVERSE_RED);
+
+        verify(mockController, times(1)).persuadePlayerToPlay();
+    }
+
+    @Test
     public void PlayCard_SkipCard_NextPlayerSkipsTurn() {
         manager.cardPlayed(NonRandomDeckFactory.SKIP_RED);
 
@@ -83,8 +91,16 @@ public class UnoRulesManagerTest {
         verify(mockController, times(2)).nextPlayer();
     }
 
+    @Test
+    public void PlayCard_WildDrawFourCard_NextPlayerDrawsFourCardsAndSkips() {
+        manager.cardPlayed(NonRandomDeckFactory.WILD_DRAW_FOUR_BLUE);
+
+        verify(mockController, times(4)).drawCard();
+        verify(mockController, times(2)).nextPlayer();
+    }
+
     @Test(expected = WrongMoveException.class)
-    public void PlayCard_CardWithOtherThenSelectedColorOnWildCard_ThrownException() {
+    public void PlayCard_OtherThenSelectedColorOnWildCard_ThrownException() {
         when(mockController.currentPlayedCard()).thenReturn(NonRandomDeckFactory.WILD_RED);
         manager.cardPlayed(NonRandomDeckFactory.ONE_BLUE);
     }
@@ -109,7 +125,16 @@ public class UnoRulesManagerTest {
     }
 
     @Test
-    public void PlayerDrawsACard_CanPlayTheDrawnCard() {
+    public void PlayCard_DrawnWild_ShouldBePlayable() {
+        createPlayer(NonRandomDeckFactory.WILD_DARK);
+        when(mockController.drawCard()).thenReturn(NonRandomDeckFactory.WILD_DARK);
+        manager.playerDraws();
+
+        manager.cardPlayed(NonRandomDeckFactory.WILD_BLUE);
+    }
+
+    @Test
+    public void DrawCard_CanPlayTheDrawnCard() {
         when(mockController.drawCard()).thenReturn(NonRandomDeckFactory.ONE_RED);
         manager.playerDraws();
 
@@ -117,15 +142,17 @@ public class UnoRulesManagerTest {
     }
 
     @Test(expected = WrongMoveException.class)
-    public void PlayerDrawsACard_PlaysOtherThanDrawnCard_ThrownException() {
+    public void DrawCard_PlaysOtherThanDrawnCard_ThrownException() {
+        createPlayer(NonRandomDeckFactory.ONE_RED, NonRandomDeckFactory.FOUR_RED);
         when(mockController.drawCard()).thenReturn(NonRandomDeckFactory.FIVE_RED);
+
         manager.playerDraws();
 
         manager.cardPlayed(NonRandomDeckFactory.ONE_RED);
     }
 
     @Test
-    public void PlayerDrawsCard_DeckIsEmpty_PillShuffledToNewDeck() {
+    public void DrawCard_DeckIsEmpty_PillShuffledToNewDeck() {
         when(mockController.deckIsEmpty()).thenReturn(true);
 
         manager.playerDraws();
@@ -133,10 +160,21 @@ public class UnoRulesManagerTest {
         verify(mockController, times(1)).updateDeckFromPill();
     }
 
+    @Test
+    public void DrawCard_NoPlayableCards_NextPlayerTurn() {
+        createPlayer(NonRandomDeckFactory.TWO_BLUE, NonRandomDeckFactory.THREE_BLUE);
+
+        manager.playerDraws();
+
+        verify(mockController, times(1)).nextPlayer();
+    }
+
     @Test(expected = WrongMoveException.class)
-    public void PlayerDrawsACard_Twice_ThrowsException() {
+    public void DrawCard_Twice_ThrowsException() {
+        createPlayer(NonRandomDeckFactory.ONE_RED, NonRandomDeckFactory.FIVE_RED);
         when(mockController.drawCard()).thenReturn(NonRandomDeckFactory.FIVE_RED);
         manager.playerDraws();
+
         manager.playerDraws();
     }
 
@@ -144,7 +182,8 @@ public class UnoRulesManagerTest {
     public void PlaysACard_AfterPreviousPlayerDrawn_CanPlayAnyPlayableCard() {
         when(mockController.drawCard()).thenReturn(NonRandomDeckFactory.FIVE_RED);
         manager.playerDraws();
-        manager.entTurn();
+        manager.endTurn();
+
         manager.cardPlayed(NonRandomDeckFactory.ONE_RED);
     }
 
@@ -152,13 +191,13 @@ public class UnoRulesManagerTest {
     public void TurnEnd_PlayerHasNotMoved_ThrowsError() {
         when(mockController.isPlayerShouldPlay()).thenReturn(true);
 
-        manager.entTurn();
+        manager.endTurn();
     }
 
     @Test
     public void TurnEnd_PlayerPlayed_MoveTurnToNextPlayerAndPersuadeHimToPlay() {
         when(mockController.isPlayerShouldPlay()).thenReturn(false);
-        manager.entTurn();
+        manager.endTurn();
 
         verify(mockController, times(1)).nextPlayer();
         verify(mockController, times(1)).persuadePlayerToPlay();
@@ -169,5 +208,16 @@ public class UnoRulesManagerTest {
         manager.gameStopped();
 
         verify(mockController, times(1)).flush();
+    }
+
+    private Player createPlayer(Card... cards) {
+        Player player = new Player("player");
+
+        for (Card card : cards)
+            player.take(card);
+
+        when(mockController.currentPlayer()).thenReturn(player);
+
+        return player;
     }
 }

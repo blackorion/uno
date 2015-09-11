@@ -2,9 +2,9 @@ package games.uno.domain.game;
 
 import games.uno.domain.cards.Card;
 import games.uno.domain.cards.Deck;
-import games.uno.exceptions.IllegalTurnEndException;
 import games.uno.exceptions.NoUsersInTheGameException;
 import games.uno.util.DeckFactory;
+
 import java.util.List;
 
 public class UnoGameFacade implements CardGame
@@ -39,7 +39,7 @@ public class UnoGameFacade implements CardGame
 
     @Override
     public void endTurn() {
-        rulesManager.entTurn();
+        rulesManager.endTurn();
     }
 
     @Override
