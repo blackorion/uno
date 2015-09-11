@@ -27,7 +27,9 @@ public interface GameMaster {
 
     void putInPlayDeck(Card card);
 
-    void flush();
+    void flushDeckAndPill();
+
+    void flushPlayersHand();
 
     GameState state();
 
@@ -40,4 +42,8 @@ public interface GameMaster {
     void updateDeckFromPill();
 
     int deckRemains();
+
+    void returnCardFromPillToDeck();
+
+    void shuffleDeck();
 }

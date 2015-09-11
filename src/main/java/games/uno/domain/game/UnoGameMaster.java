@@ -17,6 +17,16 @@ public class UnoGameMaster implements GameMaster {
     }
 
     @Override
+    public void start() {
+        state.start(this);
+    }
+
+    @Override
+    public void stop() {
+        state.finish(this);
+    }
+
+    @Override
     public Player currentPlayer() {
         return table.currentPlayer();
     }
@@ -37,11 +47,15 @@ public class UnoGameMaster implements GameMaster {
     }
 
     @Override
-    public void flush() {
-        currentPlayer().finishedHisMove();
+    public void flushDeckAndPill() {
         deck.refill();
         deck.shuffle();
         pill.empty();
+    }
+
+    @Override
+    public void flushPlayersHand() {
+        currentPlayer().finishedHisMove();
         table.players().forEach(AbstractCardHolder::empty);
     }
 
@@ -78,6 +92,16 @@ public class UnoGameMaster implements GameMaster {
     }
 
     @Override
+    public void returnCardFromPillToDeck() {
+        deck.takeCardFrom(pill);
+    }
+
+    @Override
+    public void shuffleDeck() {
+        deck.shuffle();
+    }
+
+    @Override
     public boolean deckIsEmpty() {
         return deck.remains() == 0;
     }
@@ -100,16 +124,6 @@ public class UnoGameMaster implements GameMaster {
     @Override
     public void setPlayerFinishedMove() {
         table.currentPlayer().finishedHisMove();
-    }
-
-    @Override
-    public void start() {
-        state.start(this);
-    }
-
-    @Override
-    public void stop() {
-        state.finish(this);
     }
 
     @Override

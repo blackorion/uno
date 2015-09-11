@@ -21,17 +21,78 @@ public class UnoRulesManagerTest {
     }
 
     @Test
-    public void OnGameStart_FirstCardFromBankDeckMovedToPlayedDeck() {
+    public void GameStart_FirstCardFromBankDeckMovedToPlayedDeck() {
         manager.gameStarted();
 
         verify(mockController, times(1)).flipACard();
     }
 
     @Test
-    public void OnGameStart_EachUserGets7CardsFromDeck() {
+    public void GameStart_EachUserGets7CardsFromDeck() {
         manager.gameStarted();
 
         verify(mockController, times(1)).giveEachPlayerCards(7);
+    }
+
+    @Test
+    public void GameStart_SkipCard_FirstPlayerLosesTurn() {
+        when(mockController.currentPlayedCard()).thenReturn(NonRandomDeckFactory.SKIP_RED);
+
+        manager.gameStarted();
+
+        verify(mockController, times(1)).nextPlayer();
+    }
+
+    @Test
+    public void GameStart_DrawTwoCard_FirstPlayerTakesTwoCardsAndLosesTurn() {
+        when(mockController.currentPlayedCard()).thenReturn(NonRandomDeckFactory.DRAW_TWO_RED);
+
+        manager.gameStarted();
+
+        verify(mockController, times(1)).nextPlayer();
+        verify(mockController, times(2)).drawCard();
+    }
+
+    @Test
+    public void GameStart_ReverseCard_GameChangesDirectionFirstPlayerLosesTurn() {
+        when(mockController.currentPlayedCard()).thenReturn(NonRandomDeckFactory.REVERSE_RED);
+
+        manager.gameStarted();
+
+        verify(mockController, times(1)).changeDirection();
+        verify(mockController, times(1)).nextPlayer();
+    }
+
+    @Test
+    public void GameStart_WildCard_PlayerChoosesColorAndContinuesHisTurn() {
+        when(mockController.currentPlayedCard())
+                .thenReturn(NonRandomDeckFactory.WILD_DARK)
+                .thenReturn(NonRandomDeckFactory.WILD_BLUE);
+
+        manager.gameStarted();
+        manager.cardPlayed(NonRandomDeckFactory.WILD_BLUE);
+        manager.cardPlayed(NonRandomDeckFactory.ONE_BLUE);
+
+        verify(mockController, times(1)).returnCardFromPillToDeck();
+        verify(mockController, times(1)).drawCard();
+        verify(mockController, times(1)).putInPlayDeck(NonRandomDeckFactory.WILD_BLUE);
+        verify(mockController, times(1)).putInPlayDeck(NonRandomDeckFactory.ONE_BLUE);
+        verify(mockController, times(1)).setPlayerFinishedMove();
+        verify(mockController, times(1)).nextPlayer();
+    }
+
+    @Test
+    public void GameStart_WildDrawFourCard_ReturnedToDeckAndShuffled() {
+        when(mockController.currentPlayedCard())
+                .thenReturn(NonRandomDeckFactory.WILD_DRAW_FOUR_DARK)
+                .thenReturn(NonRandomDeckFactory.WILD_DRAW_FOUR_DARK)
+                .thenReturn(NonRandomDeckFactory.ONE_RED);
+
+        manager.gameStarted();
+
+        verify(mockController, times(2)).returnCardFromPillToDeck();
+        verify(mockController, times(2)).shuffleDeck();
+        verify(mockController, times(3)).flipACard();
     }
 
     @Test(expected = WrongMoveException.class)
@@ -207,7 +268,7 @@ public class UnoRulesManagerTest {
     public void GameEnded_FlushesToDefaults() {
         manager.gameStopped();
 
-        verify(mockController, times(1)).flush();
+        verify(mockController, times(1)).flushDeckAndPill();
     }
 
     private Player createPlayer(Card... cards) {

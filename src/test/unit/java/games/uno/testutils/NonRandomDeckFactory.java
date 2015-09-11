@@ -22,8 +22,9 @@ public class NonRandomDeckFactory extends RandomDeckFactory {
     public static final Card SKIP_RED = new Card(CardValues.SKIP, CardColors.RED);
     public static final Card DRAW_TWO_RED = new Card(CardValues.DRAW_TWO, CardColors.RED);
     public static final Card WILD_RED = new Card(CardValues.WILD, CardColors.RED);
-    public static final Card WILD_BLUE = new Card(CardValues.WILD, CardColors.BLUE);
     public static final Card WILD_DARK = new Card(CardValues.WILD, CardColors.DARK);
+    public static final Card WILD_BLUE = new Card(CardValues.WILD, CardColors.BLUE);
+    public static final Card WILD_DRAW_FOUR_DARK = new Card(CardValues.WILD_DRAW_FOUR, CardColors.DARK);
     public static final Card WILD_DRAW_FOUR_BLUE = new Card(CardValues.WILD_DRAW_FOUR, CardColors.BLUE);
 
     public static final Card ONE_BLUE = new Card(CardValues.ONE, CardColors.BLUE);

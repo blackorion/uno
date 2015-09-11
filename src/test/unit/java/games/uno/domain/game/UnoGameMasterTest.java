@@ -46,4 +46,14 @@ public class UnoGameMasterTest {
         assertThat(deck.remains(), CoreMatchers.is(1));
         assertThat(deck.showTopCard(), CoreMatchers.is(NonRandomDeckFactory.WILD_DARK));
     }
+
+    @Test
+    public void returnCardFromPillToDeckAndShuffle() {
+        pill.take(NonRandomDeckFactory.WILD_BLUE);
+
+        master.returnCardFromPillToDeck();
+
+        assertThat(pill.remains(), is(0));
+        assertThat(deck.remains(), is(1));
+    }
 }

@@ -8,6 +8,7 @@ import games.uno.exceptions.WrongMoveException;
 
 public class UnoRulesManager implements RulesManager {
     private final GameMaster game;
+    private boolean firstCardIsWild = false;
     private Card lastDrawnCard;
 
     public UnoRulesManager(GameMaster game) {
@@ -19,6 +20,26 @@ public class UnoRulesManager implements RulesManager {
         game.start();
         eachPlayerGetsHand();
         game.flipACard();
+        handleFirstCardAction();
+    }
+
+    private void handleFirstCardAction() {
+        while (game.currentPlayedCard().getValue() == CardValues.WILD_DRAW_FOUR) {
+            game.returnCardFromPillToDeck();
+            game.shuffleDeck();
+            game.flipACard();
+        }
+
+        if (game.currentPlayedCard().getValue() == CardValues.WILD) {
+            game.returnCardFromPillToDeck();
+            lastDrawnCard = game.drawCard();
+            firstCardIsWild = true;
+        }
+
+        handleCardAction(game.currentPlayedCard());
+
+        if (game.currentPlayedCard().getValue() == CardValues.REVERSE)
+            game.nextPlayer();
     }
 
     @Override
@@ -34,6 +55,12 @@ public class UnoRulesManager implements RulesManager {
 
         game.putInPlayDeck(card);
         handleCardAction(card);
+
+        if (firstCardIsWild) {
+            firstCardIsWild = false;
+            return;
+        }
+
         game.setPlayerFinishedMove();
         endTurn();
     }
@@ -60,7 +87,8 @@ public class UnoRulesManager implements RulesManager {
     public void gameStopped() {
         lastDrawnCard = null;
         game.stop();
-        game.flush();
+        game.flushDeckAndPill();
+        game.flushPlayersHand();
     }
 
     @Override
