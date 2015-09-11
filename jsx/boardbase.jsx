@@ -46,9 +46,6 @@ export default class BoardBase extends GameClient {
 	get status(){
 		return this._status;
 	}
-	isUsersTurn(){
-		return this._status && this._status.currentPlayerId == this._currentUser.id;
-	}
 	isGameRunning(){
 		return this._status && this._status.state == constants.GAME_RUNNING;
 	}

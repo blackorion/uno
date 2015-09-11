@@ -87,7 +87,6 @@ body {
 }
 
 .btn {
-	color: white;
 	font-size: 20px;
 	padding: 10px 20px 10px 20px;
 	text-decoration: none;
@@ -95,6 +94,7 @@ body {
 	border-radius: 0;
 	cursor: pointer;
 	outline: none;
+	transition-duration: 100ms;
 }
 
 .btn:hover {
@@ -102,6 +102,7 @@ body {
 }
 
 .good {
+	color: white;
 	background: #44B1D0;
 }
 
@@ -110,6 +111,7 @@ body {
 }
 
 .bad {
+	color: white;
 	background: #D04444;
 }
 
@@ -118,25 +120,26 @@ body {
 }
 
 .worst {
-	background: #BBBBBB;
-}
-
-.worst:hover {
-	background: #DDDDDD;
+	color: #9E6D5C;
+	background: #B99385;
 }
 
 #menubar {
 	background: #9E6D5C;
 }
 
-.hand-name-active {
+.hand-name-self {
 	background: #78D04C;
 	color: white;
 }
 
-.hand-name-inactive {
+.hand-name-other {
 	background: #9E6D5C;
 	color: white;
+}
+
+.hand-name-active {
+	outline:6px solid white;
 }
 
 .hand-name-edit {
@@ -171,8 +174,8 @@ body {
 	font-size: 24px;
 }
 
-#new-card {
-	width: 82px;
+#new-card, .color-select {
+	width: 83px;
 	height: 125px;
 	border-style: solid;
 	border-width: 1px;
@@ -181,9 +184,14 @@ body {
 	flex-direction: column;
 	text-align: center;
 	border-radius: 15px;
-	font-size: 20px;
-	color: white;
 	border-color: white;
+	overflow: hidden;
+	transition-duration: 100ms;
+}
+
+#new-card {
+	color: white;
+	font-size: 20px;
 	float: left;
 	position:absolute;
 	margin-left: -105px;
@@ -194,19 +202,106 @@ body {
 	cursor: pointer;
 }
 
+.color-select {
+	position:relative;
+	cursor: pointer;
+}
+
+.bluez {
+	background: #44B1D0;
+}
+
+.hand-name-off {
+	right: -25px;
+	bottom: 0;
+}
+
+.card-col-off {
+	right:-10px;
+	bottom: -10px;
+}
+
 .handhand {
 	width: 50px;
 	height: 50px;
-	background: #44B1D0;
 	color: white;
 	font-size: 25px;
 	float: right;
 	position: absolute;
 	border-radius: 25px;
-	right: -25px;
-	bottom: 0;
+	font-weight: bold;
+	box-shadow: 0 0 10px #777;
 }
 
-.user-car {
+.pos-rel {
 	position:relative;
+}
+
+.red, .blue, .yellow, .green {
+	width: 41px;
+	height: 63px;
+	position:absolute;
+	transition-duration: 100ms;
+}
+
+.c-red {
+	background: #D83D3D;
+}
+
+.c-blue {
+	background: #5555FF;
+}
+
+.c-yellow {
+	background:#FFAA00;
+}
+
+.c-green {
+	background: #55AA55;
+}
+
+.red {
+	left:0;
+	top:0;
+}
+
+.green {
+	left:41px;
+	top:63px;
+}
+
+.blue {
+	left:41px;
+	top:0;
+}
+
+.yellow {
+	left:0;
+	top:63px;
+}
+
+.red:hover {
+	background: #FF5555;
+}
+
+.green:hover {
+	background: #62CA62;
+}
+
+.blue:hover {
+	background: #7797F1;
+}
+
+.yellow:hover {
+	background:#FFC95D;
+}
+
+#main-menu {
+	display: flex;
+	flex-direction: row;
+}
+
+#main-menu > * {
+	margin-left: 10px;
+	margin-right: 10px;
 }

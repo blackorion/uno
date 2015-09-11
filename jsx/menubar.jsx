@@ -7,19 +7,39 @@ export default class MenuBar extends React.Component {
 			this.forceUpdate();
 		});
 	}
-	_synthStartStop(){
+	_synthEndTurnButton(){
+		let user = this.props.board.currentUser;
+		if(user.canPlay() && user.canProceed())
+			return <button className='btn good' onClick={this.props.board.endTurn.bind(this.props.board)}>End Turn</button>;
+		else
+			return <div className='btn worst'>End Turn</div>;
+	}
+	_synthButtons(){
 		let status = this.props.board.status;
 		if(status){
 			switch(status.state){
 				case constants.GAME_NOT_RUNNING:
 					return <button className='btn good' onClick={this.props.board.startGame.bind(this.props.board)}>Start Game</button>;
 				case constants.GAME_RUNNING:
-					return <button className='btn bad' onClick={this.props.board.stopGame.bind(this.props.board)}>Stop Game</button>;
+					return this._synthEndTurnButton();
 			}
 		}
 		return <p>Offline.</p>;
 	}
+	_synthDebugControls(){
+		let status = this.props.board.status;
+		if(status){
+			switch(status.state){
+				case constants.GAME_RUNNING:
+					return <button className='btn bad' onClick={this.props.board.stopGame.bind(this.props.board)}>Stop Game</button>;
+			}
+		}
+
+	}
 	render() {
-		return <div id='main-menu'>{this._synthStartStop()}</div>;
+		return <div id='main-menu'>
+			{this._synthButtons()}
+			{this._synthDebugControls()}
+		</div>;
 	}
 }

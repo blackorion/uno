@@ -68,9 +68,12 @@ export default class SvgCard {
 		this._id = this._findId();
 	}
 	_findId(){
-		for(let record of svgGroupIds)
+		if(this._action == c.CARD_WILD) return svgGroupIds[1][0];
+		if(this._action == c.CARD_WILD_DRAW_FOUR) return svgGroupIds[0][0];
+		for(let record of svgGroupIds){
 			if(record[1] == this._action && record[2] == this._color)
 				return record[0];
+		}
 	}
 	synthUseSvg(){
 		return {__html: '<use xlink:href="/img/UNO_cards_deck.svg#'+this._id+'"></use>'};
