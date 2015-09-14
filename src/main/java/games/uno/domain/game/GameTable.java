@@ -2,15 +2,16 @@ package games.uno.domain.game;
 
 import games.uno.exceptions.PlayerAlreadyInTheGameException;
 import games.uno.exceptions.PlayerLimitForGameException;
+
 import java.util.List;
 
 public class GameTable
 {
     private static final int MAX_PLAYERS = 15;
     private final BidirectionalQueue<Player> queue = new BidirectionalQueue<>();
-    private final UnoGameFacade game;
+    private final GameMaster game;
 
-    public GameTable(UnoGameFacade game) {
+    public GameTable(GameMaster game) {
         this.game = game;
     }
 

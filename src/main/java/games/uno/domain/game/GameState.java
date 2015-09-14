@@ -2,8 +2,7 @@ package games.uno.domain.game;
 
 import games.uno.exceptions.GameAlreadyStartedException;
 
-public enum GameState
-{
+public enum GameState {
     RUNNING(true) {
         @Override
         void start(GameMaster game) {
@@ -19,7 +18,6 @@ public enum GameState
     NOT_RUNNING(false) {
         @Override
         void start(GameMaster game) {
-            game.persuadePlayerToPlay();
             game.setState(RUNNING);
         }
 

@@ -1,15 +1,16 @@
 package games.uno.util;
 
-import games.uno.domain.cards.DeckBuilder;
-import games.uno.domain.cards.CardColors;
-import games.uno.domain.cards.CardTypes;
-import games.uno.domain.cards.CardValues;
-import games.uno.domain.cards.Deck;
+import games.uno.domain.cards.*;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Priority;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Component
-public class RandomDeckFactory implements DeckFactory
-{
+@Priority(1)
+public class RandomDeckFactory implements DeckFactory {
     protected DeckBuilder builder = new DeckBuilder();
 
     public Deck generate() {
@@ -26,31 +27,56 @@ public class RandomDeckFactory implements DeckFactory
     }
 
     private void addNumericCards() {
-        for ( CardColors color : CardColors.values() )
-            if ( color != CardColors.DARK )
-                for ( CardValues value : CardValues.values() )
-                    if ( value.getType() == CardTypes.NUMERIC && value != CardValues.ZERO )
-                        for ( int i = 0; i < 2; i++ )
-                            builder.add(value, color);
-
-        for ( CardColors color : CardColors.values() )
-            if ( color != CardColors.DARK )
-                builder.add(CardValues.ZERO, color);
+        addOneToNineCards();
+        addZeroCards();
     }
 
     private void addActionCards() {
-        for ( CardColors color : CardColors.values() )
-            if ( color != CardColors.DARK )
-                for ( int i = 0; i < 2; i++ ) {
-                    builder.add(CardValues.DRAW_TWO, color);
-                    builder.add(CardValues.REVERSE, color);
-                    builder.add(CardValues.SKIP, color);
-                }
+        addColoredActionCards();
+        addWildCards();
+    }
 
+    private void addOneToNineCards() {
+        nonDarkColors().forEach(color ->
+                        numericNonZeroValues().forEach(value -> {
+                            for (int i = 0; i < 2; i++)
+                                builder.add(value, color);
+                        })
+        );
+    }
 
-        for ( int i = 0; i < 4; i++ ) {
+    private void addZeroCards() {
+        nonDarkColors().forEach(color -> builder.add(CardValues.ZERO, color));
+    }
+
+    private void addColoredActionCards() {
+        nonDarkColors().forEach(color -> {
+            for (int i = 0; i < 2; i++) {
+                builder.add(CardValues.DRAW_TWO, color);
+                builder.add(CardValues.REVERSE, color);
+                builder.add(CardValues.SKIP, color);
+            }
+        });
+    }
+
+    private void addWildCards() {
+        for (int i = 0; i < 4; i++) {
             builder.add(CardValues.WILD, CardColors.DARK);
             builder.add(CardValues.WILD_DRAW_FOUR, CardColors.DARK);
         }
+    }
+
+    private List<CardColors> nonDarkColors() {
+        return Arrays.asList(CardColors.values())
+                .stream()
+                .filter(cardColors -> cardColors != CardColors.DARK)
+                .collect(Collectors.toList());
+    }
+
+    private List<CardValues> numericNonZeroValues() {
+        return Arrays.asList(CardValues.values())
+                .stream()
+                .filter(value -> value.getType() == CardTypes.NUMERIC && value != CardValues.ZERO)
+                .collect(Collectors.toList());
     }
 }

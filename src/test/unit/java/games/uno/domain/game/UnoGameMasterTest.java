@@ -1,20 +1,19 @@
 package games.uno.domain.game;
 
+import games.uno.domain.cards.Card;
 import games.uno.domain.cards.Deck;
 import games.uno.testutils.NonRandomDeckFactory;
 import org.hamcrest.CoreMatchers;
+import org.hamcrest.core.IsNull;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class UnoGameMasterTest {
     Deck deck = new Deck();
     Deck pill = new Deck();
-    GameTable table = Mockito.mock(GameTable.class);
-    GameMaster master = new UnoGameMaster(deck, pill, table);
+    GameMaster master = new UnoGameMaster(deck, pill);
 
     @Test
     public void BankIsEmpty() {
@@ -48,12 +47,60 @@ public class UnoGameMasterTest {
     }
 
     @Test
-    public void returnCardFromPillToDeckAndShuffle() {
-        pill.take(NonRandomDeckFactory.WILD_BLUE);
+    public void DidPlayerDrew_DrawCardCurrentTurn_ReturnTrue() {
+        deck.take(NonRandomDeckFactory.ONE_BLUE);
+        master.getTable().add(new Player("player"));
 
-        master.returnCardFromPillToDeck();
+        master.drawCard();
 
-        assertThat(pill.remains(), is(0));
-        assertThat(deck.remains(), is(1));
+        assertTrue(master.didPlayerDrewThisTurn());
+    }
+
+    @Test
+    public void DidPlayerDrew_DidNotDrawCardCurrentTurn_ReturnFalse() {
+        deck.take(NonRandomDeckFactory.ONE_BLUE);
+        master.getTable().add(new Player("player"));
+
+        assertFalse(master.didPlayerDrewThisTurn());
+    }
+
+    @Test
+    public void DidPlayerDrew_DidDrawCardCurrentPreviousTurn_ReturnFalse() {
+        deck.take(NonRandomDeckFactory.ONE_BLUE);
+        master.getTable().add(new Player("player"));
+        master.drawCard();
+
+        master.nextPlayer();
+
+        assertFalse(master.didPlayerDrewThisTurn());
+    }
+
+    @Test
+    public void DidPlayerDrew_OnGameStart_ReturnFalse() {
+        deck.take(NonRandomDeckFactory.ONE_BLUE);
+        master.getTable().add(new Player("player"));
+        master.drawCard();
+
+        master.start();
+
+        assertFalse(master.didPlayerDrewThisTurn());
+    }
+
+    @Test
+    public void LastDrawnCard_CardWasDrawn_ReturnsACard() {
+        deck.take(NonRandomDeckFactory.ONE_BLUE);
+        master.getTable().add(new Player("player"));
+
+        Card expected = master.drawCard();
+
+        assertThat(master.lastDrawnCard(), is(expected));
+    }
+
+    @Test
+    public void LastDrawnCard_CardWasNotDrawn_ReturnsNull() {
+        deck.take(NonRandomDeckFactory.ONE_BLUE);
+        master.getTable().add(new Player("player"));
+
+        assertThat(master.lastDrawnCard(), IsNull.nullValue());
     }
 }

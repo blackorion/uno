@@ -2,6 +2,8 @@ package games.uno.domain.game;
 
 import games.uno.domain.cards.Card;
 
+import java.util.List;
+
 public interface CardGame {
     void start();
 
@@ -17,9 +19,17 @@ public interface CardGame {
 
     Card playerDrawsFromDeck();
 
+    int bankRemains();
+
+    List<Player> players();
+
     int playersSize();
 
-    boolean hasPlayers();
-
     void playerPlaysA(Card card);
+
+    BidirectionalQueue.Direction getDirection();
+
+    GameState state();
+
+    Card lastDrawnCard();
 }

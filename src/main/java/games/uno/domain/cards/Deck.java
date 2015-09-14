@@ -19,12 +19,16 @@ public class Deck extends AbstractCardHolder {
         index = 0;
     }
 
-    public void flush() {
+    public void removeColoredWildCards() {
         cards = cards.parallelStream().map(card -> {
             if (card.isWild())
                 return new Card(card.getValue(), CardColors.DARK);
             else
                 return card;
         }).collect(Collectors.toList());
+    }
+
+    public Card firstCardToDraw() {
+        return cards.get(index);
     }
 }

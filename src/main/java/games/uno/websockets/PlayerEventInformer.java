@@ -4,6 +4,8 @@ import games.uno.PlayerRepository;
 import games.uno.domain.cards.Card;
 import games.uno.domain.game.Player;
 import games.uno.web.PresentableCard;
+import games.uno.web.PresentablePlayerHand;
+import javafx.util.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
@@ -21,20 +23,20 @@ public class PlayerEventInformer {
         this.playerRepository = playerRepository;
     }
 
-    public void sendHandToAllPlayers(Card onTop) {
-        playerRepository.findAll().forEach(player -> sendPlayerHand(player, onTop));
+    public void sendHandToAllPlayers(Card onTop, Pair<Player, Card> lastDrawnCard) {
+        playerRepository.findAll().forEach(player -> {
+            Card drawn = lastDrawnCard == null ? null : lastDrawnCard.getKey().equals(player) ? lastDrawnCard.getValue() : null;
+            sendPlayerHand(player, drawn, onTop);
+        });
     }
 
-    public void sendPlayerHand(Player player, Card onTop) {
+    public void sendPlayerHand(Player player, Card lastDrawn, Card onTop) {
         List<PresentableCard> cards = PresentableCard.fromCollection(player.cardsOnHand(), onTop);
-        messagingTemplate.convertAndSendToUser(player.getName(), "/topic/game.cards", cards);
+        PresentablePlayerHand playerHand = new PresentablePlayerHand(cards, PresentableCard.fromCard(lastDrawn, onTop));
+        messagingTemplate.convertAndSendToUser(player.getName(), "/topic/game.cards", playerHand);
     }
 
     public void sendPlayersListToAll(List<Player> players) {
         messagingTemplate.convertAndSend("/topic/game.players", players);
-    }
-
-    public void sendPlayerCardDrawn(Player player, Card card) {
-        messagingTemplate.convertAndSendToUser(player.getName(), "/topic/game.cards.drawn", card);
     }
 }

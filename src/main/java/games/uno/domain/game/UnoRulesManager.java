@@ -9,7 +9,6 @@ import games.uno.exceptions.WrongMoveException;
 public class UnoRulesManager implements RulesManager {
     private final GameMaster game;
     private boolean firstCardIsWild = false;
-    private Card lastDrawnCard;
 
     public UnoRulesManager(GameMaster game) {
         this.game = game;
@@ -19,40 +18,30 @@ public class UnoRulesManager implements RulesManager {
     public void gameStarted() {
         game.start();
         game.giveEachPlayerCards(7);
+        handleTopCardAction();
         game.flipACard();
-        handleFirstCardAction();
+        game.persuadePlayerToPlay();
     }
 
-    private void handleFirstCardAction() {
-        while (game.currentPlayedCard().getValue() == CardValues.WILD_DRAW_FOUR) {
-            game.returnCardFromPillToDeck();
+    private void handleTopCardAction() {
+        while (game.deckFirstCardToDraw().getValue() == CardValues.WILD_DRAW_FOUR)
             game.shuffleDeck();
-            game.flipACard();
-        }
 
-        if (game.currentPlayedCard().getValue() == CardValues.WILD) {
-            game.returnCardFromPillToDeck();
-            lastDrawnCard = game.drawCard();
+        if (game.deckFirstCardToDraw().getValue() == CardValues.WILD) {
             firstCardIsWild = true;
+            game.drawCard();
         }
 
-        handleCardAction(game.currentPlayedCard());
+        handleCardAction(game.deckFirstCardToDraw());
 
-        if (game.currentPlayedCard().getValue() == CardValues.REVERSE)
+        if (game.deckFirstCardToDraw().getValue() == CardValues.REVERSE) {
             game.nextPlayer();
+        }
     }
 
     @Override
     public void cardPlayed(Card card) {
-        if (!card.isPlayable(game.currentPlayedCard()))
-            throw new WrongMoveException(game.currentPlayedCard(), card);
-
-        if (card.isWild() && card.getColor() == CardColors.DARK)
-            throw new WrongMoveException("Color not picked");
-
-        if (lastDrawnCard != null && !card.equals(lastDrawnCard))
-            throw new WrongMoveException("Only drawn card is playable");
-
+        verifyValidMove(card);
         game.putInPlayDeck(card);
         handleCardAction(card);
 
@@ -63,6 +52,17 @@ public class UnoRulesManager implements RulesManager {
 
         game.setPlayerFinishedMove();
         endTurn();
+    }
+
+    private void verifyValidMove(Card card) {
+        if (!card.isPlayable(game.currentPlayedCard()))
+            throw new WrongMoveException(game.currentPlayedCard(), card);
+
+        if (card.isWild() && card.getColor() == CardColors.DARK)
+            throw new WrongMoveException("Color not picked");
+
+        if (game.lastDrawnCard() != null && !card.equals(game.lastDrawnCard()))
+            throw new WrongMoveException("Only drawn card is playable");
     }
 
     private void handleCardAction(Card card) {
@@ -85,7 +85,6 @@ public class UnoRulesManager implements RulesManager {
 
     @Override
     public void gameStopped() {
-        lastDrawnCard = null;
         game.stop();
         game.flushDeckAndPill();
         game.flushPlayersHand();
@@ -93,27 +92,23 @@ public class UnoRulesManager implements RulesManager {
 
     @Override
     public Card playerDraws() {
-        if (lastDrawnCard != null)
+        if (game.didPlayerDrewThisTurn())
             throw new WrongMoveException("Can't draw more than one card in turn.");
 
-        lastDrawnCard = game.drawCard();
+        Card lastDrawnCard = game.drawCard();
         game.setPlayerFinishedMove();
 
         if (game.deckIsEmpty())
             game.updateDeckFromPill();
 
-        if (noCardsToMakeMove())
+        if (drawnCardNotPlayable(lastDrawnCard))
             endTurn();
 
-        return lastDrawnCard;
+        return game.lastDrawnCard();
     }
 
-    private boolean noCardsToMakeMove() {
-        for (Card card : game.currentPlayer().cardsOnHand())
-            if (card.isPlayable(game.currentPlayedCard()))
-                return false;
-
-        return true;
+    private boolean drawnCardNotPlayable(Card card) {
+        return card != null && !card.isPlayable(game.currentPlayedCard());
     }
 
     @Override
@@ -123,7 +118,5 @@ public class UnoRulesManager implements RulesManager {
 
         game.nextPlayer();
         game.persuadePlayerToPlay();
-        lastDrawnCard = null;
     }
-
 }

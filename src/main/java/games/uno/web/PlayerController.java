@@ -12,13 +12,13 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
 import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @CrossOrigin
 @RequestMapping("/api/players")
 @RestController
-public class PlayerController
-{
+public class PlayerController {
     private final PlayerService playerService;
     private final GameService gameService;
     private final RandomDataGenerator generator;
@@ -36,20 +36,23 @@ public class PlayerController
     }
 
     @SubscribeMapping("/game.cards")
-    public Collection<PresentableCard> playerCards(StompHeaderAccessor accessor) {
-        return playerService.find(accessor).cardsOnHand().stream()
+    public PresentablePlayerHand playerCards(StompHeaderAccessor accessor) {
+        Player player = playerService.find(accessor);
+        List<PresentableCard> cards = player.cardsOnHand().stream()
                 .map(card -> PresentableCard.fromCard(card, gameService.currentCard()))
                 .collect(Collectors.toList());
+
+        return new PresentablePlayerHand(cards, PresentableCard.fromCard(gameService.getLastDrawnCardBy(player), gameService.currentCard()));
     }
 
     @RequestMapping(value = "/me", method = RequestMethod.GET)
     public Player create(@RequestParam(value = "username", defaultValue = "", required = false) String username,
                          @RequestParam(value = "password", required = false) String password,
                          HttpServletRequest request, Principal principal) {
-        if ( principal != null ) {
+        if (principal != null) {
             Player player = playerService.find(request.getSession().getId());
 
-            if ( player != null )
+            if (player != null)
                 return player;
         }
 

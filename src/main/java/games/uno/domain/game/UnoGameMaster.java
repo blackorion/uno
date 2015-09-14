@@ -9,21 +9,24 @@ public class UnoGameMaster implements GameMaster {
     private final Deck pill;
     private final GameTable table;
     private GameState state = GameState.NOT_RUNNING;
+    private Card lastDrawnCard;
 
-    public UnoGameMaster(Deck deck, Deck pill, GameTable gameTable) {
+    public UnoGameMaster(Deck deck, Deck pill) {
         this.deck = deck;
         this.pill = pill;
-        this.table = gameTable;
+        this.table = new GameTable(this);
     }
 
     @Override
     public void start() {
         state.start(this);
+        lastDrawnCard = null;
     }
 
     @Override
     public void stop() {
         state.finish(this);
+        lastDrawnCard = null;
     }
 
     @Override
@@ -60,11 +63,6 @@ public class UnoGameMaster implements GameMaster {
     }
 
     @Override
-    public GameState state() {
-        return state;
-    }
-
-    @Override
     public void giveEachPlayerCards(int number) {
         table.players().forEach(player -> {
             for (int i = 0; i < number; i++)
@@ -78,10 +76,16 @@ public class UnoGameMaster implements GameMaster {
     }
 
     @Override
+    public GameState state() {
+        return state;
+    }
+
+    @Override
     public void updateDeckFromPill() {
         Card card = pill.drawFromTop();
+        deck.empty();
         deck.takeAllFrom(pill);
-        deck.flush();
+        deck.removeColoredWildCards();
         pill.empty();
         pill.take(card);
     }
@@ -92,8 +96,23 @@ public class UnoGameMaster implements GameMaster {
     }
 
     @Override
-    public void returnCardFromPillToDeck() {
-        deck.takeCardFrom(pill);
+    public Card deckFirstCardToDraw() {
+        return deck.firstCardToDraw();
+    }
+
+    @Override
+    public boolean didPlayerDrewThisTurn() {
+        return lastDrawnCard != null;
+    }
+
+    @Override
+    public Card lastDrawnCard() {
+        return lastDrawnCard;
+    }
+
+    @Override
+    public boolean deckIsEmpty() {
+        return deck.remains() == 0;
     }
 
     @Override
@@ -102,8 +121,8 @@ public class UnoGameMaster implements GameMaster {
     }
 
     @Override
-    public boolean deckIsEmpty() {
-        return deck.remains() == 0;
+    public GameTable getTable() {
+        return table;
     }
 
     @Override
@@ -118,7 +137,7 @@ public class UnoGameMaster implements GameMaster {
 
     @Override
     public Card drawCard() {
-        return table.currentPlayer().takeCardFrom(deck);
+        return lastDrawnCard = table.currentPlayer().takeCardFrom(deck);
     }
 
     @Override
@@ -134,5 +153,6 @@ public class UnoGameMaster implements GameMaster {
     @Override
     public void nextPlayer() {
         table.nextTurn();
+        lastDrawnCard = null;
     }
 }

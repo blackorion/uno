@@ -61,5 +61,4 @@ public class NonRandomDeckFactory extends RandomDeckFactory {
                 .add(NINE_RED)
                 .add(ZERO_RED);
     }
-
 }

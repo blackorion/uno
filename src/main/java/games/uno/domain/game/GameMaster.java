@@ -43,7 +43,13 @@ public interface GameMaster {
 
     int deckRemains();
 
-    void returnCardFromPillToDeck();
-
     void shuffleDeck();
+
+    GameTable getTable();
+
+    Card deckFirstCardToDraw();
+
+    boolean didPlayerDrewThisTurn();
+
+    Card lastDrawnCard();
 }
