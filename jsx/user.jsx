@@ -3,6 +3,7 @@ export default class User {
 		this._id = idx;
 		this._hand = [];
 		this._board = board;
+		this._drawnCard = null;
 	}
 	_user(){
 		return this._board.userById(this._id);
@@ -27,6 +28,12 @@ export default class User {
 	set name(newName){
 		this._board.setUserName(newName);
 		$(document).trigger('update:current_user');
+	}
+	get drawnCard(){
+		return this._drawnCard;
+	}
+	set drawnCard(newDrawnCard){
+		this._drawnCard = newDrawnCard;
 	}
 	canProceed(){
 		return !this._user().shouldPlay;
