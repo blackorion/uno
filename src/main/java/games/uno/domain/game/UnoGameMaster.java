@@ -53,13 +53,13 @@ public class UnoGameMaster implements GameMaster {
     public void flushDeckAndPill() {
         deck.refill();
         deck.shuffle();
-        pill.empty();
+        pill.dropAll();
     }
 
     @Override
     public void flushPlayersHand() {
         currentPlayer().finishedHisMove();
-        table.players().forEach(AbstractCardHolder::empty);
+        table.players().forEach(AbstractCardHolder::dropAll);
     }
 
     @Override
@@ -83,10 +83,10 @@ public class UnoGameMaster implements GameMaster {
     @Override
     public void updateDeckFromPill() {
         Card card = pill.drawFromTop();
-        deck.empty();
+        deck.dropAll();
         deck.takeAllFrom(pill);
         deck.removeColoredWildCards();
-        pill.empty();
+        pill.dropAll();
         pill.take(card);
     }
 
@@ -108,6 +108,12 @@ public class UnoGameMaster implements GameMaster {
     @Override
     public Card lastDrawnCard() {
         return lastDrawnCard;
+    }
+
+    @Override
+    public void finishRound() {
+        lastDrawnCard = null;
+        stop();
     }
 
     @Override

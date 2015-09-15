@@ -11,13 +11,14 @@ import org.mockito.Mockito;
 import static org.mockito.Mockito.*;
 
 public class UnoRulesManagerTest {
+    private ScoreCounter scoreCounter = Mockito.mock(ScoreCounter.class);
     private GameMaster mockController = Mockito.mock(GameMaster.class);
-    private RulesManager manager = new UnoRulesManager(mockController);
+    private RulesManager manager = new UnoRulesManager(mockController, scoreCounter);
 
     @Before
     public void setUp() throws Exception {
         when(mockController.currentPlayedCard()).thenReturn(NonRandomDeckFactory.ONE_RED);
-        createPlayer();
+        createPlayerWithHand();
     }
 
     @Test
@@ -198,11 +199,49 @@ public class UnoRulesManagerTest {
 
     @Test
     public void PlayCard_DrawnWild_ShouldBePlayable() {
-        createPlayer(NonRandomDeckFactory.WILD_DARK);
+        createPlayerWithHand(NonRandomDeckFactory.WILD_DARK);
         setDrawnCard(NonRandomDeckFactory.WILD_DARK);
         manager.playerDraws();
 
         manager.cardPlayed(NonRandomDeckFactory.WILD_BLUE);
+    }
+
+    @Test
+    public void PlayCard_LastCard_PlayerWon() {
+        createPlayerWithHand();
+
+        manager.cardPlayed(NonRandomDeckFactory.TWO_RED);
+
+        verify(mockController, times(1)).finishRound();
+    }
+
+    @Test
+    public void PlayCard_RoundFinished_CountScore() {
+        createPlayerWithHand();
+
+        manager.cardPlayed(NonRandomDeckFactory.TWO_RED);
+
+        verify(scoreCounter, times(1)).compute();
+    }
+
+    @Test
+    public void PlayCard_DrawTwoAndRoundFinished_NextPlayerTakesTwoAndCountScore() {
+        createPlayerWithHand();
+
+        manager.cardPlayed(NonRandomDeckFactory.DRAW_TWO_RED);
+
+        verify(scoreCounter, times(1)).compute();
+        verify(mockController, times(2)).drawCard();
+    }
+
+    @Test
+    public void PlayCard_DrawFourAndRoundFinished_NextPlayerTakesFourAndCountScore() {
+        createPlayerWithHand();
+
+        manager.cardPlayed(NonRandomDeckFactory.WILD_DRAW_FOUR_BLUE);
+
+        verify(scoreCounter, times(1)).compute();
+        verify(mockController, times(4)).drawCard();
     }
 
     @Test
@@ -215,7 +254,7 @@ public class UnoRulesManagerTest {
 
     @Test(expected = WrongMoveException.class)
     public void DrawCard_PlaysOtherThanDrawnCard_ThrownException() {
-        createPlayer(NonRandomDeckFactory.ONE_RED, NonRandomDeckFactory.FOUR_RED);
+        createPlayerWithHand(NonRandomDeckFactory.ONE_RED, NonRandomDeckFactory.FOUR_RED);
         setDrawnCard(NonRandomDeckFactory.FIVE_RED);
 
         manager.playerDraws();
@@ -234,7 +273,7 @@ public class UnoRulesManagerTest {
 
     @Test
     public void DrawCard_AnyCard_CanFinishTurn() {
-        createPlayer(NonRandomDeckFactory.ONE_RED, NonRandomDeckFactory.FIVE_RED);
+        createPlayerWithHand(NonRandomDeckFactory.ONE_RED, NonRandomDeckFactory.FIVE_RED);
 
         manager.playerDraws();
 
@@ -243,7 +282,7 @@ public class UnoRulesManagerTest {
 
     @Test
     public void DrawCard_NoPlayableCards_NextPlayerTurn() {
-        createPlayer(NonRandomDeckFactory.TWO_BLUE, NonRandomDeckFactory.THREE_BLUE);
+        createPlayerWithHand(NonRandomDeckFactory.TWO_BLUE, NonRandomDeckFactory.THREE_BLUE);
         setDrawnCard(NonRandomDeckFactory.TWO_BLUE);
 
         manager.playerDraws();
@@ -253,7 +292,7 @@ public class UnoRulesManagerTest {
 
     @Test
     public void DrawCard_PlayableCardsOnHandButNotPlayableDrawn_NextPlayerTurn() {
-        createPlayer(NonRandomDeckFactory.ONE_RED, NonRandomDeckFactory.THREE_RED);
+        createPlayerWithHand(NonRandomDeckFactory.ONE_RED, NonRandomDeckFactory.THREE_RED);
         setDrawnCard(NonRandomDeckFactory.TWO_BLUE);
 
         manager.playerDraws();
@@ -291,7 +330,7 @@ public class UnoRulesManagerTest {
         verify(mockController, times(1)).flushDeckAndPill();
     }
 
-    private Player createPlayer(Card... cards) {
+    private Player createPlayerWithHand(Card... cards) {
         Player player = new Player("player");
 
         for (Card card : cards)

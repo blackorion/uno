@@ -1,17 +1,28 @@
 package games.uno.domain.game;
 
 import games.uno.domain.cards.Card;
-import games.uno.domain.cards.CardColors;
 import games.uno.domain.cards.CardValues;
 import games.uno.exceptions.IllegalTurnEndException;
 import games.uno.exceptions.WrongMoveException;
 
 public class UnoRulesManager implements RulesManager {
     private final GameMaster game;
+    private CardPlayStrategy cardPlayStrategy;
+    private ScoreCounter scoreCounter;
     private boolean firstCardIsWild = false;
 
-    public UnoRulesManager(GameMaster game) {
+    public UnoRulesManager(GameMaster game, ScoreCounter scoreCounter) {
         this.game = game;
+        this.scoreCounter = scoreCounter;
+        setDefaultCardPlayStrategy();
+    }
+
+    void setDefaultCardPlayStrategy() {
+        this.cardPlayStrategy = new CardPlayStrategy(this, game);
+    }
+
+    private void setFirstCardWildPlayStrategy() {
+        this.cardPlayStrategy = new FirstCardWildPlayStrategy(this, game);
     }
 
     @Override
@@ -28,7 +39,7 @@ public class UnoRulesManager implements RulesManager {
             game.shuffleDeck();
 
         if (game.deckFirstCardToDraw().getValue() == CardValues.WILD) {
-            firstCardIsWild = true;
+            setFirstCardWildPlayStrategy();
             game.drawCard();
         }
 
@@ -41,31 +52,10 @@ public class UnoRulesManager implements RulesManager {
 
     @Override
     public void cardPlayed(Card card) {
-        verifyValidMove(card);
-        game.putInPlayDeck(card);
-        handleCardAction(card);
-
-        if (firstCardIsWild) {
-            firstCardIsWild = false;
-            return;
-        }
-
-        game.setPlayerFinishedMove();
-        endTurn();
+        cardPlayStrategy.play(card);
     }
 
-    private void verifyValidMove(Card card) {
-        if (!card.isPlayable(game.currentPlayedCard()))
-            throw new WrongMoveException(game.currentPlayedCard(), card);
-
-        if (card.isWild() && card.getColor() == CardColors.DARK)
-            throw new WrongMoveException("Color not picked");
-
-        if (game.lastDrawnCard() != null && !card.equals(game.lastDrawnCard()))
-            throw new WrongMoveException("Only drawn card is playable");
-    }
-
-    private void handleCardAction(Card card) {
+    void handleCardAction(Card card) {
         if (card.getValue() == CardValues.REVERSE)
             game.changeDirection();
         else if (card.getValue() == CardValues.SKIP)
@@ -118,5 +108,9 @@ public class UnoRulesManager implements RulesManager {
 
         game.nextPlayer();
         game.persuadePlayerToPlay();
+    }
+
+    void computeScore() {
+        scoreCounter.compute();
     }
 }

@@ -14,12 +14,17 @@ public class GameConfig {
     }
 
     @Bean
-    public RulesManager rulesManager(GameMaster master) {
-        return new UnoRulesManager(master);
+    public RulesManager rulesManager(GameMaster master, ScoreCounter scoreCounter) {
+        return new UnoRulesManager(master, scoreCounter);
     }
 
     @Bean
     public GameMaster gameMaster(DeckFactory deckFactory) {
         return new UnoGameMaster(deckFactory.generate(), new Deck());
+    }
+
+    @Bean
+    public ScoreCounter scoreCounter(GameMaster gameMaster) {
+        return new ScoreCounter(gameMaster.getTable());
     }
 }

@@ -2,27 +2,38 @@ package games.uno.domain.game;
 
 import games.uno.domain.cards.AbstractCardHolder;
 import games.uno.domain.cards.Card;
+
 import java.util.List;
 
-public class Player extends AbstractCardHolder
-{
+public class Player extends AbstractCardHolder {
     private Long id;
     private String name;
     private boolean shouldPlay = false;
+    private int gameScore = 0;
 
-    public Player(String name) { this.name = name; }
+    public Player(String name) {
+        this.name = name;
+    }
 
-    public void setId(long id) { this.id = id; }
+    public void setId(long id) {
+        this.id = id;
+    }
 
-    public Long getId() { return id; }
+    public Long getId() {
+        return id;
+    }
 
-    public String getName() { return name; }
+    public String getName() {
+        return name;
+    }
 
-    public List<Card> cardsOnHand() { return cards; }
+    public List<Card> cardsOnHand() {
+        return cards;
+    }
 
     public boolean hasCardToPlay(Card onTop) {
-        for ( Card testable : cards ) {
-            if ( testable.isPlayable(onTop) )
+        for (Card testable : cards) {
+            if (testable.isPlayable(onTop))
                 return true;
         }
 
@@ -30,7 +41,9 @@ public class Player extends AbstractCardHolder
     }
 
     @Override
-    public String toString() { return name; }
+    public String toString() {
+        return name;
+    }
 
     public boolean isShouldPlay() {
         return shouldPlay;
@@ -50,5 +63,13 @@ public class Player extends AbstractCardHolder
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public int getGameScore() {
+        return gameScore;
+    }
+
+    public void addScore(int score) {
+        gameScore += score;
     }
 }

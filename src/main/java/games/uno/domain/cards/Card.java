@@ -51,4 +51,8 @@ public class Card {
     public String toString() {
         return value + " " + color;
     }
+
+    public int getScore() {
+        return value.getScore();
+    }
 }

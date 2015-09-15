@@ -52,4 +52,6 @@ public interface GameMaster {
     boolean didPlayerDrewThisTurn();
 
     Card lastDrawnCard();
+
+    void finishRound();
 }

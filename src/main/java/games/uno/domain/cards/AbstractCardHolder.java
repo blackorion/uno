@@ -37,7 +37,7 @@ public class AbstractCardHolder implements CardHolder {
         return cards.size() - index;
     }
 
-    public void empty() {
+    public void dropAll() {
         cards = new ArrayList<>();
         index = 0;
     }
