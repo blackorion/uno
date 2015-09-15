@@ -174,12 +174,12 @@ body {
 	font-size: 24px;
 }
 
-#new-card, .color-select {
+.placeholder, .color-select {
 	width: 83px;
 	height: 125px;
 	border-style: solid;
 	border-width: 1px;
-	display: flex;
+	display: inline-flex;
 	justify-content: center;
 	flex-direction: column;
 	text-align: center;
@@ -189,15 +189,18 @@ body {
 	transition-duration: 100ms;
 }
 
-#new-card {
-	color: white;
-	font-size: 20px;
+#shift-left {
 	float: left;
-	position:absolute;
+	position: absolute;
 	margin-left: -105px;
 }
 
-#new-card:hover {
+.placeholder {
+	color: white;
+	font-size: 20px;
+}
+
+.new-card:hover {
 	background: #BFE8B1;
 	cursor: pointer;
 }

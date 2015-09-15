@@ -21,8 +21,9 @@ export default class Board extends BoardBase {
 		this._users = newUsers;
 		$(document).trigger('update:users');
 	}
-	_setUserHand(hand){
-		this._currentUser.hand = hand;
+	_setUserHand(data){
+		this._currentUser.hand = data.hand;
+		this._currentUser.drawnCard = data.drawn;
 		$(document).trigger('update:user_cards');
 	}
 	_setupEvents(){

@@ -93,3 +93,18 @@ export class ColorSelectCard extends ActionCard {
 		}
 	}
 }
+
+export class PlayableCard extends React.Component {
+	constructor(props){
+		super(props)
+	}
+	render(){
+		if(this.props.card.playable){
+			if(this.props.card.color == constants.COLOR_BLACK)
+				return <ColorSelectCard action={this.props.board.playCard.bind(this.props.board)} data={this.props.card} />;
+			else
+				return <ActionCard action={this.props.board.playCard.bind(this.props.board)} data={this.props.card} />;
+		}
+		return <StaticCard data={this.props.card} />;
+	}
+}

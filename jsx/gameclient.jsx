@@ -22,7 +22,7 @@ export default class GameClient {
 	}
 	_debugSubscribe(chan){
 		this._client.subscribe(chan,(data)=>{
-			console.log('<<< WS '+chan,data);
+			console.log('<<< WS '+chan,JSON.parse(data.body));
 		});
 	}
 	_subscribeSingle(chan, f){

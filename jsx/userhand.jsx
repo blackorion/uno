@@ -1,4 +1,4 @@
-import {ActionCard,StaticCard,ColorSelectCard} from './card';
+import {PlayableCard} from './card';
 import * as constants from './constants';
 
 export default class UserHand extends React.Component {
@@ -15,13 +15,7 @@ export default class UserHand extends React.Component {
 		let hand = this.props.board.currentUser.hand.reverse();
 		if (hand.length > 0){
 			return hand.map((card,i)=>{
-				if(card.playable){
-					if(card.color == constants.COLOR_BLACK)
-						return <ColorSelectCard action={this.props.board.playCard.bind(this.props.board)} key={i} data={card} />;
-					else
-						return <ActionCard key={i} action={this.props.board.playCard.bind(this.props.board)} data={card} />;
-				}
-				return <StaticCard key={i} data={card} />;
+				return <PlayableCard board={this.props.board} card={card} key={i} />;
 			});
 		}
 		return <p>You don't have any cards.</p>;
