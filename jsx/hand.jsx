@@ -11,9 +11,9 @@ export default class Hand extends React.Component{
 		};
 	}
 	_synthHandNameClassName(){
-		let cls = 'hand-name'
+		let cls = 'hand-name';
 		if(!this.state.editable){
-			if(this.props.board.status && this.props.board.status.currentPlayerId == this.props.user.id)
+			if(this.props.board.isGameRunning() && this.props.board.status.currentPlayerId == this.props.user.id)
 				cls += ' hand-name-active';
 			if(this.props.user.id == this.props.board.currentUser.id)
 				cls += ' hand-name-self';
@@ -43,16 +43,24 @@ export default class Hand extends React.Component{
 
 	}
 	_synthCardsOnHand(){
-		if(this.props.user.cardsOnHand > 0)
+		if(this.props.board.isGameRunning() && this.props.user.cardsOnHand > 0)
 			return <div className='hand-name-off bluez handhand center-flex-row'>
 				{this.props.user.cardsOnHand}
 			</div>;
+	}
+	_synthRoundScore(){
+		if(!this.props.board.isGameRunning()){
+			return <div className='score center-flex-row'>
+				{this.props.user.gameScore}
+			</div>;
+		}
 	}
 	render(){
 		return <div className='pos-rel'>
 			{this._synthCardsOnHand()}
 			{this._synthNamePlate()}
-		</div>
+			{this._synthRoundScore()}
+		</div>;
 	}
 }
 

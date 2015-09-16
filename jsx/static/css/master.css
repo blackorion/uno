@@ -15,7 +15,7 @@ body {
 	}
 }
 
-#board {
+.board {
 	display: flex;
 	align-items: center;
 	flex-direction: column;
@@ -25,7 +25,7 @@ body {
 	height: 100%;
 }
 
-#board > * {
+.board > * {
 	width: 100%;
 }
 
@@ -34,7 +34,7 @@ body {
 	to { text-shadow: 0px 0px 25px #FFFFFF; }
 }
 
-#greeting {
+.greeting {
 	text-align: center;
 	background: #DC916C;
 	width:100%;
@@ -156,21 +156,20 @@ body {
 	height: 50px;
 	font-weight: bold;
 	width: 170px;
-	margin-bottom: 25px;
 }
 
 #deck {
 	background: #82A775;
 }
 
-#cards-left {
+.cards-left {
 	float:right;
 	position:absolute;
 	color: white;
 	margin-left: 15px;
 }
 
-#cards-left strong {
+.cards-left strong {
 	font-size: 24px;
 }
 
@@ -189,7 +188,7 @@ body {
 	transition-duration: 100ms;
 }
 
-#shift-left {
+.shift-left {
 	float: left;
 	position: absolute;
 	margin-left: -105px;
@@ -216,7 +215,7 @@ body {
 
 .hand-name-off {
 	right: -25px;
-	bottom: 0;
+	bottom: -25px;
 }
 
 .card-col-off {
@@ -299,12 +298,24 @@ body {
 	background:#FFC95D;
 }
 
-#main-menu {
+.main-menu {
 	display: flex;
 	flex-direction: row;
 }
 
-#main-menu > * {
+.main-menu > * {
 	margin-left: 10px;
 	margin-right: 10px;
+}
+
+.hands {
+	padding-bottom: 25px;
+}
+
+.score {
+	font-size: 40px;
+	color: white;
+	background: #DC916C;
+	padding-top: 10px;
+	padding-bottom: 10px;
 }

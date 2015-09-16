@@ -22,7 +22,7 @@ export default class UserHand extends React.Component {
 	}
 	render(){
 		if(this.props.board.isGameRunning()){
-			return <div id='user-hand' className='center-flex-row'>
+			return <div className='user-hand center-flex-row'>
 				{this._synthCards()}
 			</div>;
 		}

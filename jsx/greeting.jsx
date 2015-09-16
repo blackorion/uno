@@ -17,10 +17,10 @@ export default class Greeting extends React.Component {
 	}
 	render() {
 		if(!this.props.board.isGameRunning()){
-			return <div id="greeting">
+			return <div className='greeting'>
 				{this._synthGreeting()}
 				<p>Welcome to </p>
-				<h1 className="glow">The Super UNO VI: Hyper Arcade Edition II HD Remix!</h1>
+				<h1 className='glow'>The Super UNO VI: Hyper Arcade Edition II HD Remix!</h1>
 			</div>
 		}
 		return false;
