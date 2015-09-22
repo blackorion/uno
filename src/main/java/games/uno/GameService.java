@@ -79,6 +79,10 @@ public class GameService {
             return null;
     }
 
+    public void removeAllPlayers() {
+        game.removePlayers();
+    }
+
     private Pair<Player, Card> lastDrawnCard() {
         return new Pair<>(game.currentPlayer(), game.lastDrawnCard());
     }

@@ -12,6 +12,7 @@ import org.mockito.Mockito;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
 public class GameTableTest {
@@ -51,5 +52,16 @@ public class GameTableTest {
         table.add(expectedPlayer);
 
         assertThat(table.currentPlayer(), is(expectedPlayer));
+    }
+
+    @Test
+    public void RemovePlayers_All_TableIsEmpty() {
+        table.add(new Player("player"));
+        table.add(new Player("player2"));
+        table.add(new Player("player3"));
+
+        table.removePlayers();
+
+        assertTrue(table.players().isEmpty());
     }
 }

@@ -32,4 +32,6 @@ public interface CardGame {
     GameState state();
 
     Card lastDrawnCard();
+
+    void removePlayers();
 }

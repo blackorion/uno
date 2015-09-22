@@ -16,6 +16,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @CrossOrigin
 @RequestMapping("/api/game")
@@ -30,11 +31,14 @@ public class GameController {
         this.playerService = playerService;
     }
 
-    @RequestMapping(value = "/flush", method = RequestMethod.GET)
+    @RequestMapping(value = "/reset", method = RequestMethod.GET)
+    @ResponseBody
     public String flush() {
-        this.playerService.flushSession();
+        gameService.stopCurrentGame();
+        playerService.flushSession();
+        gameService.removeAllPlayers();
 
-        return "redirect:/";
+        return "ok";
     }
 
     @SubscribeMapping("/game.info")

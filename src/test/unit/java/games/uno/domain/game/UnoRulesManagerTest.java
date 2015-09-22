@@ -50,6 +50,7 @@ public class UnoRulesManagerTest {
 
     @Test
     public void GameStart_SkipCard_FirstPlayerLosesTurn() {
+        createPlayerWithHand(NonRandomDeckFactory.FIVE_RED, NonRandomDeckFactory.SKIP_RED);
         when(mockController.deckFirstCardToDraw()).thenReturn(NonRandomDeckFactory.SKIP_RED);
 
         manager.gameStarted();
@@ -79,6 +80,7 @@ public class UnoRulesManagerTest {
 
     @Test
     public void GameStart_WildCard_PlayerChoosesColorAndContinuesHisTurn() {
+        createPlayerWithHand(NonRandomDeckFactory.WILD_RED, NonRandomDeckFactory.WILD_DARK);
         when(mockController.deckFirstCardToDraw())
                 .thenReturn(NonRandomDeckFactory.WILD_DARK)
                 .thenReturn(NonRandomDeckFactory.WILD_BLUE);
@@ -130,6 +132,7 @@ public class UnoRulesManagerTest {
 
     @Test
     public void PlayCard_Playable_TurnEnds() {
+        createPlayerWithHand(NonRandomDeckFactory.FIVE_RED);
         manager.cardPlayed(NonRandomDeckFactory.ONE_RED);
 
         verify(mockController, times(1)).nextPlayer();
@@ -144,6 +147,7 @@ public class UnoRulesManagerTest {
 
     @Test
     public void PlayCard_ReverseCard_PersuadeNextPlayerToPlay() {
+        createPlayerWithHand(NonRandomDeckFactory.ONE_RED, NonRandomDeckFactory.REVERSE_RED);
         manager.cardPlayed(NonRandomDeckFactory.REVERSE_RED);
 
         verify(mockController, times(1)).persuadePlayerToPlay();
@@ -151,6 +155,7 @@ public class UnoRulesManagerTest {
 
     @Test
     public void PlayCard_SkipCard_NextPlayerSkipsTurn() {
+        createPlayerWithHand(NonRandomDeckFactory.FIVE_RED, NonRandomDeckFactory.SKIP_RED);
         manager.cardPlayed(NonRandomDeckFactory.SKIP_RED);
 
         verify(mockController, times(2)).nextPlayer();
@@ -158,6 +163,7 @@ public class UnoRulesManagerTest {
 
     @Test
     public void PlayCard_DrawTwoCard_NextPlayerDrawsTwoCardsAndSkipsTurn() {
+        createPlayerWithHand(NonRandomDeckFactory.FIVE_RED, NonRandomDeckFactory.DRAW_TWO_RED);
         manager.cardPlayed(NonRandomDeckFactory.DRAW_TWO_RED);
 
         verify(mockController, times(2)).drawCard();
@@ -166,6 +172,7 @@ public class UnoRulesManagerTest {
 
     @Test
     public void PlayCard_WildDrawFourCard_NextPlayerDrawsFourCardsAndSkips() {
+        createPlayerWithHand(NonRandomDeckFactory.FIVE_RED, NonRandomDeckFactory.WILD_DRAW_FOUR_BLUE);
         manager.cardPlayed(NonRandomDeckFactory.WILD_DRAW_FOUR_BLUE);
 
         verify(mockController, times(4)).drawCard();
@@ -204,6 +211,16 @@ public class UnoRulesManagerTest {
         manager.playerDraws();
 
         manager.cardPlayed(NonRandomDeckFactory.WILD_BLUE);
+    }
+
+    @Test
+    public void PlayCard_LastCardIsSkip_TurnDoesNotSkipped() {
+        createPlayerWithHand();
+
+        manager.cardPlayed(NonRandomDeckFactory.SKIP_RED);
+
+        verify(mockController, never()).nextPlayer();
+        verify(mockController, times(1)).finishRound();
     }
 
     @Test

@@ -20,15 +20,21 @@ public class BasicCardPlayStrategy extends CardPlayStrategy {
     private void finishTurn() {
         game.setPlayerFinishedMove();
 
-        if (game.currentPlayer().cardsOnHand().size() == 0) {
+        if (isLastCard()) {
             game.finishRound();
             computeScore();
 
             if (game.currentPlayer().getGameScore() >= 500)
                 game.stop();
+
+            return ;
         }
 
         rulesManager.endTurn();
+    }
+
+    private boolean isLastCard() {
+        return game.currentPlayer().cardsOnHand().isEmpty();
     }
 
     private void computeScore() {

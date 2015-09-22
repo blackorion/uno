@@ -86,4 +86,9 @@ public class BasicCardGame implements CardGame {
     public Card lastDrawnCard() {
         return master.lastDrawnCard();
     }
+
+    @Override
+    public void removePlayers() {
+        master.getTable().removePlayers();
+    }
 }

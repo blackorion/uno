@@ -9,8 +9,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
-
 @Service
 public class PlayerService
 {
@@ -28,8 +26,6 @@ public class PlayerService
     public Player findOrNew(String sessionId) {
         return repository.findBySessionId(sessionId);
     }
-
-    public Collection<Player> findAll() { return repository.findAll(); }
 
     public Player find(String sessionId) { return repository.findBySessionId(sessionId); }
 

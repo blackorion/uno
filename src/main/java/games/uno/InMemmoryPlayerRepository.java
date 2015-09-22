@@ -30,6 +30,7 @@ public class InMemmoryPlayerRepository implements PlayerRepository {
     @Override
     public void deleteAll() {
         players.clear();
+        counter.set(0);
     }
 
     @Override

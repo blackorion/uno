@@ -35,10 +35,6 @@ public class GameTable
         return queue.getElements();
     }
 
-    public boolean isEmpty() {
-        return queue.size() == 0;
-    }
-
     public BidirectionalQueue.Direction getDirection() {
         return queue.getDirection();
     }
@@ -56,5 +52,9 @@ public class GameTable
 
     public void changeDirection() {
         queue.changeDirection();
+    }
+
+    public void removePlayers() {
+        queue.clear();
     }
 }
