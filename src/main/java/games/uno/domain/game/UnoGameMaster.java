@@ -143,6 +143,12 @@ public class UnoGameMaster implements GameMaster {
 
     @Override
     public Card drawCard() {
+        if (deckIsEmpty())
+            updateDeckFromPill();
+
+        if (deckIsEmpty())
+            return null;
+
         return lastDrawnCard = table.currentPlayer().takeCardFrom(deck);
     }
 

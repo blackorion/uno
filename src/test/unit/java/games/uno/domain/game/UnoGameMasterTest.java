@@ -5,15 +5,22 @@ import games.uno.domain.cards.Deck;
 import games.uno.testutils.NonRandomDeckFactory;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.core.IsNull;
+import org.junit.Before;
 import org.junit.Test;
 
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.*;
 
 public class UnoGameMasterTest {
     Deck deck = new Deck();
     Deck pill = new Deck();
     GameMaster master = new UnoGameMaster(deck, pill);
+
+    @Before
+    public void setUp() throws Exception {
+        master.getTable().add(new Player("player"));
+    }
 
     @Test
     public void BankIsEmpty() {
@@ -102,5 +109,27 @@ public class UnoGameMasterTest {
         master.getTable().add(new Player("player"));
 
         assertThat(master.lastDrawnCard(), IsNull.nullValue());
+    }
+
+    @Test
+    public void DrawCard_DeckIsEmpty_PillShuffledToNewDeck() {
+        pill.take(NonRandomDeckFactory.ONE_RED);
+        pill.take(NonRandomDeckFactory.TWO_BLUE);
+        pill.take(NonRandomDeckFactory.THREE_BLUE);
+
+        Card drawn = master.drawCard();
+
+        assertThat(drawn, is(NonRandomDeckFactory.TWO_BLUE));
+        assertThat(deck.showTopCard(), is(NonRandomDeckFactory.THREE_BLUE));
+        assertThat(pill.showTopCard(), is(NonRandomDeckFactory.ONE_RED));
+    }
+
+    @Test
+    public void DrawCard_EmptyDeckAndPill_NoCardDrawn() {
+        pill.take(NonRandomDeckFactory.ONE_BLUE);
+
+        Card drawn = master.drawCard();
+
+        assertThat(drawn, is(nullValue()));
     }
 }

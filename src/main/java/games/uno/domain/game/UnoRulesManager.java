@@ -68,9 +68,6 @@ public class UnoRulesManager implements RulesManager {
         Card lastDrawnCard = game.drawCard();
         game.setPlayerFinishedMove();
 
-        if (game.deckIsEmpty())
-            game.updateDeckFromPill();
-
         if (drawnCardNotPlayable(lastDrawnCard))
             endTurn();
 

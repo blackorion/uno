@@ -290,15 +290,6 @@ public class UnoRulesManagerTest {
     }
 
     @Test
-    public void DrawCard_DeckIsEmpty_PillShuffledToNewDeck() {
-        when(mockController.deckIsEmpty()).thenReturn(true);
-
-        manager.playerDraws();
-
-        verify(mockController, times(1)).updateDeckFromPill();
-    }
-
-    @Test
     public void DrawCard_AnyCard_CanFinishTurn() {
         createPlayerWithHand(NonRandomDeckFactory.ONE_RED, NonRandomDeckFactory.FIVE_RED);
 
