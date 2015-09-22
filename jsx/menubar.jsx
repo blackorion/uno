@@ -37,7 +37,7 @@ export default class MenuBar extends React.Component {
 
 	}
 	render() {
-		return <div id='main-menu'>
+		return <div className='main-menu'>
 			{this._synthButtons()}
 			{this._synthDebugControls()}
 		</div>;

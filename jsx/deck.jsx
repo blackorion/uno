@@ -36,11 +36,11 @@ export default class Deck extends React.Component {
 		let status = this.props.board.status;
 		if(this.props.board.isGameRunning()){
 			return <div>
-				<span id="shift-left">
+				<span className='shift-left'>
 					{this._synthDrawCard()}
 				</span>
 				{this._synthCard(status.topCard)}
-				<span id='cards-left'>Cards left:<br/><strong>{status.cardsInBank}</strong></span>
+				<span className='cards-left'>Cards left:<br/><strong>{status.cardsInBank}</strong></span>
 			</div>;
 		}
 		return false;
