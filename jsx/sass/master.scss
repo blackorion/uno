@@ -1,0 +1,162 @@
+@import url(https://fonts.googleapis.com/css?family=Roboto:400,700,300,100&subset=latin,cyrillic);
+
+@import 'cards';
+@import 'menubar';
+@import 'deck';
+@import 'greeting';
+
+@mixin center-flex-row {
+	display: flex;
+	align-items: center;
+	flex-direction: row;
+	justify-content: center;
+	flex-wrap:wrap;
+	& > * {
+		margin: 25px;
+	}
+}
+
+body {
+	padding: 0;
+	margin: 0;
+	font-family: 'Roboto', sans-serif;
+	font-weight: 400;
+	background: #FFC190;
+}
+
+/*
+ * @keyframes wobble {
+ * 	from {
+ * 		transform: rotate(-15deg);
+ * 	}
+ * 	to {
+ * 		transform: rotate(15deg);
+ * 	}
+ * }
+ */
+
+.board {
+	display: flex;
+	align-items: center;
+	flex-direction: column;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+
+	& > * {
+		width: 100%;
+	}
+}
+
+@keyframes moveRight {
+	from { background-position: 0 0; }
+	to { background-position: 100% 0; }
+}
+
+@mixin arrow-bg($img,$reverse: null) {
+	background: url($img);
+	background-attachment: fixed;
+	background-position: 0px 0px;
+	animation: moveRight 40s linear infinite $reverse;
+}
+
+.bg-right { @include arrow-bg("/img/arrow_right.svg"); }
+
+.bg-left { @include arrow-bg("/img/arrow_left.svg",reverse); }
+
+.hand-name {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	width: 100%;
+	text-align: center;
+	height: 50px;
+	font-weight: bold;
+	width: 170px;
+
+	&.hand-name-self {
+		background: #78D04C;
+		color: white;
+	}
+
+	&.hand-name-other {
+		background: #9E6D5C;
+		color: white;
+	}
+
+	&.hand-name-active {
+		outline:6px solid white;
+	}
+
+	&.hand-name-edit {
+		color: black;
+		background: white;
+	}
+}
+
+#deck {
+	@include center-flex-row;
+
+	background: #82A775;
+}
+
+.shift-left {
+	float: left;
+	position: absolute;
+	margin-left: -105px;
+}
+
+@mixin handhand {
+	width: 50px;
+	height: 50px;
+	color: white;
+	font-size: 25px;
+	float: right;
+	position: absolute;
+	border-radius: 25px;
+	font-weight: bold;
+	box-shadow: 0 0 10px #777;
+}
+
+@mixin right-bottom-offset($offset) {
+	right: $offset;
+	bottom: $offset;
+}
+
+.hand-name-off {
+	@include center-flex-row;
+	@include handhand;
+	@include right-bottom-offset(-25px);
+
+	background: #44B1D0;
+}
+
+.hands {
+	@include center-flex-row;
+
+	padding-bottom: 25px;
+}
+
+.score {
+	@include center-flex-row;
+
+	font-size: 40px;
+	color: white;
+	background: #DC916C;
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+
+.user-hand { @include center-flex-row; }
+
+.card-col-off {
+	@include handhand;
+	@include right-bottom-offset(-10px);
+}
+
+#menubar {
+	@include center-flex-row;
+
+	background: #9E6D5C;
+}

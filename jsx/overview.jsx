@@ -30,7 +30,7 @@ export default class Overview extends React.Component {
 		return '';
 	}
 	render(){
-		return <div className={'hands center-flex-row '+this._synthGameDirectionClass()}>
+		return <div className={'hands '+this._synthGameDirectionClass()}>
 			{this._synthHands()}
 		</div>;
 	}

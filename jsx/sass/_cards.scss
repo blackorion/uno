@@ -1,0 +1,68 @@
+.pos-rel {
+	position:relative;
+}
+
+.red, .blue, .yellow, .green {
+	width: 41px;
+	height: 63px;
+	position:absolute;
+	transition-duration: 100ms;
+}
+
+.c-red { background: #D83D3D; }
+
+.c-blue { background: #5555FF; }
+
+.c-yellow { background:#FFAA00; }
+
+.c-green { background: #55AA55; }
+
+@mixin offset($left,$top) {
+	left:$left;
+	top:$top;
+}
+
+.red {
+	@include offset(0,0);
+
+	&:hover {
+		background: #FF5555;
+	}
+}
+
+.green {
+	@include offset(41px,63px);
+
+	&:hover {
+		background: #62CA62;
+	}
+}
+
+.blue {
+	@include offset(41px,0);
+
+	&:hover {
+		background: #7797F1;
+	}
+}
+
+.yellow {
+	@include offset(0,63px);
+
+	&:hover {
+		background:#FFC95D;
+	}
+}
+
+.card-dimmed {
+	opacity: 0.3;
+}
+
+.card-action {
+	cursor: pointer;
+}
+
+.color-select {
+	position:relative;
+	cursor: pointer;
+}

@@ -5,7 +5,7 @@ import BoardBase from './boardbase';
 export default class Board extends BoardBase {
 	initiateGame(){
 		this._greetServer((data)=>{
-			console.log('>>> CURRENT USER',data);
+			console.info('>>> CURRENT USER',data);
 			this._currentUser = new User(data.id,this);
 			this._users = [data];
 			this._connect();

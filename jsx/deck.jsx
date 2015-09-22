@@ -17,7 +17,7 @@ export default class Deck extends React.Component {
 			if(user.drawnCard){
 				return <PlayableCard board={this.props.board} card={user.drawnCard} />;
 			} else{
-				return <div onClick={this.props.board.drawCard.bind(this.props.board)} className='placeholder new-card'>
+				return <div onClick={this.props.board.drawCard.bind(this.props.board)} className='new-card'>
 					Draw
 				</div>;
 			}

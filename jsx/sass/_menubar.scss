@@ -1,0 +1,57 @@
+@mixin btn {
+	font-size: 20px;
+	padding: 10px 20px 10px 20px;
+	text-decoration: none;
+	border: none;
+	border-radius: 0;
+	cursor: pointer;
+	outline: none;
+	transition-duration: 100ms;
+
+	&:hover {
+		text-decoration: none;
+	}
+}
+
+.btn-good,
+.btn-bad {
+	color: white;
+}
+
+.btn-good {
+	@include btn;
+
+	background: #44B1D0;
+
+	&:hover {
+		background: #5DD5F7;
+	}
+}
+
+
+.btn-bad {
+	@include btn;
+
+	background: #D04444;
+
+	&:hover {
+		background: #F75D5D;
+	}
+}
+
+.btn-worst {
+	@include btn;
+
+	color: #9E6D5C;
+	background: #B99385;
+}
+
+.main-menu {
+	display: flex;
+	flex-direction: row;
+}
+
+.main-menu > * {
+	margin-left: 10px;
+	margin-right: 10px;
+}

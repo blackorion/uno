@@ -44,13 +44,13 @@ export default class Hand extends React.Component{
 	}
 	_synthCardsOnHand(){
 		if(this.props.board.isGameRunning() && this.props.user.cardsOnHand > 0)
-			return <div className='hand-name-off bluez handhand center-flex-row'>
+			return <div className='hand-name-off'>
 				{this.props.user.cardsOnHand}
 			</div>;
 	}
 	_synthRoundScore(){
 		if(!this.props.board.isGameRunning()){
-			return <div className='score center-flex-row'>
+			return <div className='score'>
 				{this.props.user.gameScore}
 			</div>;
 		}
