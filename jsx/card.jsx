@@ -19,7 +19,7 @@ export class StaticCard extends React.Component {
 
 export class StaticColorCard extends StaticCard {
 	_synthColorClass(){
-		let cls = 'card-col-off handhand ';
+		let cls = 'card-col-off ';
 		switch(this.props.data.color){
 			case constants.COLOR_RED:
 				return cls + 'c-red';

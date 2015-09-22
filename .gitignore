@@ -4,3 +4,4 @@ node_modules
 *.swp
 *.min.js
 application.js
+master.css

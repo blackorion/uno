@@ -22,7 +22,7 @@ export default class GameClient {
 	}
 	_debugSubscribe(chan){
 		this._client.subscribe(chan,(data)=>{
-			console.log('<<< WS '+chan,JSON.parse(data.body));
+			console.info('<<< WS '+chan,JSON.parse(data.body));
 		});
 	}
 	_subscribeSingle(chan, f){
@@ -65,29 +65,33 @@ export default class GameClient {
 
 	// Actions
 	startGame(f){
-		console.log('>>> WS START GAME');
+		console.info('>>> WS START GAME');
 		this._client.send('/app/game.control',{},JSON.stringify({action:'START'}));
+	}
+	resetGame(){
+		console.info('>>> RESET GAME');
+		this._ajaxWithSession('/api/game/reset','GET');
 	}
 	_greetServer(f){
 		this._ajaxWithSession('/api/players/me','GET',f);
 	}
 	stopGame(f){
-		console.log('>>> WS STOP GAME');
+		console.info('>>> WS STOP GAME');
 		this._client.send('/app/game.control',{},JSON.stringify({action:'STOP'}));
 	}
 	playCard(card_){
-		console.log('>>> WS SENDING',JSON.stringify(card_));
+		console.info('>>> WS SENDING',JSON.stringify(card_));
 		this._sendAction('PLAY_CARD',{card:card_});
 	}
 	drawCard(){
-		console.log('>>> WS DRAW CARD');
+		console.info('>>> WS DRAW CARD');
 		this._sendAction('DRAW_CARD',{});
 	}
 	setUserName(newName){
-		console.log('>>> WS NEW NAME [NOOP]',newName);
+		console.info('>>> WS NEW NAME [NOOP]',newName);
 	}
 	endTurn(){
-		console.log('>>> WS END TURN');
+		console.info('>>> WS END TURN');
 		this._sendAction('END_TURN',{});
 	}
 }
