@@ -2,6 +2,8 @@ package games.uno.domain.game;
 
 import games.uno.domain.cards.Card;
 
+import java.util.List;
+
 public interface GameMaster {
     void nextPlayer();
 
@@ -24,6 +26,8 @@ public interface GameMaster {
     void stop();
 
     Card drawCard();
+
+    List<Card> drawCard(int times);
 
     void putInPlayDeck(Card card);
 

@@ -6,9 +6,6 @@ public class WildDrawFourCardAction implements CardAction {
     @Override
     public void applyAction(GameMaster game) {
         game.nextPlayer();
-        game.drawCard();
-        game.drawCard();
-        game.drawCard();
-        game.drawCard();
+        game.drawCard(4);
     }
 }

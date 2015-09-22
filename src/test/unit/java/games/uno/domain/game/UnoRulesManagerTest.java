@@ -65,7 +65,7 @@ public class UnoRulesManagerTest {
         manager.gameStarted();
 
         verify(mockController, times(1)).nextPlayer();
-        verify(mockController, times(2)).drawCard();
+        verify(mockController, times(1)).drawCard(2);
     }
 
     @Test
@@ -166,7 +166,7 @@ public class UnoRulesManagerTest {
         createPlayerWithHand(NonRandomDeckFactory.FIVE_RED, NonRandomDeckFactory.DRAW_TWO_RED);
         manager.cardPlayed(NonRandomDeckFactory.DRAW_TWO_RED);
 
-        verify(mockController, times(2)).drawCard();
+        verify(mockController, times(1)).drawCard(2);
         verify(mockController, times(2)).nextPlayer();
     }
 
@@ -175,7 +175,7 @@ public class UnoRulesManagerTest {
         createPlayerWithHand(NonRandomDeckFactory.FIVE_RED, NonRandomDeckFactory.WILD_DRAW_FOUR_BLUE);
         manager.cardPlayed(NonRandomDeckFactory.WILD_DRAW_FOUR_BLUE);
 
-        verify(mockController, times(4)).drawCard();
+        verify(mockController, times(1)).drawCard(4);
         verify(mockController, times(2)).nextPlayer();
     }
 
@@ -258,7 +258,7 @@ public class UnoRulesManagerTest {
         manager.cardPlayed(NonRandomDeckFactory.DRAW_TWO_RED);
 
         verify(scoreCounter, times(1)).compute();
-        verify(mockController, times(2)).drawCard();
+        verify(mockController, times(1)).drawCard(2);
     }
 
     @Test
@@ -268,7 +268,7 @@ public class UnoRulesManagerTest {
         manager.cardPlayed(NonRandomDeckFactory.WILD_DRAW_FOUR_BLUE);
 
         verify(scoreCounter, times(1)).compute();
-        verify(mockController, times(4)).drawCard();
+        verify(mockController, times(1)).drawCard(4);
     }
 
     @Test

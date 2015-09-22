@@ -4,6 +4,9 @@ import games.uno.domain.cards.AbstractCardHolder;
 import games.uno.domain.cards.Card;
 import games.uno.domain.cards.Deck;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class UnoGameMaster implements GameMaster {
     private final Deck deck;
     private final Deck pill;
@@ -150,6 +153,16 @@ public class UnoGameMaster implements GameMaster {
             return null;
 
         return lastDrawnCard = table.currentPlayer().takeCardFrom(deck);
+    }
+
+    @Override
+    public List<Card> drawCard(int times) {
+        List<Card> cards = new ArrayList<>();
+
+        for (int i = 0; i < times; i++)
+            cards.add(drawCard());
+
+        return cards;
     }
 
     @Override
