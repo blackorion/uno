@@ -10,8 +10,11 @@ public class FirstCardWildPlayStrategy extends CardPlayStrategy {
     @Override
     public void play(Card card) {
         verifyMove(card);
-        game.putInPlayDeck(card);
-        rulesManager.handleCardAction(card);
+        doPlayCard(card);
+        updateStrategy();
+    }
+
+    private void updateStrategy() {
         rulesManager.setDefaultCardPlayStrategy();
     }
 }

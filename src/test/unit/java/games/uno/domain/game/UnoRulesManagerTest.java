@@ -225,6 +225,16 @@ public class UnoRulesManagerTest {
     }
 
     @Test
+    public void RoundFinish_PlayerReaches500_PlayerWinsTheGame() {
+        Player player = createPlayerWithHand();
+        player.addScore(500);
+
+        manager.cardPlayed(NonRandomDeckFactory.TWO_RED);
+
+        verify(mockController, times(1)).stop();
+    }
+
+    @Test
     public void PlayCard_DrawTwoAndRoundFinished_NextPlayerTakesTwoAndCountScore() {
         createPlayerWithHand();
 

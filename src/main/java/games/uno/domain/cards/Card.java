@@ -1,5 +1,7 @@
 package games.uno.domain.cards;
 
+import games.uno.domain.game.GameMaster;
+
 public class Card {
     private final CardValues value;
     private final CardColors color;
@@ -54,5 +56,9 @@ public class Card {
 
     public int getScore() {
         return value.getScore();
+    }
+
+    public void applyAction(GameMaster game) {
+        value.applyAction(game);
     }
 }

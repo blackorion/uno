@@ -9,7 +9,6 @@ public class UnoRulesManager implements RulesManager {
     private final GameMaster game;
     private CardPlayStrategy cardPlayStrategy;
     private ScoreCounter scoreCounter;
-    private boolean firstCardIsWild = false;
 
     public UnoRulesManager(GameMaster game, ScoreCounter scoreCounter) {
         this.game = game;
@@ -18,10 +17,10 @@ public class UnoRulesManager implements RulesManager {
     }
 
     void setDefaultCardPlayStrategy() {
-        this.cardPlayStrategy = new CardPlayStrategy(this, game);
+        this.cardPlayStrategy = new BasicCardPlayStrategy(this, game, scoreCounter);
     }
 
-    private void setFirstCardWildPlayStrategy() {
+    void setFirstCardWildPlayStrategy() {
         this.cardPlayStrategy = new FirstCardWildPlayStrategy(this, game);
     }
 
@@ -43,34 +42,15 @@ public class UnoRulesManager implements RulesManager {
             game.drawCard();
         }
 
-        handleCardAction(game.deckFirstCardToDraw());
+        game.deckFirstCardToDraw().applyAction(game);
 
-        if (game.deckFirstCardToDraw().getValue() == CardValues.REVERSE) {
+        if (game.deckFirstCardToDraw().getValue() == CardValues.REVERSE)
             game.nextPlayer();
-        }
     }
 
     @Override
     public void cardPlayed(Card card) {
         cardPlayStrategy.play(card);
-    }
-
-    void handleCardAction(Card card) {
-        if (card.getValue() == CardValues.REVERSE)
-            game.changeDirection();
-        else if (card.getValue() == CardValues.SKIP)
-            game.nextPlayer();
-        else if (card.getValue() == CardValues.DRAW_TWO) {
-            game.nextPlayer();
-            game.drawCard();
-            game.drawCard();
-        } else if (card.getValue() == CardValues.WILD_DRAW_FOUR) {
-            game.nextPlayer();
-            game.drawCard();
-            game.drawCard();
-            game.drawCard();
-            game.drawCard();
-        }
     }
 
     @Override
@@ -108,9 +88,5 @@ public class UnoRulesManager implements RulesManager {
 
         game.nextPlayer();
         game.persuadePlayerToPlay();
-    }
-
-    void computeScore() {
-        scoreCounter.compute();
     }
 }
