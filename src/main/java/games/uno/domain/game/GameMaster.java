@@ -29,7 +29,7 @@ public interface GameMaster {
 
     List<Card> drawCard(int times);
 
-    void putInPlayDeck(Card card);
+    void moveToPill(Card card);
 
     void flushDeckAndPill();
 
@@ -58,4 +58,6 @@ public interface GameMaster {
     Card lastDrawnCard();
 
     void finishRound();
+
+    int cardsInPill();
 }

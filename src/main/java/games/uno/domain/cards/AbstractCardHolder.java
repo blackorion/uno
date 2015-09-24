@@ -1,15 +1,14 @@
 package games.uno.domain.cards;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class AbstractCardHolder implements CardHolder {
-    protected List<Card> cards = new ArrayList<>();
-    protected int index = 0;
+    protected List<Card> cards = new LinkedList<>();
 
     @Override
     public Card drawFromTop() {
-        return cards.get(index++);
+        return cards.remove(0);
     }
 
     @Override
@@ -34,11 +33,10 @@ public class AbstractCardHolder implements CardHolder {
 
     @Override
     public int remains() {
-        return cards.size() - index;
+        return cards.size();
     }
 
     public void dropAll() {
-        cards = new ArrayList<>();
-        index = 0;
+        cards = new LinkedList<>();
     }
 }

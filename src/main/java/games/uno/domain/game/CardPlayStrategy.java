@@ -25,7 +25,7 @@ abstract class CardPlayStrategy {
     }
 
     protected void doPlayCard(Card card) {
-        game.putInPlayDeck(card);
+        game.moveToPill(card);
         card.applyAction(game);
     }
 

@@ -1,23 +1,27 @@
 package games.uno.domain.game;
 
-import games.uno.domain.cards.Deck;
 import games.uno.exceptions.WonPlayerDetermineException;
 import games.uno.testutils.NonRandomDeckFactory;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
+
+import java.util.Arrays;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.when;
 
 public class ScoreCounterTest {
     private final Player PLAYER_ONE = new Player("player1");
     private final Player PLAYER_TWO = new Player("player2");
-    private final GameTable table = new GameTable(new UnoGameMaster(new Deck(), new Deck()));
-    private final ScoreCounter counter = new ScoreCounter(table);
+    private final GameTable stubTable = Mockito.mock(GameTable.class);
+    private final ScoreCounter counter = new ScoreCounter(stubTable);
 
     @Before
     public void setUp() {
-        table.add(PLAYER_ONE);
-        table.add(PLAYER_TWO);
+        when(stubTable.currentPlayer())
+                .thenReturn(PLAYER_ONE);
+        when(stubTable.players()).thenReturn(Arrays.asList(PLAYER_ONE, PLAYER_TWO));
     }
 
     @Test

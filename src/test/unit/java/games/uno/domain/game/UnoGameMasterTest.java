@@ -3,22 +3,27 @@ package games.uno.domain.game;
 import games.uno.domain.cards.Card;
 import games.uno.domain.cards.Deck;
 import games.uno.testutils.NonRandomDeckFactory;
+import games.uno.util.DeckFactory;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.core.IsNull;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.when;
 
 public class UnoGameMasterTest {
     Deck deck = new Deck();
-    Deck pill = new Deck();
-    GameMaster master = new UnoGameMaster(deck, pill);
+    GameMaster master;
 
     @Before
     public void setUp() throws Exception {
+        DeckFactory stubFactory = Mockito.mock(DeckFactory.class);
+        when(stubFactory.generate()).thenReturn(deck);
+        master = new UnoGameMaster(stubFactory);
         master.getTable().add(new Player("player"));
     }
 
@@ -31,12 +36,12 @@ public class UnoGameMasterTest {
     public void updateDeckFromPill() {
         deck.take(NonRandomDeckFactory.DRAW_TWO_RED);
         deck.drawFromTop();
-        pill.take(NonRandomDeckFactory.ONE_RED);
-        pill.take(NonRandomDeckFactory.TWO_BLUE);
+        master.moveToPill(NonRandomDeckFactory.ONE_RED);
+        master.moveToPill(NonRandomDeckFactory.TWO_BLUE);
 
         master.updateDeckFromPill();
 
-        assertThat(pill.remains(), is(1));
+        assertThat(master.cardsInPill(), is(1));
         assertThat(master.currentPlayedCard(), is(NonRandomDeckFactory.ONE_RED));
         assertThat(deck.remains(), is(1));
         assertThat(deck.showTopCard(), is(NonRandomDeckFactory.TWO_BLUE));
@@ -44,8 +49,8 @@ public class UnoGameMasterTest {
 
     @Test
     public void updateDeckFromPill_shouldFlushWildCardsColor() {
-        pill.take(NonRandomDeckFactory.ONE_RED);
-        pill.take(NonRandomDeckFactory.WILD_BLUE);
+        master.moveToPill(NonRandomDeckFactory.ONE_RED);
+        master.moveToPill(NonRandomDeckFactory.WILD_BLUE);
 
         master.updateDeckFromPill();
 
@@ -113,20 +118,20 @@ public class UnoGameMasterTest {
 
     @Test
     public void DrawCard_DeckIsEmpty_PillShuffledToNewDeck() {
-        pill.take(NonRandomDeckFactory.ONE_RED);
-        pill.take(NonRandomDeckFactory.TWO_BLUE);
-        pill.take(NonRandomDeckFactory.THREE_BLUE);
+        master.moveToPill(NonRandomDeckFactory.ONE_RED);
+        master.moveToPill(NonRandomDeckFactory.TWO_BLUE);
+        master.moveToPill(NonRandomDeckFactory.THREE_BLUE);
 
         Card drawn = master.drawCard();
 
         assertThat(drawn, is(NonRandomDeckFactory.TWO_BLUE));
         assertThat(deck.showTopCard(), is(NonRandomDeckFactory.THREE_BLUE));
-        assertThat(pill.showTopCard(), is(NonRandomDeckFactory.ONE_RED));
+        assertThat(master.currentPlayedCard(), is(NonRandomDeckFactory.ONE_RED));
     }
 
     @Test
     public void DrawCard_EmptyDeckAndPill_NoCardDrawn() {
-        pill.take(NonRandomDeckFactory.ONE_BLUE);
+        master.moveToPill(NonRandomDeckFactory.ONE_BLUE);
 
         Card drawn = master.drawCard();
 

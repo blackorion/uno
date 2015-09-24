@@ -3,21 +3,28 @@ package games.uno.domain.game;
 import games.uno.domain.cards.AbstractCardHolder;
 import games.uno.domain.cards.Card;
 import games.uno.domain.cards.Deck;
+import games.uno.util.DeckFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class UnoGameMaster implements GameMaster {
-    private final Deck deck;
+    private Deck deck;
     private final Deck pill;
     private final GameTable table;
+    private final DeckFactory deckFactory;
     private GameState state = GameState.NOT_RUNNING;
     private Card lastDrawnCard;
 
-    public UnoGameMaster(Deck deck, Deck pill) {
-        this.deck = deck;
-        this.pill = pill;
+    public UnoGameMaster(DeckFactory deckFactory) {
+        this.deckFactory = deckFactory;
+        this.deck = makeDeck();
+        this.pill = new Deck();
         this.table = new GameTable(this);
+    }
+
+    private Deck makeDeck() {
+        return deckFactory.generate();
     }
 
     @Override
@@ -54,8 +61,7 @@ public class UnoGameMaster implements GameMaster {
 
     @Override
     public void flushDeckAndPill() {
-        deck.refill();
-        deck.shuffle();
+        deck = makeDeck();
         pill.dropAll();
     }
 
@@ -120,6 +126,11 @@ public class UnoGameMaster implements GameMaster {
     }
 
     @Override
+    public int cardsInPill() {
+        return pill.remains();
+    }
+
+    @Override
     public boolean deckIsEmpty() {
         return deck.remains() == 0;
     }
@@ -171,7 +182,7 @@ public class UnoGameMaster implements GameMaster {
     }
 
     @Override
-    public void putInPlayDeck(Card card) {
+    public void moveToPill(Card card) {
         pill.takeCardFrom(currentPlayer(), card);
     }
 

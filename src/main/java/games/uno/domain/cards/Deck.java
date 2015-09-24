@@ -15,10 +15,6 @@ public class Deck extends AbstractCardHolder {
         Collections.shuffle(cards);
     }
 
-    public void refill() {
-        index = 0;
-    }
-
     public void removeColoredWildCards() {
         cards = cards.parallelStream().map(card -> {
             if (card.isWild())
@@ -29,6 +25,6 @@ public class Deck extends AbstractCardHolder {
     }
 
     public Card firstCardToDraw() {
-        return cards.get(index);
+        return cards.get(0);
     }
 }

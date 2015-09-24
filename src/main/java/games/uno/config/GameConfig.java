@@ -1,6 +1,5 @@
 package games.uno.config;
 
-import games.uno.domain.cards.Deck;
 import games.uno.domain.game.*;
 import games.uno.util.DeckFactory;
 import org.springframework.context.annotation.Bean;
@@ -20,7 +19,7 @@ public class GameConfig {
 
     @Bean
     public GameMaster gameMaster(DeckFactory deckFactory) {
-        return new UnoGameMaster(deckFactory.generate(), new Deck());
+        return new UnoGameMaster(deckFactory);
     }
 
     @Bean

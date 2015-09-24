@@ -90,8 +90,8 @@ public class UnoRulesManagerTest {
         manager.cardPlayed(NonRandomDeckFactory.ONE_BLUE);
 
         verify(mockController, times(1)).drawCard();
-        verify(mockController, times(1)).putInPlayDeck(NonRandomDeckFactory.WILD_BLUE);
-        verify(mockController, times(1)).putInPlayDeck(NonRandomDeckFactory.ONE_BLUE);
+        verify(mockController, times(1)).moveToPill(NonRandomDeckFactory.WILD_BLUE);
+        verify(mockController, times(1)).moveToPill(NonRandomDeckFactory.ONE_BLUE);
         verify(mockController, times(1)).setPlayerFinishedMove();
         verify(mockController, times(1)).nextPlayer();
     }
@@ -120,7 +120,7 @@ public class UnoRulesManagerTest {
 
         manager.cardPlayed(NonRandomDeckFactory.ONE_RED);
 
-        verify(mockController, times(1)).putInPlayDeck(NonRandomDeckFactory.ONE_RED);
+        verify(mockController, times(1)).moveToPill(NonRandomDeckFactory.ONE_RED);
     }
 
     @Test
