@@ -1,6 +1,11 @@
 package games.uno.util;
 
-import games.uno.domain.cards.*;
+import games.cardgame.deck.Deck;
+import games.cardgame.deck.DeckBuilder;
+import games.cardgame.deck.DeckFactory;
+import games.uno.domain.cards.UnoCardColors;
+import games.uno.domain.cards.UnoCardTypes;
+import games.uno.domain.cards.UnoCardValues;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Priority;
@@ -46,37 +51,37 @@ public class RandomDeckFactory implements DeckFactory {
     }
 
     private void addZeroCards() {
-        nonDarkColors().forEach(color -> builder.add(CardValues.ZERO, color));
+        nonDarkColors().forEach(color -> builder.add(UnoCardValues.ZERO, color));
     }
 
     private void addColoredActionCards() {
         nonDarkColors().forEach(color -> {
             for (int i = 0; i < 2; i++) {
-                builder.add(CardValues.DRAW_TWO, color);
-                builder.add(CardValues.REVERSE, color);
-                builder.add(CardValues.SKIP, color);
+                builder.add(UnoCardValues.DRAW_TWO, color);
+                builder.add(UnoCardValues.REVERSE, color);
+                builder.add(UnoCardValues.SKIP, color);
             }
         });
     }
 
     private void addWildCards() {
         for (int i = 0; i < 4; i++) {
-            builder.add(CardValues.WILD, CardColors.DARK);
-            builder.add(CardValues.WILD_DRAW_FOUR, CardColors.DARK);
+            builder.add(UnoCardValues.WILD, UnoCardColors.DARK);
+            builder.add(UnoCardValues.WILD_DRAW_FOUR, UnoCardColors.DARK);
         }
     }
 
-    private List<CardColors> nonDarkColors() {
-        return Arrays.asList(CardColors.values())
+    private List<UnoCardColors> nonDarkColors() {
+        return Arrays.asList(UnoCardColors.values())
                 .stream()
-                .filter(cardColors -> cardColors != CardColors.DARK)
+                .filter(cardColors -> cardColors != UnoCardColors.DARK)
                 .collect(Collectors.toList());
     }
 
-    private List<CardValues> numericNonZeroValues() {
-        return Arrays.asList(CardValues.values())
+    private List<UnoCardValues> numericNonZeroValues() {
+        return Arrays.asList(UnoCardValues.values())
                 .stream()
-                .filter(value -> value.getType() == CardTypes.NUMERIC && value != CardValues.ZERO)
+                .filter(value -> value.getType() == UnoCardTypes.NUMERIC && value != UnoCardValues.ZERO)
                 .collect(Collectors.toList());
     }
 }

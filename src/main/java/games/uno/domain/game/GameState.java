@@ -1,6 +1,7 @@
 package games.uno.domain.game;
 
-import games.uno.exceptions.GameAlreadyStartedException;
+import games.cardgame.core.GameMaster;
+import games.cardgame.exceptions.GameAlreadyStartedException;
 
 public enum GameState {
     RUNNING(true) {

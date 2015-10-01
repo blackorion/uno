@@ -1,9 +1,13 @@
 package games.uno.domain.game;
 
-import games.uno.domain.cards.Card;
-import games.uno.exceptions.IllegalTurnEndException;
-import games.uno.exceptions.WrongMoveException;
-import games.uno.testutils.NonRandomDeckFactory;
+import games.cardgame.core.GameMaster;
+import games.cardgame.core.RulesManager;
+import games.cardgame.core.ScoreCounter;
+import games.cardgame.exceptions.IllegalTurnEndException;
+import games.cardgame.exceptions.WrongMoveException;
+import games.cardgame.player.Player;
+import games.cardgame.testutils.NonRandomDeckFactory;
+import games.uno.domain.cards.UnoCard;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -348,10 +352,10 @@ public class UnoRulesManagerTest {
         verify(mockController, times(1)).flushDeckAndPill();
     }
 
-    private Player createPlayerWithHand(Card... cards) {
+    private Player createPlayerWithHand(UnoCard... cards) {
         Player player = new Player("player");
 
-        for (Card card : cards)
+        for (UnoCard card : cards)
             player.take(card);
 
         when(mockController.currentPlayer()).thenReturn(player);
@@ -359,7 +363,7 @@ public class UnoRulesManagerTest {
         return player;
     }
 
-    private Card setDrawnCard(Card drawn) {
+    private UnoCard setDrawnCard(UnoCard drawn) {
         when(mockController.drawCard()).thenReturn(drawn);
         when(mockController.lastDrawnCard()).thenReturn(drawn);
 

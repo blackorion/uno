@@ -1,9 +1,12 @@
 package games.uno.domain.game;
 
-import games.uno.domain.cards.AbstractCardHolder;
-import games.uno.domain.cards.Card;
-import games.uno.domain.cards.Deck;
-import games.uno.util.DeckFactory;
+import games.cardgame.cardholder.AbstractCardHolder;
+import games.cardgame.core.GameMaster;
+import games.cardgame.core.GameTable;
+import games.cardgame.deck.Deck;
+import games.cardgame.deck.DeckFactory;
+import games.cardgame.player.Player;
+import games.uno.domain.cards.UnoCard;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +17,7 @@ public class UnoGameMaster implements GameMaster {
     private final GameTable table;
     private final DeckFactory deckFactory;
     private GameState state = GameState.NOT_RUNNING;
-    private Card lastDrawnCard;
+    private UnoCard lastDrawnCard;
 
     public UnoGameMaster(DeckFactory deckFactory) {
         this.deckFactory = deckFactory;
@@ -45,7 +48,7 @@ public class UnoGameMaster implements GameMaster {
     }
 
     @Override
-    public Card currentPlayedCard() {
+    public UnoCard currentPlayedCard() {
         return pill.showTopCard();
     }
 
@@ -91,7 +94,7 @@ public class UnoGameMaster implements GameMaster {
 
     @Override
     public void updateDeckFromPill() {
-        Card card = pill.drawFromTop();
+        UnoCard card = pill.drawFromTop();
         deck.dropAll();
         deck.takeAllFrom(pill);
         deck.removeColoredWildCards();
@@ -105,7 +108,7 @@ public class UnoGameMaster implements GameMaster {
     }
 
     @Override
-    public Card deckFirstCardToDraw() {
+    public UnoCard deckFirstCardToDraw() {
         return deck.firstCardToDraw();
     }
 
@@ -115,7 +118,7 @@ public class UnoGameMaster implements GameMaster {
     }
 
     @Override
-    public Card lastDrawnCard() {
+    public UnoCard lastDrawnCard() {
         return lastDrawnCard;
     }
 
@@ -156,7 +159,7 @@ public class UnoGameMaster implements GameMaster {
     }
 
     @Override
-    public Card drawCard() {
+    public UnoCard drawCard() {
         if (deckIsEmpty())
             updateDeckFromPill();
 
@@ -167,8 +170,8 @@ public class UnoGameMaster implements GameMaster {
     }
 
     @Override
-    public List<Card> drawCard(int times) {
-        List<Card> cards = new ArrayList<>();
+    public List<UnoCard> drawCard(int times) {
+        List<UnoCard> cards = new ArrayList<>();
 
         for (int i = 0; i < times; i++)
             cards.add(drawCard());
@@ -182,7 +185,7 @@ public class UnoGameMaster implements GameMaster {
     }
 
     @Override
-    public void moveToPill(Card card) {
+    public void moveToPill(UnoCard card) {
         pill.takeCardFrom(currentPlayer(), card);
     }
 

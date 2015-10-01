@@ -1,7 +1,7 @@
 package games.uno.events;
 
-import games.uno.GameService;
-import games.uno.PlayerService;
+import games.uno.services.GameService;
+import games.uno.services.PlayerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
@@ -10,6 +10,7 @@ import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.GenericMessage;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.messaging.SessionConnectedEvent;
+
 import java.util.Map;
 
 @Component

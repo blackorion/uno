@@ -1,6 +1,8 @@
 package games.uno;
 
-import games.uno.domain.game.Player;
+import games.cardgame.player.Player;
+import games.uno.repositories.PlayerRepository;
+import games.uno.services.PlayerService;
 import org.junit.Test;
 import org.springframework.security.authentication.AuthenticationManager;
 

@@ -1,9 +1,11 @@
 package games.uno.domain.game;
 
-import games.uno.domain.cards.Card;
-import games.uno.domain.cards.Deck;
-import games.uno.testutils.NonRandomDeckFactory;
-import games.uno.util.DeckFactory;
+import games.cardgame.core.GameMaster;
+import games.cardgame.deck.Deck;
+import games.cardgame.deck.DeckFactory;
+import games.cardgame.player.Player;
+import games.cardgame.testutils.NonRandomDeckFactory;
+import games.uno.domain.cards.UnoCard;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.core.IsNull;
 import org.junit.Before;
@@ -103,7 +105,7 @@ public class UnoGameMasterTest {
         deck.take(NonRandomDeckFactory.ONE_BLUE);
         master.getTable().add(new Player("player"));
 
-        Card expected = master.drawCard();
+        UnoCard expected = master.drawCard();
 
         assertThat(master.lastDrawnCard(), is(expected));
     }
@@ -122,7 +124,7 @@ public class UnoGameMasterTest {
         master.moveToPill(NonRandomDeckFactory.TWO_BLUE);
         master.moveToPill(NonRandomDeckFactory.THREE_BLUE);
 
-        Card drawn = master.drawCard();
+        UnoCard drawn = master.drawCard();
 
         assertThat(drawn, is(NonRandomDeckFactory.TWO_BLUE));
         assertThat(deck.showTopCard(), is(NonRandomDeckFactory.THREE_BLUE));
@@ -133,7 +135,7 @@ public class UnoGameMasterTest {
     public void DrawCard_EmptyDeckAndPill_NoCardDrawn() {
         master.moveToPill(NonRandomDeckFactory.ONE_BLUE);
 
-        Card drawn = master.drawCard();
+        UnoCard drawn = master.drawCard();
 
         assertThat(drawn, is(nullValue()));
     }

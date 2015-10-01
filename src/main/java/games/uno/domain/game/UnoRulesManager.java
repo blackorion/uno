@@ -1,9 +1,15 @@
 package games.uno.domain.game;
 
-import games.uno.domain.cards.Card;
-import games.uno.domain.cards.CardValues;
-import games.uno.exceptions.IllegalTurnEndException;
-import games.uno.exceptions.WrongMoveException;
+import games.cardgame.core.GameMaster;
+import games.cardgame.core.RulesManager;
+import games.cardgame.core.ScoreCounter;
+import games.cardgame.exceptions.IllegalTurnEndException;
+import games.cardgame.exceptions.WrongMoveException;
+import games.uno.domain.cards.UnoCard;
+import games.uno.domain.cards.UnoCardValues;
+import games.uno.domain.game.cardplaystrategies.BasicCardPlayStrategy;
+import games.uno.domain.game.cardplaystrategies.CardPlayStrategy;
+import games.uno.domain.game.cardplaystrategies.FirstCardWildPlayStrategy;
 
 public class UnoRulesManager implements RulesManager {
     private final GameMaster game;
@@ -16,7 +22,7 @@ public class UnoRulesManager implements RulesManager {
         setDefaultCardPlayStrategy();
     }
 
-    void setDefaultCardPlayStrategy() {
+    public void setDefaultCardPlayStrategy() {
         this.cardPlayStrategy = new BasicCardPlayStrategy(this, game, scoreCounter);
     }
 
@@ -34,22 +40,22 @@ public class UnoRulesManager implements RulesManager {
     }
 
     private void handleTopCardAction() {
-        while (game.deckFirstCardToDraw().getValue() == CardValues.WILD_DRAW_FOUR)
+        while (game.deckFirstCardToDraw().getValue() == UnoCardValues.WILD_DRAW_FOUR)
             game.shuffleDeck();
 
-        if (game.deckFirstCardToDraw().getValue() == CardValues.WILD) {
+        if (game.deckFirstCardToDraw().getValue() == UnoCardValues.WILD) {
             setFirstCardWildPlayStrategy();
             game.drawCard();
         }
 
         game.deckFirstCardToDraw().applyAction(game);
 
-        if (game.deckFirstCardToDraw().getValue() == CardValues.REVERSE)
+        if (game.deckFirstCardToDraw().getValue() == UnoCardValues.REVERSE)
             game.nextPlayer();
     }
 
     @Override
-    public void cardPlayed(Card card) {
+    public void cardPlayed(UnoCard card) {
         cardPlayStrategy.play(card);
     }
 
@@ -61,11 +67,11 @@ public class UnoRulesManager implements RulesManager {
     }
 
     @Override
-    public Card playerDraws() {
+    public UnoCard playerDraws() {
         if (game.didPlayerDrewThisTurn())
             throw new WrongMoveException("Can't draw more than one card in turn.");
 
-        Card lastDrawnCard = game.drawCard();
+        UnoCard lastDrawnCard = game.drawCard();
         game.setPlayerFinishedMove();
 
         if (drawnCardNotPlayable(lastDrawnCard))
@@ -74,7 +80,7 @@ public class UnoRulesManager implements RulesManager {
         return game.lastDrawnCard();
     }
 
-    private boolean drawnCardNotPlayable(Card card) {
+    private boolean drawnCardNotPlayable(UnoCard card) {
         return card != null && !card.isPlayable(game.currentPlayedCard());
     }
 

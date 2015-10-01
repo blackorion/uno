@@ -1,10 +1,10 @@
 package games.uno.web.messages;
 
-import games.uno.GameService;
-import games.uno.domain.cards.Card;
-import games.uno.domain.cards.CardColors;
-import games.uno.domain.cards.CardValues;
-import games.uno.domain.game.Player;
+import games.cardgame.player.Player;
+import games.uno.domain.cards.UnoCard;
+import games.uno.domain.cards.UnoCardColors;
+import games.uno.domain.cards.UnoCardValues;
+import games.uno.services.GameService;
 
 import java.util.Map;
 
@@ -32,7 +32,7 @@ public class PlayerActionMessage {
 
                 Map<String, String> card = (Map<String, String>) event.data.get("card");
 
-                gameService.playCard(player, new Card(CardValues.valueOf(card.get("value")), CardColors.valueOf(card.get("color"))));
+                gameService.playCard(player, new UnoCard(UnoCardValues.valueOf(card.get("value")), UnoCardColors.valueOf(card.get("color"))));
             }
         },
         END_TURN {

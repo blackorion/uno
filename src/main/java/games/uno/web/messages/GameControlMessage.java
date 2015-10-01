@@ -1,6 +1,6 @@
 package games.uno.web.messages;
 
-import games.uno.GameService;
+import games.uno.services.GameService;
 
 public class GameControlMessage
 {
