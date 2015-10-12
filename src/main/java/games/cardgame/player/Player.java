@@ -1,6 +1,7 @@
 package games.cardgame.player;
 
 import games.cardgame.cardholder.AbstractCardHolder;
+import games.humanresources.Room;
 import games.uno.domain.cards.UnoCard;
 
 import java.util.List;
@@ -10,6 +11,7 @@ public class Player extends AbstractCardHolder {
     private String name;
     private boolean shouldPlay = false;
     private int gameScore = 0;
+    private Room room;
 
     public Player(String name) {
         this.name = name;
@@ -71,5 +73,13 @@ public class Player extends AbstractCardHolder {
 
     public void addScore(int score) {
         gameScore += score;
+    }
+
+    public Room getRoom() {
+        return room;
+    }
+
+    public void setRoom(Room room) {
+        this.room = room;
     }
 }

@@ -9,7 +9,7 @@ import games.uno.domain.game.GameState;
 import java.util.List;
 
 public class GameTable {
-    private static final int MAX_PLAYERS = 15;
+    public static final int MAX_PLAYERS_CAPABILITY = 15;
     private final BidirectionalQueue<Player> queue = new BidirectionalQueue<>();
     private final GameMaster game;
 
@@ -29,7 +29,7 @@ public class GameTable {
         if (game.state().isRunning())
             throw new IllegalArgumentException("The game has already started.");
 
-        if (queue.size() == MAX_PLAYERS)
+        if (queue.size() == MAX_PLAYERS_CAPABILITY)
             throw new PlayerLimitForGameException();
     }
 

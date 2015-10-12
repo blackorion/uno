@@ -24,7 +24,7 @@ public class GameTableTest {
 
     @Test(expected = PlayerLimitForGameException.class)
     public void Add_MoreThanMaxPlayersCapacity_ThrowsException() {
-        for (int i = 0; i < 16; i++)
+        for (int i = 0; i <= GameTable.MAX_PLAYERS_CAPABILITY; i++)
             table.add(new Player("Player" + i));
     }
 
